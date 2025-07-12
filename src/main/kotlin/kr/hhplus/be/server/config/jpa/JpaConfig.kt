@@ -12,7 +12,5 @@ import org.springframework.transaction.PlatformTransactionManager
 @EnableJpaRepositories
 class JpaConfig {
     @Bean
-    fun transactionManager(): PlatformTransactionManager {
-        return JpaTransactionManager()
-    }
+    fun transactionManager(): PlatformTransactionManager = JpaTransactionManager()
 }
