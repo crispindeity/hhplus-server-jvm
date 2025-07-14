@@ -107,20 +107,18 @@ sequenceDiagram
     participant QueueService as QueueService
     participant WS as WebSocketServer
     participant DB as RDB
-
-    User->>FE: 예약 페이지 진입
-    FE->>TokenAPI: POST /token (UUID 포함)
-    TokenAPI->>QueueService: 대기열 토큰 생성
-    QueueService->>DB: 토큰 및 순번 저장
-    TokenAPI-->>FE: 대기열 토큰 응답
-
-    FE->>WS: WebSocket 연결 시작
-    WS->>DB: 대기열 순번 확인
-    WS-->>FE: 대기 순번 업데이트
+    User ->> FE: 예약 페이지 진입
+    FE ->> TokenAPI: POST /token (UUID 포함)
+    TokenAPI ->> QueueService: 대기열 토큰 생성
+    QueueService ->> DB: 토큰 및 순번 저장
+    TokenAPI -->> FE: 대기열 토큰 응답
+    FE ->> WS: WebSocket 연결 시작
+    WS ->> DB: 대기열 순번 확인
+    WS -->> FE: 대기 순번 업데이트
 
     alt 연결 종료
-        WS->>QueueService: 연결 종료 감지
-        QueueService->>DB: 토큰 상태 → CANCELLED
+        WS ->> QueueService: 연결 종료 감지
+        QueueService ->> DB: 토큰 상태 → CANCELLED
     end
 ```
 
@@ -133,22 +131,19 @@ sequenceDiagram
     participant SeatAPI as SeatController
     participant ReserveService as ReservationService
     participant DB as RDB
-
-    FE->>SeatAPI: GET /dates
-    SeatAPI->>DB: 예약 가능한 날짜 조회
-    SeatAPI-->>FE: 날짜 목록 응답
-
-    FE->>SeatAPI: GET /seats?date=YYYY-MM-DD
-    SeatAPI->>DB: 해당 날짜 좌석 상태 조회
-    SeatAPI-->>FE: 좌석 목록 응답
-
-    FE->>ReserveService: POST /seats/reserve
-    ReserveService->>DB: 좌석 임시 배정 (상태: HOLD, 만료시간 저장)
+    FE ->> SeatAPI: GET /dates
+    SeatAPI ->> DB: 예약 가능한 날짜 조회
+    SeatAPI -->> FE: 날짜 목록 응답
+    FE ->> SeatAPI: GET /seats?date=YYYY-MM-DD
+    SeatAPI ->> DB: 해당 날짜 좌석 상태 조회
+    SeatAPI -->> FE: 좌석 목록 응답
+    FE ->> ReserveService: POST /seats/reserve
+    ReserveService ->> DB: 좌석 임시 배정 (상태: HOLD, 만료시간 저장)
     Note right of ReserveService: 스케줄러가 5분 후 HOLD 상태 자동 해제
-    ReserveService-->>FE: 임시 예약 응답
+    ReserveService -->> FE: 임시 예약 응답
 
     alt 유저가 예약 포기
-        ReserveService->>DB: HOLD 상태 → CANCELLED
+        ReserveService ->> DB: HOLD 상태 → CANCELLED
     end
 ```
 
@@ -164,34 +159,31 @@ sequenceDiagram
     participant PaymentService
     participant DB as RDB
     participant WS as WebSocketServer
-
-    FE->>PointAPI: GET /point?userId=...
-    PointAPI->>PointService: 사용자 포인트 조회
-    PointService->>DB: 포인트 정보 조회
-    PointService-->>PointAPI: 보유 포인트 응답
-    PointAPI-->>FE: 현재 포인트 응답
+    FE ->> PointAPI: GET /point?userId=...
+    PointAPI ->> PointService: 사용자 포인트 조회
+    PointService ->> DB: 포인트 정보 조회
+    PointService -->> PointAPI: 보유 포인트 응답
+    PointAPI -->> FE: 현재 포인트 응답
 
     alt 포인트 부족
-        FE->>PointAPI: POST /point/charge (userId, amount)
-        PointAPI->>PointService: 포인트 충전
-        PointService->>DB: 포인트 잔액 갱신
-        PointService-->>PointAPI: 충전 완료
-        PointAPI-->>FE: 충전 성공
+        FE ->> PointAPI: POST /point/charge (userId, amount)
+        PointAPI ->> PointService: 포인트 충전
+        PointService ->> DB: 포인트 잔액 갱신
+        PointService -->> PointAPI: 충전 완료
+        PointAPI -->> FE: 충전 성공
     end
 
-    FE->>PayAPI: POST /pay (좌석 정보 + 결제금액)
-    PayAPI->>PaymentService: 결제 처리
-
-    PaymentService->>PointService: 포인트 차감 요청
-    PointService->>DB: 보유 포인트 차감
-    PointService-->>PaymentService: 차감 완료
-
-    PaymentService->>DB: 좌석 상태 → CONFIRMED
-    PaymentService->>DB: 결제 내역 생성
-    PaymentService->>DB: 대기열 토큰 상태 → COMPLETED
-    PaymentService-->>PayAPI: 결제 성공
-    PayAPI-->>FE: 결제 완료
-    WS-->>FE: 대기열 종료 알림
+    FE ->> PayAPI: POST /pay (좌석 정보 + 결제금액)
+    PayAPI ->> PaymentService: 결제 처리
+    PaymentService ->> PointService: 포인트 차감 요청
+    PointService ->> DB: 보유 포인트 차감
+    PointService -->> PaymentService: 차감 완료
+    PaymentService ->> DB: 좌석 상태 → CONFIRMED
+    PaymentService ->> DB: 결제 내역 생성
+    PaymentService ->> DB: 대기열 토큰 상태 → COMPLETED
+    PaymentService -->> PayAPI: 결제 성공
+    PayAPI -->> FE: 결제 완료
+    WS -->> FE: 대기열 종료 알림
 ```
 
 ### 전체 흐름
@@ -237,7 +229,6 @@ sequenceDiagram
         SeatAPI -->> FE: 좌석 목록 응답
         FE ->> ReserveService: POST /seats/reserve (날짜 + 좌석)
         ReserveService ->> DB: 좌석 임시 배정 (상태: HOLD, 만료시간 저장)
-        Note right of ReserveService: 스케줄러가 HOLD 상태 5분 후 자동 해제
         ReserveService -->> FE: 임시 예약 완료
     %% --- 포인트 조회 및 충전 ---
         FE ->> PointAPI: GET /point?userId=...
@@ -271,103 +262,93 @@ sequenceDiagram
     end
 ```
 
-## 클래스 다이어그램
-
-```mermaid
-classDiagram
-    class User {
-        UUID id
-        String name
-    }
-
-    class QueueToken {
-        Long id
-        UUID userId
-        int queueNumber
-        TokenStatus status
-        LocalDateTime createdAt
-    }
-
-    class Seat {
-        Long id
-        int number
-    }
-
-    class Reservation {
-        Long id
-        UUID userId
-        Seat seat
-        ReservationStatus status
-        LocalDateTime reservedAt
-        LocalDateTime expiresAt
-    }
-
-    class Point {
-        UUID userId
-        int balance
-    }
-
-    class Payment {
-        Long id
-        UUID userId
-        int amount
-        LocalDateTime paidAt
-    }
-
-    Reservation --> Seat
-    Reservation --> User
-    QueueToken --> User
-    Point --> User
-    Payment --> User
-```
-
 ## ERD
 
 ```mermaid
 erDiagram
-    USERS ||--o{ QUEUE_TOKENS: has
+    USERS ||--|| POINT_WALLET: owns
     USERS ||--o{ RESERVATIONS: makes
-    USERS ||--o{ POINTS: owns
-    USERS ||--o{ PAYMENTS: pays
-    SEATS ||--o{ RESERVATIONS: has
-
-    QUEUE_TOKENS {
-        UUID id PK
-        UUID user_id
-        INT queue_number
-        STRING status
-        DATETIME created_at
-    }
-
+    USERS ||--o{ PAYMENT: pays
+    USERS ||--o{ SEAT_HOLD: holds
+    USERS ||--o{ QUEUE_TOKENS: queued_by
+    POINT_WALLET ||--o{ POINT_HISTORY: tracks
+    RESERVATIONS ||--|| SEATS: reserves
+    RESERVATIONS }o--|| PAYMENT: paid_with
+    SEAT_HOLD ||--|| SEATS: locks
+    SEATS ||--o{ RESERVATIONS: reserved_by
+    POINT_WALLET ||--|| USERS: belongs_to
     USERS {
         UUID id PK
-        STRING name
+        String user_id
+        Datetime created_at
+        Datetime updated_at
     }
 
     SEATS {
-        BIGINT id PK
-        INT seat_number
+        Bigint id PK
+        Int number
+        Bigint price
+        Datetime created_at
+        Datetime updated_at
+    }
+
+    POINT_WALLET {
+        Bigint id PK
+        UUID user_id
+        Bigint balance
+        Datetime created_at
+        Datetime updated_at
     }
 
     RESERVATIONS {
-        BIGINT id PK
+        Bigint id PK
         UUID user_id
-        BIGINT seat_id
-        STRING status
-        DATETIME reserved_at
-        DATETIME expires_at
+        Bigint seat_id
+        Bigint payment_id
+        Datetime reserved_at
+        Datetime expires_at
+        Enum status "PENDING | CANCELLED | CONFIRMED | EXPIRED"
+        Datetime created_at
+        Datetime updated_at
     }
 
-    POINTS {
-        UUID user_id PK
-        INT balance
+    QUEUE_TOKENS {
+        Bigint id PK
+        UUID user_id
+        Int number
+        String token
+        Enum status "COMPLETED | CANCELLED"
+        Datetime expires_at
+        Datetime created_at
+        Datetime updated_at
     }
 
-    PAYMENTS {
-        BIGINT id PK
+    POINT_HISTORY {
+        Bigint id PK
+        Bigint point_wallet_id
+        Enum status "CHARGED | USED"
+        Bigint amount
+        Datetime created_at
+        Datetime updated_at
+    }
+
+    PAYMENT {
+        Bigint id PK
+        UUID userId
+        Enum status "PENDING | COMPLETED | CANCELLED"
+        Bigint price
+        Datetime payed_at
+        Datetime created_at
+        Datetime updated_at
+    }
+
+    SEAT_HOLD {
+        Bigint id PK
+        Bigint seat_id "UNIQUE"
         UUID user_id
-        BIGINT reservation_id
-        INT amount
-        DATETIME paid_at
+        Datetime held_at
+        Datetime expires_at
+        Datetime created_at
+        Datetime updated_at
     }
 ```
