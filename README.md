@@ -94,6 +94,42 @@ docker-compose up -d
 
 </details>
 
+## 플로우 차트
+
+```mermaid
+flowchart TD
+    User["사용자"]
+    API["API 요청"]
+    Queue{"대기열"}
+    Date["예약 가능 일 조회"]
+    Seat["좌석 조회"]
+    Reservation["예약 요청"]
+    SeatStatus{"좌석 점유"}
+    SeatHold["좌석 임시 배정"]
+    Payment["결제"]
+    PaymentTime{"결제 시간"}
+    Balance{"잔액"}
+    Charge["포인트 충전"]
+    Completed["예약 완료"]
+    User --> API
+    API --> Queue
+    Queue -- 순번 도달 --> Date
+    Queue -- 대기 --> Queue
+    Date --> Seat
+    Seat --> Reservation
+    Reservation --> SeatStatus
+    SeatStatus -- 실패 --> Seat
+    SeatStatus -- 성공 --> SeatHold
+    SeatHold --> Payment
+    Payment --> PaymentTime
+    PaymentTime -- 5분 초과 --> Date
+    PaymentTime -- 5분 미만 --> Balance
+    Balance -- 부족 --> Charge
+    Charge --> Payment
+    Balance -- 충분 --> Completed
+    Completed -- 만료 --> Queue
+```
+
 ## 시퀀스 다이어그램
 
 ### 대기열 진입 및 순번 조회
