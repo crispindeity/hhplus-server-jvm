@@ -266,89 +266,122 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    USERS ||--|| POINT_WALLET: owns
-    USERS ||--o{ RESERVATIONS: makes
-    USERS ||--o{ PAYMENT: pays
-    USERS ||--o{ SEAT_HOLD: holds
-    USERS ||--o{ QUEUE_TOKENS: queued_by
-    POINT_WALLET ||--o{ POINT_HISTORY: tracks
-    RESERVATIONS ||--|| SEATS: reserves
-    RESERVATIONS }o--|| PAYMENT: paid_with
-    SEAT_HOLD ||--|| SEATS: locks
-    SEATS ||--o{ RESERVATIONS: reserved_by
-    POINT_WALLET ||--|| USERS: belongs_to
     USERS {
-        UUID id PK
-        String user_id
-        Datetime created_at
-        Datetime updated_at
+        VARCHAR(36) id PK
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    SEATS {
-        Bigint id PK
-        Int number
-        Bigint price
-        Datetime created_at
-        Datetime updated_at
+    POINT_WALLETS {
+        BIGINT id PK
+        VARCHAR(36) user_id 
+        BIGINT balance
+        BIGINT version
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    POINT_WALLET {
-        Bigint id PK
-        UUID user_id
-        Bigint balance
-        Datetime created_at
-        Datetime updated_at
-    }
-
-    RESERVATIONS {
-        Bigint id PK
-        UUID user_id
-        Bigint seat_id
-        Bigint payment_id
-        Datetime reserved_at
-        Datetime expires_at
-        Enum status "PENDING | CANCELLED | CONFIRMED | EXPIRED"
-        Datetime created_at
-        Datetime updated_at
+    POINT_TRANSACTIONS {
+        BIGINT id PK
+        BIGINT point_wallet_id 
+        VARCHAR type "CHARGED | USED"
+        BIGINT amount
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
     QUEUE_TOKENS {
-        Bigint id PK
-        UUID user_id
-        Int number
-        String token
-        Enum status "COMPLETED | CANCELLED"
-        Datetime expires_at
-        Datetime created_at
-        Datetime updated_at
+        BIGINT id PK
+        VARCHAR(36) user_id 
+        INT number
+        VARCHAR(1024) token
+        VARCHAR status "WAITING | COMPLETED | CANCELLED | EXPIRED"
+        TIMESTAMP expires_at
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    POINT_HISTORY {
-        Bigint id PK
-        Bigint point_wallet_id
-        Enum status "CHARGED | USED"
-        Bigint amount
-        Datetime created_at
-        Datetime updated_at
+    SEATS {
+        BIGINT id PK
+        INT number
+        BIGINT price
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    PAYMENT {
-        Bigint id PK
-        UUID userId
-        Enum status "PENDING | COMPLETED | CANCELLED"
-        Bigint price
-        Datetime payed_at
-        Datetime created_at
-        Datetime updated_at
+    CONCERTS {
+        BIGINT id PK
+        VARCHAR(255) title
+        DATE date
+        TIME start_time
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
 
-    SEAT_HOLD {
-        Bigint id PK
-        Bigint seat_id "UNIQUE"
-        UUID user_id
-        Datetime held_at
-        Datetime expires_at
-        Datetime created_at
-        Datetime updated_at
+    CONCERT_SEATS {
+        BIGINT id PK
+        BIGINT concert_id 
+        BIGINT seat_id 
+        VARCHAR status "HELD | AVAILABLE | RESERVED"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
     }
+
+    SEAT_HOLDS {
+        BIGINT id PK
+        BIGINT concert_seat_id 
+        VARCHAR(36) user_id 
+        TIMESTAMP held_at
+        TIMESTAMP expires_at
+        TIMESTAMP released_at
+        VARCHAR status "HELD | CONFIRMED | EXPIRED | CANCELLED"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    RESERVATIONS {
+        BIGINT id PK
+        VARCHAR(36) user_id 
+        BIGINT concert_id 
+        BIGINT payment_id 
+        TIMESTAMP confirmed_at
+        TIMESTAMP reserved_at
+        TIMESTAMP expires_at
+        VARCHAR status "IN_PROGRESS | CANCELLED | CONFIRMED | EXPIRED"
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    RESERVATION_SEATS {
+        BIGINT id PK
+        BIGINT reservation_id 
+        BIGINT seat_id 
+        BIGINT concert_id 
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    PAYMENTS {
+        BIGINT id PK
+        VARCHAR(36) user_id 
+        VARCHAR status "PENDING | COMPLETED | CANCELLED"
+        BIGINT price
+        TIMESTAMP paid_at
+        TIMESTAMP created_at
+        TIMESTAMP updated_at
+    }
+
+    USERS ||--o{ POINT_WALLETS: "has (logical)"
+    USERS ||--o{ QUEUE_TOKENS: "receives (logical)"
+    USERS ||--o{ RESERVATIONS: "makes (logical)"
+    USERS ||--o{ PAYMENTS: "initiates (logical)"
+    POINT_WALLETS ||--o{ POINT_TRANSACTIONS: "tracks (logical)"
+    RESERVATIONS ||--o{ RESERVATION_SEATS: "contains"
+    RESERVATIONS ||--|| PAYMENTS: "paid_by"
+    RESERVATION_SEATS ||--|| SEATS: "maps_to"
+    RESERVATION_SEATS ||--|| CONCERTS: "scheduled_in"
+    CONCERTS ||--o{ CONCERT_SEATS: "has"
+    CONCERT_SEATS ||--|| SEATS: "assigned_to"
+    CONCERT_SEATS ||--o{ SEAT_HOLDS: "held_by"
+    CONCERT_SEATS ||--o{ RESERVATION_SEATS: "reserved_by"
 ```
