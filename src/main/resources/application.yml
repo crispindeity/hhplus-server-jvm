@@ -22,10 +22,22 @@ spring:
       hibernate.jdbc.time_zone: UTC
 
 ---
-spring.config.activate.on-profile: local, test
-
 spring:
+  config:
+    activate:
+      on-profile: local, test
+
   datasource:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+
+---
+spring:
+  config:
+    activate:
+      on-profile: mock
+
+use:
+  mock:
+    queue: true
