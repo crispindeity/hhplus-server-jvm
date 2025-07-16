@@ -3,6 +3,7 @@ package kr.hhplus.be.server.docs
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.time.LocalDate
 import kr.hhplus.be.server.adapter.web.dto.request.FindAvailableDatesRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -19,6 +20,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation
+import org.springframework.restdocs.request.RequestDocumentation
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -157,6 +159,144 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("concertId")
                                     .type(JsonFieldType.NUMBER)
                                     .description("콘서트 식별 아이디")
+                            ),
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지")
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("[문서] 예약 가능 좌석 조회 요청")
+    fun findAvailableSeats() {
+        // given
+        val param: LocalDate = LocalDate.now().plusDays(1)
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .get("/api/reservations/available-seats")
+                        .param("date", param.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isOk,
+                MockMvcResultMatchers.jsonPath("$.code").value(200),
+                MockMvcResultMatchers.jsonPath("$.message").value("success")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "예약 가능 좌석 조회",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("예약")
+                            .summary("예약 가능 좌석 조회 API")
+                            .description("예약 가능 좌석을 조회할 때 사용하는 API"),
+                    snippets =
+                        arrayOf(
+                            RequestDocumentation.queryParameters(
+                                RequestDocumentation
+                                    .parameterWithName("date")
+                                    .description("좌석 조회 날짜")
+                            ),
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.seats")
+                                    .type(JsonFieldType.ARRAY)
+                                    .description("예약 가능 좌석 리스트"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.seats[].id")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("좌석 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.seats[].number")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("좌석 번호"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.seats[].price")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("좌석 가격")
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("[문서] 예약 가능 좌석 조회 요청 - 잘못된 요청")
+    fun findAvailableSeatsBadRequest() {
+        // given
+        val param: LocalDate = LocalDate.now().minusDays(10)
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .get("/api/reservations/available-seats")
+                        .param("date", param.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest,
+                MockMvcResultMatchers.jsonPath("$.code").value(400),
+                MockMvcResultMatchers.jsonPath("$.message").value("bad request")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "예약 가능 좌석 조회 - 잘못된 요청",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("예약")
+                            .summary("예약 가능 좌석 조회 요청 실패")
+                            .description("현재 날짜 이전 날짜로 예약 가능 좌석 조회 시 예외 발생"),
+                    snippets =
+                        arrayOf(
+                            RequestDocumentation.queryParameters(
+                                RequestDocumentation
+                                    .parameterWithName("date")
+                                    .description("좌석 조회 날짜")
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
