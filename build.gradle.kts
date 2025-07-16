@@ -73,6 +73,7 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
     testImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:$restdocsSpecMockMvcVersion")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -131,4 +132,35 @@ if (!rootProject.extra.has("install-git-hooks")) {
     project.rootProject.tasks.named("prepareKotlinBuildScriptModel") {
         dependsOn(preCommit, prePush)
     }
+}
+
+openapi3 {
+    setServer("http://localhost:8080")
+    title = "concert reservation server"
+    version = "1.0.0"
+    description = "API Documents"
+    format = "yml"
+}
+
+tasks.register<Copy>("copySwaggerSpec") {
+    description = "copy openapi3 document"
+    group = JavaBasePlugin.DOCUMENTATION_GROUP
+
+    val inputFile: File = file("build/api-spec/openapi3.yml")
+    val outputDir: File = file("src/main/resources/static/docs/swagger-ui")
+
+    inputs.file(inputFile)
+    outputs.dir(outputDir)
+
+    from(inputFile)
+    into(outputDir)
+}
+
+tasks.named("build") {
+    dependsOn("test")
+    finalizedBy("copySwaggerSpec")
+}
+
+tasks.named("test") {
+    finalizedBy("openapi3")
 }
