@@ -4,10 +4,13 @@ import java.time.LocalDate
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.FindAvailableDatesRequest
 import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableDatesResponse
+import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableSeatsResponse
+import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableSeatsResponses
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -26,6 +29,36 @@ internal class ReservationController {
                 )
             )
         if (request.concertId > 0) {
+            return ResponseEntity.ok().body(ApiResponse.success(result = response))
+        }
+        return ResponseEntity.badRequest().body(ApiResponse.fail(400, "bad request"))
+    }
+
+    @GetMapping("/available-seats")
+    fun findAvailableSeats(
+        @RequestParam date: LocalDate
+    ): ResponseEntity<ApiResponse<FindAvailableSeatsResponses>> {
+        val response =
+            FindAvailableSeatsResponses(
+                listOf(
+                    FindAvailableSeatsResponse(
+                        id = 1L,
+                        number = 1,
+                        price = 1000
+                    ),
+                    FindAvailableSeatsResponse(
+                        id = 2L,
+                        number = 2,
+                        price = 2000
+                    ),
+                    FindAvailableSeatsResponse(
+                        id = 3L,
+                        number = 3,
+                        price = 3000
+                    )
+                )
+            )
+        if (date.isAfter(LocalDate.now().minusDays(1))) {
             return ResponseEntity.ok().body(ApiResponse.success(result = response))
         }
         return ResponseEntity.badRequest().body(ApiResponse.fail(400, "bad request"))
