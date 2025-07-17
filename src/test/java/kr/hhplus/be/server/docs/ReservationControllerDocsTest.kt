@@ -4,7 +4,9 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDate
+import java.time.LocalTime
 import kr.hhplus.be.server.adapter.web.dto.request.FindAvailableDatesRequest
+import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -297,6 +299,174 @@ class ReservationControllerDocsTest {
                                 RequestDocumentation
                                     .parameterWithName("date")
                                     .description("좌석 조회 날짜")
+                            ),
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지")
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("[문서] 예약 생성 요청")
+    fun makeReservation() {
+        // given
+        val request =
+            MakeReservationRequest(
+                date = LocalDate.now().plusDays(1),
+                time = LocalTime.now(),
+                seat = 1L
+            )
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .post("/api/reservations")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isOk,
+                MockMvcResultMatchers.jsonPath("$.code").value(200),
+                MockMvcResultMatchers.jsonPath("$.message").value("success")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "예약 생성",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("예약")
+                            .summary("예약 생성 요청 API")
+                            .description("좌석을 예약할 때 사용되는 API 입니다."),
+                    snippets =
+                        arrayOf(
+                            PayloadDocumentation.requestFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("date")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 일자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("time")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 시간"),
+                                PayloadDocumentation
+                                    .fieldWithPath("seat")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("좌석")
+                            ),
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.id")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("예약 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.userId")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("유저 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.concertId")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("콘서트 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.reservedAt")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 일자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.expiresAt")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 만료 일자")
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("[문서] 예약 생성 요청 - 잘못된 요청")
+    fun makeReservationBadRequest() {
+        // given
+        val request =
+            MakeReservationRequest(
+                date = LocalDate.now().plusDays(1),
+                time = LocalTime.now(),
+                seat = -1L
+            )
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .post("/api/reservations")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest,
+                MockMvcResultMatchers.jsonPath("$.code").value(400),
+                MockMvcResultMatchers.jsonPath("$.message").value("bad request")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "예약 생성 - 잘못된 요청",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("예약"),
+                    snippets =
+                        arrayOf(
+                            PayloadDocumentation.requestFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("date")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 일자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("time")
+                                    .type(JsonFieldType.STRING)
+                                    .description("예약 시간"),
+                                PayloadDocumentation
+                                    .fieldWithPath("seat")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("좌석")
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
