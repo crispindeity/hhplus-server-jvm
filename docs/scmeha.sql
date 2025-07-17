@@ -67,14 +67,12 @@ CREATE TABLE RESERVATIONS
 
 CREATE TABLE RESERVATION_SEATS
 (
-  id             BIGINT PRIMARY KEY,
-  reservation_id BIGINT    NOT NULL,
-  seat_id        BIGINT    NOT NULL,
-  concert_id     BIGINT    NOT NULL,
-  created_at     TIMESTAMP NOT NULL,
-  updated_at     TIMESTAMP NOT NULL,
-  UNIQUE (reservation_id, seat_id),
-  UNIQUE (concert_id, seat_id)
+  id              BIGINT PRIMARY KEY,
+  reservation_id  BIGINT    NOT NULL,
+  concert_seat_id BIGINT    NOT NULL,
+  created_at      TIMESTAMP NOT NULL,
+  updated_at      TIMESTAMP NOT NULL,
+  UNIQUE (reservation_id, concert_seat_id)
 );
 
 CREATE TABLE QUEUE_TOKENS
@@ -125,10 +123,6 @@ CREATE TABLE SEAT_HOLDS
   user_id         VARCHAR(36) NOT NULL,
   held_at         TIMESTAMP   NOT NULL,
   expires_at      TIMESTAMP   NOT NULL,
-  released_at     TIMESTAMP DEFAULT NULL,
-  status          VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'CONFIRMED', 'EXPIRED', 'CANCELLED')),
-  created_at      TIMESTAMP   NOT NULL,
-  updated_at      TIMESTAMP   NOT NULL,
   UNIQUE (concert_seat_id)
 );
 
