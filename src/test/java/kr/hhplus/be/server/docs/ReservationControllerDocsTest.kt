@@ -18,11 +18,13 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
+import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.request.RequestDocumentation
+import org.springframework.restdocs.snippet.Attributes
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -71,6 +73,7 @@ class ReservationControllerDocsTest {
                         .get("/api/reservations/available-dates")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -95,6 +98,16 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("concertId")
                                     .type(JsonFieldType.NUMBER)
                                     .description("콘서트 식별 아이디")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
@@ -137,6 +150,7 @@ class ReservationControllerDocsTest {
                         .get("/api/reservations/available-dates")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -161,6 +175,16 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("concertId")
                                     .type(JsonFieldType.NUMBER)
                                     .description("콘서트 식별 아이디")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
@@ -199,6 +223,7 @@ class ReservationControllerDocsTest {
                         .get("/api/reservations/available-seats")
                         .param("date", param.toString())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -222,6 +247,16 @@ class ReservationControllerDocsTest {
                                 RequestDocumentation
                                     .parameterWithName("date")
                                     .description("좌석 조회 날짜")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
@@ -276,6 +311,7 @@ class ReservationControllerDocsTest {
                         .get("/api/reservations/available-seats")
                         .param("date", param.toString())
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -299,6 +335,16 @@ class ReservationControllerDocsTest {
                                 RequestDocumentation
                                     .parameterWithName("date")
                                     .description("좌석 조회 날짜")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
@@ -342,6 +388,7 @@ class ReservationControllerDocsTest {
                         .post("/api/reservations")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -374,6 +421,16 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("seat")
                                     .type(JsonFieldType.NUMBER)
                                     .description("좌석")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             ),
                             PayloadDocumentation.responseFields(
                                 PayloadDocumentation
@@ -437,6 +494,7 @@ class ReservationControllerDocsTest {
                         .post("/api/reservations")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("EntryQueueToken", "token")
                 )
 
         // then
@@ -477,6 +535,16 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("message")
                                     .type(JsonFieldType.STRING)
                                     .description("응답 메시지")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
                             )
                         ),
                     requestPreprocessor =
