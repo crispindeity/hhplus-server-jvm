@@ -164,19 +164,22 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     participant FE as Frontend
-    participant SeatAPI as SeatController
+    participant SeatAPI as ReservationController
     participant ReserveService as ReservationService
     participant DB as RDB
     FE ->> SeatAPI: GET /dates
-    SeatAPI ->> DB: 예약 가능한 날짜 조회
+    SeatAPI ->> ReserveService: 예약 가능 날짜 조회 요청
+    ReserveService ->> DB: 예약 가능한 날짜 조회
     SeatAPI -->> FE: 날짜 목록 응답
-    FE ->> SeatAPI: GET /seats?date=YYYY-MM-DD
-    SeatAPI ->> DB: 해당 날짜 좌석 상태 조회
+    FE ->> SeatAPI: GET
+    SeatAPI ->> ReserveService: 해당 날짜 좌석 상태 조회 요청 
+    ReserveService ->> DB: 해당 날짜 좌석 상태 조회
     SeatAPI -->> FE: 좌석 목록 응답
-    FE ->> ReserveService: POST /seats/reserve
+    FE ->> SeatAPI: POST
+    SeatAPI ->> ReserveService: 예약 요청
     ReserveService ->> DB: 좌석 임시 배정 (상태: HOLD, 만료시간 저장)
     Note right of ReserveService: 스케줄러가 5분 후 HOLD 상태 자동 해제
-    ReserveService -->> FE: 임시 예약 응답
+    SeatAPI -->> FE: 임시 예약 응답
 
     alt 유저가 예약 포기
         ReserveService ->> DB: HOLD 상태 → CANCELLED
@@ -195,21 +198,21 @@ sequenceDiagram
     participant PaymentService
     participant DB as RDB
     participant WS as WebSocketServer
-    FE ->> PointAPI: GET /point?userId=...
+    FE ->> PointAPI: GET
     PointAPI ->> PointService: 사용자 포인트 조회
     PointService ->> DB: 포인트 정보 조회
     PointService -->> PointAPI: 보유 포인트 응답
     PointAPI -->> FE: 현재 포인트 응답
 
     alt 포인트 부족
-        FE ->> PointAPI: POST /point/charge (userId, amount)
+        FE ->> PointAPI: POST
         PointAPI ->> PointService: 포인트 충전
         PointService ->> DB: 포인트 잔액 갱신
         PointService -->> PointAPI: 충전 완료
         PointAPI -->> FE: 충전 성공
     end
 
-    FE ->> PayAPI: POST /pay (좌석 정보 + 결제금액)
+    FE ->> PayAPI: POST
     PayAPI ->> PaymentService: 결제 처리
     PaymentService ->> PointService: 포인트 차감 요청
     PointService ->> DB: 보유 포인트 차감
@@ -232,7 +235,7 @@ sequenceDiagram
     participant TokenAPI as TokenController
     participant QueueService
     participant WS as WebSocketServer
-    participant SeatAPI as SeatController
+    participant SeatAPI as ReservationController
     participant ReserveService as ReservationService
     participant PointAPI as PointController
     participant PointService
@@ -241,7 +244,7 @@ sequenceDiagram
     participant DB as RDB
 %% --- 대기열 진입 및 WebSocket 연결 ---
     User ->> FE: 예약 페이지 진입
-    FE ->> TokenAPI: POST /token (UUID 포함)
+    FE ->> TokenAPI: POST (UUID 포함)
     TokenAPI ->> QueueService: 대기열 토큰 생성
     QueueService ->> DB: 토큰 및 순번 저장
     TokenAPI -->> FE: 대기열 토큰 응답
@@ -257,24 +260,24 @@ sequenceDiagram
 
     alt 순번 도달
     %% --- 좌석 예약 흐름 ---
-        FE ->> SeatAPI: GET /dates
+        FE ->> SeatAPI: GET
         SeatAPI ->> DB: 예약 가능한 날짜 조회
         SeatAPI -->> FE: 날짜 목록 응답
-        FE ->> SeatAPI: GET /seats?date=YYYY-MM-DD
+        FE ->> SeatAPI: GET
         SeatAPI ->> DB: 해당 날짜 좌석 상태 조회
         SeatAPI -->> FE: 좌석 목록 응답
-        FE ->> ReserveService: POST /seats/reserve (날짜 + 좌석)
+        FE ->> ReserveService: POST
         ReserveService ->> DB: 좌석 임시 배정 (상태: HOLD, 만료시간 저장)
         ReserveService -->> FE: 임시 예약 완료
     %% --- 포인트 조회 및 충전 ---
-        FE ->> PointAPI: GET /point?userId=...
+        FE ->> PointAPI: GET
         PointAPI ->> PointService: 포인트 조회 요청
         PointService ->> DB: 포인트 정보 조회
         PointService -->> PointAPI: 보유 포인트 응답
         PointAPI -->> FE: 포인트 응답
 
         alt 포인트 부족
-            FE ->> PointAPI: POST /point/charge (userId, amount)
+            FE ->> PointAPI: POST
             PointAPI ->> PointService: 포인트 충전
             PointService ->> DB: 포인트 잔액 갱신
             PointService -->> PointAPI: 충전 완료
@@ -282,7 +285,7 @@ sequenceDiagram
         end
 
     %% --- 결제 흐름 ---
-        FE ->> PayAPI: POST /pay (좌석 정보 + 결제금액)
+        FE ->> PayAPI: POST
         PayAPI ->> PaymentService: 결제 처리 요청
         PaymentService ->> PointService: 포인트 차감 요청
         PointService ->> DB: 보유 포인트 차감
@@ -369,10 +372,6 @@ erDiagram
         VARCHAR(36) user_id 
         TIMESTAMP held_at
         TIMESTAMP expires_at
-        TIMESTAMP released_at
-        VARCHAR status "HELD | CONFIRMED | EXPIRED | CANCELLED"
-        TIMESTAMP created_at
-        TIMESTAMP updated_at
     }
 
     RESERVATIONS {
@@ -391,8 +390,7 @@ erDiagram
     RESERVATION_SEATS {
         BIGINT id PK
         BIGINT reservation_id 
-        BIGINT seat_id 
-        BIGINT concert_id 
+        BIGINT concert_seat_id
         TIMESTAMP created_at
         TIMESTAMP updated_at
     }
