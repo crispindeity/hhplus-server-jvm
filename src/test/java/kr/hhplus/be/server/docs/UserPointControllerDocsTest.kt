@@ -204,4 +204,140 @@ class UserPointControllerDocsTest {
                 )
             )
     }
+
+    @Test
+    @DisplayName("[문서] 유저 포인트 조회 요청")
+    fun findPoint() {
+        // given
+        val userId = 1L
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .get("/api/users/{id}/points", userId)
+                        .header("EntryQueueToken", "token")
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isOk,
+                MockMvcResultMatchers.jsonPath("$.code").value(200),
+                MockMvcResultMatchers.jsonPath("$.message").value("success")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "유저 포인트 조회",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("유저 포인트")
+                            .summary("유저 포인트 조회 API")
+                            .description("유저 포인트 조회 시 사용되는 API"),
+                    snippets =
+                        arrayOf(
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.userId")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("유저 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.balance")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("포인트 잔액")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
+
+    @Test
+    @DisplayName("[문서] 유저 포인트 조회 요청 - 잘못된 요청")
+    fun findPointBadRequest() {
+        // given
+        val userId = -1L
+
+        // when
+        val result: ResultActions =
+            mockMvc
+                .perform(
+                    MockMvcRequestBuilders
+                        .get("/api/users/{id}/points", userId)
+                        .header("EntryQueueToken", "token")
+                )
+
+        // then
+        result
+            .andExpectAll(
+                MockMvcResultMatchers.status().isBadRequest,
+                MockMvcResultMatchers.jsonPath("$.code").value(400),
+                MockMvcResultMatchers.jsonPath("$.message").value("bad request")
+            ).andDo(
+                MockMvcRestDocumentationWrapper.document(
+                    identifier = "유저 포인트 조회 - 잘못된 요청",
+                    resourceDetails =
+                        ResourceSnippetParameters
+                            .builder()
+                            .tag("유저 포인트"),
+                    snippets =
+                        arrayOf(
+                            PayloadDocumentation.responseFields(
+                                PayloadDocumentation
+                                    .fieldWithPath("code")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("응답 코드"),
+                                PayloadDocumentation
+                                    .fieldWithPath("message")
+                                    .type(JsonFieldType.STRING)
+                                    .description("응답 메시지")
+                            ),
+                            HeaderDocumentation.requestHeaders(
+                                HeaderDocumentation
+                                    .headerWithName("EntryQueueToken")
+                                    .description("대기열 토큰")
+                                    .attributes(
+                                        Attributes
+                                            .key("EntryQueueToken")
+                                            .value("Token")
+                                    )
+                            )
+                        ),
+                    requestPreprocessor =
+                        Preprocessors.preprocessRequest(
+                            Preprocessors.prettyPrint()
+                        ),
+                    responsePreprocessor =
+                        Preprocessors.preprocessResponse(
+                            Preprocessors.prettyPrint()
+                        )
+                )
+            )
+    }
 }
