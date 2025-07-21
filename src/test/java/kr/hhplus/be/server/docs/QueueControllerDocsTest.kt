@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import kr.hhplus.be.server.adapter.web.dto.request.EntryQueueTokenRequest
+import kr.hhplus.be.server.common.exception.ErrorCode
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -145,8 +146,15 @@ class QueueControllerDocsTest {
 
         // then
         result
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andDo(
+            .andExpectAll(
+                MockMvcResultMatchers.status().isOk,
+                MockMvcResultMatchers
+                    .jsonPath("$.code")
+                    .value(ErrorCode.INVALID_REQUEST_VALUE.code),
+                MockMvcResultMatchers
+                    .jsonPath("$.message")
+                    .value(ErrorCode.INVALID_REQUEST_VALUE.message)
+            ).andDo(
                 MockMvcRestDocumentationWrapper.document(
                     "대기열 토큰 - 잘못된 요청",
                     resourceDetails =
@@ -169,7 +177,15 @@ class QueueControllerDocsTest {
                                 PayloadDocumentation
                                     .fieldWithPath("message")
                                     .type(JsonFieldType.STRING)
-                                    .description("에러 메시지")
+                                    .description("에러 메시지"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.errors[0].field")
+                                    .type(JsonFieldType.STRING)
+                                    .description("잘못 요청한 필드 이름"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.errors[0].value")
+                                    .type(JsonFieldType.STRING)
+                                    .description("잘못 요청한 필드 값")
                             )
                         ),
                     requestPreprocessor =
