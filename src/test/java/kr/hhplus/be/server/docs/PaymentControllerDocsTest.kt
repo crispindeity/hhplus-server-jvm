@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import kr.hhplus.be.server.adapter.web.dto.request.PayWithPointsRequest
+import kr.hhplus.be.server.common.exception.ErrorCode
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -166,9 +167,13 @@ class PaymentControllerDocsTest {
         // then
         result
             .andExpectAll(
-                MockMvcResultMatchers.status().isBadRequest,
-                MockMvcResultMatchers.jsonPath("$.code").value(400),
-                MockMvcResultMatchers.jsonPath("$.message").value("bad request")
+                MockMvcResultMatchers.status().isOk,
+                MockMvcResultMatchers
+                    .jsonPath("$.code")
+                    .value(ErrorCode.INVALID_REQUEST_VALUE.code),
+                MockMvcResultMatchers
+                    .jsonPath("$.message")
+                    .value(ErrorCode.INVALID_REQUEST_VALUE.message)
             ).andDo(
                 MockMvcRestDocumentationWrapper.document(
                     identifier = "포인트 결제 - 잘못된 요청",
@@ -186,7 +191,15 @@ class PaymentControllerDocsTest {
                                 PayloadDocumentation
                                     .fieldWithPath("message")
                                     .type(JsonFieldType.STRING)
-                                    .description("응답 메시지")
+                                    .description("응답 메시지"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.errors[0].field")
+                                    .type(JsonFieldType.STRING)
+                                    .description("잘못 요청한 필드 이름"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.errors[0].value")
+                                    .type(JsonFieldType.NUMBER)
+                                    .description("잘못 요청한 필드 값")
                             ),
                             PayloadDocumentation.requestFields(
                                 PayloadDocumentation

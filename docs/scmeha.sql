@@ -79,7 +79,7 @@ CREATE TABLE QUEUE_TOKENS
 (
   id         BIGINT PRIMARY KEY,
   user_id    VARCHAR(36)   NOT NULL,
-  number     INT           NOT NULL,
+  queue_number     INT           NOT NULL,
   token      VARCHAR(1024) NOT NULL,
   status     VARCHAR(20)   NOT NULL CHECK (status IN ('WAITING', 'COMPLETED', 'CANCELLED', 'EXPIRED')),
   expires_at TIMESTAMP     NOT NULL,

@@ -31,15 +31,15 @@ paths:
               예약 생성 - 잘못된 요청:
                 value: |-
                   {
-                    "date" : "2025-07-18",
-                    "time" : "16:01:18.088368",
+                    "date" : "2025-07-22",
+                    "time" : "11:42:51.321844",
                     "seat" : -1
                   }
               예약 생성:
                 value: |-
                   {
-                    "date" : "2025-07-18",
-                    "time" : "16:01:18.001004",
+                    "date" : "2025-07-22",
+                    "time" : "11:42:51.292738",
                     "seat" : 1
                   }
       responses:
@@ -48,7 +48,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
               examples:
                 예약 생성 - 잘못된 요청:
                   value: |-
@@ -72,8 +72,8 @@ paths:
                         "id" : 1,
                         "userId" : 1,
                         "concertId" : 1,
-                        "reservedAt" : "2025-07-17T16:01:18.004151",
-                        "expiresAt" : "2025-07-17T16:06:18.004158"
+                        "reservedAt" : "2025-07-21T11:42:51.299521",
+                        "expiresAt" : "2025-07-21T11:47:51.299534"
                       }
                     }
   /api/queue/entry-token:
@@ -110,7 +110,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
               examples:
                 대기열 토큰:
                   value: |-
@@ -130,130 +130,6 @@ paths:
                     {
                       "code" : 400,
                       "message" : "bad request"
-                    }
-  /api/reservations/available-dates:
-    get:
-      tags:
-      - 예약
-      summary: 예약 가능 날짜 조회 API
-      description: 예약 가능 날짜를 조회할 때 사용하는 API
-      operationId: 예약 가능 날짜 조회
-      parameters:
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/api-reservations-available-dates578281312"
-            examples:
-              예약 가능 날짜 조회:
-                value: |-
-                  {
-                    "concertId" : 1
-                  }
-              예약 가능 날짜 조회 - 잘못된 요청:
-                value: |-
-                  {
-                    "concertId" : -1
-                  }
-      responses:
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-available-dates2111023121"
-              examples:
-                예약 가능 날짜 조회:
-                  value: |-
-                    {
-                      "code" : 200,
-                      "message" : "success",
-                      "result" : {
-                        "dates" : [ "2025-07-18", "2025-07-19", "2025-07-20" ]
-                      }
-                    }
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
-              examples:
-                예약 가능 날짜 조회 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
-  /api/reservations/available-seats:
-    get:
-      tags:
-      - 예약
-      summary: 예약 가능 좌석 조회 요청 실패
-      description: 현재 날짜 이전 날짜로 예약 가능 좌석 조회 시 예외 발생
-      operationId: 예약 가능 좌석 조회
-      parameters:
-      - name: date
-        in: query
-        description: 좌석 조회 날짜
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
-      responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
-              examples:
-                예약 가능 좌석 조회 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-available-seats-1415072009"
-              examples:
-                예약 가능 좌석 조회:
-                  value: |-
-                    {
-                      "code" : 200,
-                      "message" : "success",
-                      "result" : {
-                        "seats" : [ {
-                          "id" : 1,
-                          "number" : 1,
-                          "price" : 1000
-                        }, {
-                          "id" : 2,
-                          "number" : 2,
-                          "price" : 2000
-                        }, {
-                          "id" : 3,
-                          "number" : 3,
-                          "price" : 3000
-                        } ]
-                      }
                     }
   /api/users/{id}/points:
     get:
@@ -282,7 +158,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
               examples:
                 유저 포인트 조회 - 잘못된 요청:
                   value: |-
@@ -305,6 +181,126 @@ paths:
                       "result" : {
                         "userId" : 1,
                         "balance" : 1000
+                      }
+                    }
+  /api/concerts/{id}/reservations/available-dates:
+    get:
+      tags:
+      - 콘서트
+      summary: 콘서트 예약 가능 날짜 조회 API
+      description: 콘서트 예약 가능 날짜를 조회할 때 사용하는 API
+      operationId: 콘서트 예약 가능 날짜 조회
+      parameters:
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
+      responses:
+        "400":
+          description: "400"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
+              examples:
+                콘서트 예약 가능 날짜 조회 - 잘못된 요청:
+                  value: |-
+                    {
+                      "code" : 400,
+                      "message" : "bad request"
+                    }
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-concerts-id-reservations-available-dates2111023121"
+              examples:
+                콘서트 예약 가능 날짜 조회:
+                  value: |-
+                    {
+                      "code" : 200,
+                      "message" : "success",
+                      "result" : {
+                        "dates" : [ "2025-07-22", "2025-07-23", "2025-07-24" ]
+                      }
+                    }
+  /api/concerts/{id}/reservations/available-seats:
+    get:
+      tags:
+      - 콘서트
+      summary: 콘서트 예약 가능 좌석 조회 API
+      description: 콘서트 예약 가능 좌석을 조회할 때 사용하는 API
+      operationId: 콘서트 예약 가능 좌석 조회
+      parameters:
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: 좌석 조회 날짜
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
+      responses:
+        "400":
+          description: "400"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
+              examples:
+                콘서트 예약 가능 좌석 조회 - 잘못된 요청:
+                  value: |-
+                    {
+                      "code" : 400,
+                      "message" : "bad request"
+                    }
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-concerts-id-reservations-available-seats-1415072009"
+              examples:
+                콘서트 예약 가능 좌석 조회:
+                  value: |-
+                    {
+                      "code" : 200,
+                      "message" : "success",
+                      "result" : {
+                        "seats" : [ {
+                          "id" : 1,
+                          "number" : 1,
+                          "price" : 1000
+                        }, {
+                          "id" : 2,
+                          "number" : 2,
+                          "price" : 2000
+                        }, {
+                          "id" : 3,
+                          "number" : 3,
+                          "price" : 3000
+                        } ]
                       }
                     }
   /api/reservations/{id}/payment/points:
@@ -350,7 +346,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
               examples:
                 포인트 결제 - 잘못된 요청:
                   value: |-
@@ -374,7 +370,7 @@ paths:
                         "userId" : 1,
                         "reservationId" : 1,
                         "price" : 1000,
-                        "paidAt" : "2025-07-17T16:01:17.652054"
+                        "paidAt" : "2025-07-21T11:42:51.213424"
                       }
                     }
   /api/users/{id}/points/charge:
@@ -420,7 +416,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-available-seats623876813"
+                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
               examples:
                 유저 포인트 충전 - 잘못된 요청:
                   value: |-
@@ -444,52 +440,7 @@ paths:
                     }
 components:
   schemas:
-    api-reservations-available-seats623876813:
-      type: object
-      properties:
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
-    api-reservations-available-dates2111023121:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            dates:
-              type: array
-              description: 예약 가능 날짜 리스트
-              items:
-                oneOf:
-                - type: object
-                - type: boolean
-                - type: string
-                - type: number
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
-    api-queue-entry-token-859874659:
-      type: object
-      properties:
-        code:
-          type: number
-          description: 에러 코드
-        message:
-          type: string
-          description: 에러 메시지
-    api-users-id-points-charge-326542580:
-      type: object
-      properties:
-        amount:
-          type: number
-          description: 포인트 충전 금액
-    api-reservations-available-seats-1415072009:
+    api-concerts-id-reservations-available-seats-1415072009:
       type: object
       properties:
         result:
@@ -528,6 +479,12 @@ components:
         message:
           type: string
           description: 응답 메시지
+    api-reservations-id-payment-points730362:
+      type: object
+      properties:
+        price:
+          type: number
+          description: 가격
     api-reservations1943643336:
       type: object
       properties:
@@ -555,12 +512,45 @@ components:
         message:
           type: string
           description: 응답 메시지
-    api-reservations-id-payment-points730362:
+    api-reservations-id-payment-points623876813:
       type: object
       properties:
-        price:
+        code:
           type: number
-          description: 가격
+          description: 응답 코드
+        message:
+          type: string
+          description: 응답 메시지
+    api-concerts-id-reservations-available-dates2111023121:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            dates:
+              type: array
+              description: 예약 가능 날짜 리스트
+              items:
+                oneOf:
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
+        code:
+          type: number
+          description: 응답 코드
+        message:
+          type: string
+          description: 응답 메시지
+    api-queue-entry-token-859874659:
+      type: object
+      properties:
+        code:
+          type: number
+          description: 에러 코드
+        message:
+          type: string
+          description: 에러 메시지
     api-users-id-points-695636323:
       type: object
       properties:
@@ -579,18 +569,12 @@ components:
         message:
           type: string
           description: 응답 메시지
-    api-reservations-2110669849:
+    api-users-id-points-charge-326542580:
       type: object
       properties:
-        seat:
+        amount:
           type: number
-          description: 좌석
-        date:
-          type: string
-          description: 예약 일자
-        time:
-          type: string
-          description: 예약 시간
+          description: 포인트 충전 금액
     api-reservations-id-payment-points-230409006:
       type: object
       properties:
@@ -615,12 +599,18 @@ components:
         message:
           type: string
           description: 응답 메시지
-    api-reservations-available-dates578281312:
+    api-reservations-2110669849:
       type: object
       properties:
-        concertId:
+        seat:
           type: number
-          description: 콘서트 식별 아이디
+          description: 좌석
+        date:
+          type: string
+          description: 예약 일자
+        time:
+          type: string
+          description: 예약 시간
     api-queue-entry-token-200765834:
       type: object
       properties:

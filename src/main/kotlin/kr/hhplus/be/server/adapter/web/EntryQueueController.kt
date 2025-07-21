@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.adapter.web
 
+import jakarta.validation.Valid
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.EntryQueueTokenRequest
 import org.springframework.http.ResponseEntity
@@ -13,16 +14,10 @@ import org.springframework.web.bind.annotation.RestController
 internal class EntryQueueController {
     @PostMapping("/entry-token")
     fun getEntryQueueToken(
-        @RequestBody request: EntryQueueTokenRequest
-    ): ResponseEntity<ApiResponse<Unit>> {
-        if (request.userId.isNotBlank()) {
-            return ResponseEntity
-                .ok()
-                .header("EntryQueueToken", "token")
-                .body(ApiResponse.success())
-        }
-        return ResponseEntity
-            .badRequest()
-            .body(ApiResponse.fail(400, "bad request"))
-    }
+        @RequestBody @Valid request: EntryQueueTokenRequest
+    ): ResponseEntity<ApiResponse<Unit>> =
+        ResponseEntity
+            .ok()
+            .header("EntryQueueToken", "token")
+            .body(ApiResponse.success())
 }
