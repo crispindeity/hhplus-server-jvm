@@ -1,0 +1,37 @@
+package kr.hhplus.be.server.fake
+
+import java.util.UUID
+import kr.hhplus.be.server.application.port.EntryQueuePort
+import kr.hhplus.be.server.domain.QueueToken
+
+class FakeEntryQueuePort : EntryQueuePort {
+    private val storage: MutableMap<Long, QueueToken> = mutableMapOf()
+    private var sequence: Long = 0L
+
+    override fun saveEntryQueueToken(token: QueueToken) {
+        if (token.id == 0L || storage[token.id] == null) {
+            val newToken: QueueToken = token.copy(id = sequence++)
+            storage[newToken.id] = newToken
+        } else {
+            storage[token.id] = token
+        }
+    }
+
+    override fun existsWaitingQueueToken(userId: UUID): Boolean =
+        storage.values.any {
+            it.userId == userId &&
+                it.status == QueueToken.Status.WAITING
+        }
+
+    override fun getEntryQueueNextNumber(): Int = storage.count().plus(1)
+
+    fun saveSingleQueueToken(userId: UUID) {
+        storage[1L] =
+            QueueToken(
+                id = 1L,
+                userId = userId,
+                queueNumber = 1,
+                token = "token"
+            )
+    }
+}
