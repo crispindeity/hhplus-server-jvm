@@ -9,4 +9,8 @@ interface EntryQueuePort {
     fun saveEntryQueueToken(token: QueueToken)
 
     fun existsWaitingQueueToken(userId: UUID): Boolean
+
+    fun getCurrentAllowedQueueNumber(): Int
+
+    fun getEntryQueueToken(userId: UUID): QueueToken?
 }

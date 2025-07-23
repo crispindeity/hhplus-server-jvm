@@ -13,5 +13,11 @@ enum class ErrorCode(
     INVALID_REQUEST_VALUE(code = 400, message = "invalid request value."),
     TOKEN_ALREADY_ISSUED(code = 400, message = "token already issued."),
     MISSING_ENTRY_QUEUE_JWT_HEADER(code = 400, message = "missing entry queue token header."),
-    INVALID_JWT(code = 403, message = "invalid jwt.")
+    INVALID_JWT(code = 403, message = "invalid jwt."),
+    QUEUE_NOT_YET_ALLOWED(code = 400, message = "queue not yet allowed."),
+    INVALID_QUEUE_TOKEN(code = 400, message = "invalid queue token."),
+    NOT_FOUND_QUEUE_TOKEN(code = 400, message = "not found queue token."),
+    QUEUE_TOKEN_INVALID_STATUS(code = 400, message = "invalid token status."),
+    NO_REQUEST_CONTEXT(code = 400, message = "no request context."),
+    MISSING_REQUEST_ATTRIBUTE(code = 400, message = "missing request attribute.")
 }
