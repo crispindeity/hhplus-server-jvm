@@ -3,14 +3,20 @@ package kr.hhplus.be.server.docs
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.util.UUID
 import kr.hhplus.be.server.adapter.web.EntryQueueController
 import kr.hhplus.be.server.adapter.web.dto.request.EntryQueueTokenRequest
+import kr.hhplus.be.server.application.port.EntryQueuePort
+import kr.hhplus.be.server.application.service.JWTHelper
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.config.TestConfig
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.headers.HeaderDocumentation
@@ -28,12 +34,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
+@Import(TestConfig::class)
 @WebMvcTest(controllers = [EntryQueueController::class])
-class QueueControllerDocsTest {
+internal class QueueControllerDocsTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
+    lateinit var entryQueuePort: EntryQueuePort
+
+    @Autowired
+    lateinit var jwtHelper: JWTHelper
+
     private val objectMapper = ObjectMapper()
 
     @BeforeEach
@@ -55,8 +67,20 @@ class QueueControllerDocsTest {
     @DisplayName("[문서] 대기열 토큰 발급 요청")
     fun queueToken() {
         // given
+        val userId: UUID = UUID.randomUUID()
         val request =
-            EntryQueueTokenRequest("b3e1f8a4-cfe5-4260-9db3-59d158b6d11e")
+            EntryQueueTokenRequest(userId.toString())
+
+        // mock
+        BDDMockito
+            .given(entryQueuePort.existsWaitingQueueToken(userId))
+            .willReturn(false)
+        BDDMockito
+            .given(entryQueuePort.getEntryQueueNextNumber())
+            .willReturn(1)
+        BDDMockito
+            .given(jwtHelper.createJWT(userId, 1))
+            .willReturn("mock-token")
 
         // when
         val result: ResultActions =
