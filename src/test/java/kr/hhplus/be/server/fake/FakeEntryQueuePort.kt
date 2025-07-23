@@ -23,6 +23,15 @@ class FakeEntryQueuePort : EntryQueuePort {
                 it.status == QueueToken.Status.WAITING
         }
 
+    override fun getCurrentAllowedQueueNumber(): Int =
+        storage.values
+            .sortedBy { it.queueNumber }
+            .take(10)
+            .maxOf { it.queueNumber }
+
+    override fun getEntryQueueToken(userId: UUID): QueueToken? =
+        storage.values.find { it.userId == userId }
+
     override fun getEntryQueueNextNumber(): Int = storage.count().plus(1)
 
     fun saveSingleQueueToken(userId: UUID) {
@@ -33,5 +42,19 @@ class FakeEntryQueuePort : EntryQueuePort {
                 queueNumber = 1,
                 token = "token"
             )
+    }
+
+    fun saveHundredQueueToken(): MutableMap<Long, QueueToken> {
+        repeat(100) { index ->
+            val sequence: Long = index.toLong() + 1
+            storage[sequence] =
+                QueueToken(
+                    id = sequence,
+                    userId = UUID.randomUUID(),
+                    queueNumber = sequence.toInt(),
+                    token = "token"
+                )
+        }
+        return storage
     }
 }
