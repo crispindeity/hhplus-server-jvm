@@ -7,8 +7,10 @@ import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.QueueToken
 import org.slf4j.Logger
+import org.springframework.stereotype.Service
 
-class EntryQueueService(
+@Service
+internal class EntryQueueService(
     private val entryQueuePort: EntryQueuePort,
     private val jwtHelper: JWTHelper
 ) {
