@@ -7,7 +7,7 @@ import kr.hhplus.be.server.domain.PointWallet
 internal class FakePointWalletPort : PointWalletPort {
     private val storage: MutableMap<Long, PointWallet> = mutableMapOf()
 
-    override fun chargePoint(wallet: PointWallet) {
+    override fun update(wallet: PointWallet) {
         storage[wallet.id] = wallet
     }
 
@@ -19,6 +19,7 @@ internal class FakePointWalletPort : PointWalletPort {
     ) {
         storage[1L] =
             PointWallet(
+                id = 1L,
                 userId = userId,
                 balance = point
             )

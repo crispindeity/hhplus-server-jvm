@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.fake
 
+import java.util.UUID
 import kr.hhplus.be.server.application.port.ReservationPort
 import kr.hhplus.be.server.domain.Reservation
 
@@ -14,5 +15,27 @@ internal class FakeReservationPort : ReservationPort {
         } else {
             storage[reservation.id] = reservation
         }
+    }
+
+    override fun getInProgressReservations(userId: UUID): List<Reservation> =
+        storage.values.filter {
+            it.userId == userId &&
+                it.status == Reservation.Status.IN_PROGRESS
+        }
+
+    override fun update(reservation: Reservation) {
+        storage[reservation.id] = reservation
+    }
+
+    fun saveSingleReservation(userId: UUID) {
+        storage[1L] =
+            Reservation(
+                id = 1L,
+                userId = userId,
+                concertSeatId = 1L,
+                concertId = 1L,
+                paymentId = 1L,
+                status = Reservation.Status.IN_PROGRESS
+            )
     }
 }

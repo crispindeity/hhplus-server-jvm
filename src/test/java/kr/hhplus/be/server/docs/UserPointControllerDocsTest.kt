@@ -76,7 +76,7 @@ class UserPointControllerDocsTest {
         // mock
         BDDMockito.given(userPort.exists(userId)).willReturn(true)
         BDDMockito.given(pointWalletPort.getWallet(userId)).willReturn(pointWallet)
-        BDDMockito.willDoNothing().given(pointWalletPort).chargePoint(pointWallet.chargePoint(500L))
+        BDDMockito.willDoNothing().given(pointWalletPort).update(pointWallet.chargePoint(500L))
 
         // when
         val result: ResultActions =

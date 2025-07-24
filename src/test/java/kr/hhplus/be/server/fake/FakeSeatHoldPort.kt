@@ -15,4 +15,13 @@ internal class FakeSeatHoldPort : SeatHoldPort {
             storage[seatHold.id] = seatHold
         }
     }
+
+    override fun deleteAll(seatIds: List<Long>) {
+        seatIds.forEach { seatId ->
+            val toRemove: SeatHold? = storage.values.find { it.concertSeatId == seatId }
+            if (toRemove != null) {
+                storage.remove(toRemove.id)
+            }
+        }
+    }
 }
