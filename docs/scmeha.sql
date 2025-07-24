@@ -2,25 +2,33 @@ CREATE TABLE CONCERTS
 (
   id         BIGINT PRIMARY KEY,
   title      VARCHAR(255) NOT NULL,
-  date       DATE         NOT NULL,
-  start_time TIME         NOT NULL,
   created_at TIMESTAMP    NOT NULL,
   updated_at TIMESTAMP    NOT NULL
 );
 
-CREATE TABLE CONCERT_SEATS
+CREATE TABLE CONCERT_SCHEDULES
 (
   id         BIGINT PRIMARY KEY,
-  concert_id BIGINT      NOT NULL,
-  seat_id    BIGINT      NOT NULL,
-  status     VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'AVAILABLE', 'RESERVED')),
-  created_at TIMESTAMP   NOT NULL,
-  updated_at TIMESTAMP   NOT NULL,
-  UNIQUE (concert_id, seat_id)
+  concert_id BIGINT    NOT NULL,
+  date       DATE      NOT NULL,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  UNIQUE (concert_id, date)
+);
+
+CREATE TABLE CONCERT_SEATS
+(
+  id          BIGINT PRIMARY KEY,
+  schedule_id BIGINT      NOT NULL,
+  seat_id     BIGINT      NOT NULL,
+  status      VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'AVAILABLE', 'RESERVED')),
+  created_at  TIMESTAMP   NOT NULL,
+  updated_at  TIMESTAMP   NOT NULL,
+  UNIQUE (schedule_id, seat_id)
 );
 
 CREATE INDEX idx_concert_status
-  ON CONCERT_SEATS (concert_id, status);
+  ON CONCERT_SEATS (schedule_id, status);
 
 CREATE TABLE USERS
 (
@@ -77,14 +85,14 @@ CREATE TABLE RESERVATION_SEATS
 
 CREATE TABLE QUEUE_TOKENS
 (
-  id         BIGINT PRIMARY KEY,
-  user_id    VARCHAR(36)   NOT NULL,
-  queue_number     INT           NOT NULL,
-  token      VARCHAR(1024) NOT NULL,
-  status     VARCHAR(20)   NOT NULL CHECK (status IN ('WAITING', 'COMPLETED', 'CANCELLED', 'EXPIRED')),
-  expires_at TIMESTAMP     NOT NULL,
-  created_at TIMESTAMP     NOT NULL,
-  updated_at TIMESTAMP     NOT NULL
+  id           BIGINT PRIMARY KEY,
+  user_id      VARCHAR(36)   NOT NULL,
+  queue_number INT           NOT NULL,
+  token        VARCHAR(1024) NOT NULL,
+  status       VARCHAR(20)   NOT NULL CHECK (status IN ('WAITING', 'COMPLETED', 'CANCELLED', 'EXPIRED')),
+  expires_at   TIMESTAMP     NOT NULL,
+  created_at   TIMESTAMP     NOT NULL,
+  updated_at   TIMESTAMP     NOT NULL
 );
 
 CREATE INDEX idx_status ON QUEUE_TOKENS (status);

@@ -19,5 +19,7 @@ enum class ErrorCode(
     NOT_FOUND_QUEUE_TOKEN(code = 400, message = "not found queue token."),
     QUEUE_TOKEN_INVALID_STATUS(code = 400, message = "invalid token status."),
     NO_REQUEST_CONTEXT(code = 400, message = "no request context."),
-    MISSING_REQUEST_ATTRIBUTE(code = 400, message = "missing request attribute.")
+    MISSING_REQUEST_ATTRIBUTE(code = 400, message = "missing request attribute."),
+    NOT_FOUND_CONCERT(code = 404, message = "not found concert."),
+    NOT_FOUND_CONCERT_SCHEDULE(code = 404, message = "not found concert schedule.")
 }
