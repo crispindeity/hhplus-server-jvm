@@ -10,12 +10,16 @@ import kr.hhplus.be.server.adapter.web.ReservationController
 import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
 import kr.hhplus.be.server.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.application.port.ConcertSeatPort
+import kr.hhplus.be.server.application.port.PaymentPort
 import kr.hhplus.be.server.application.port.ReservationPort
+import kr.hhplus.be.server.application.port.SeatPort
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.config.TestConfig
 import kr.hhplus.be.server.domain.ConcertSchedule
 import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.domain.Payment
 import kr.hhplus.be.server.domain.Reservation
+import kr.hhplus.be.server.domain.Seat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -57,6 +61,12 @@ class ReservationControllerDocsTest {
 
     @Autowired
     private lateinit var reservationPort: ReservationPort
+
+    @Autowired
+    private lateinit var paymentPort: PaymentPort
+
+    @Autowired
+    private lateinit var seatPort: SeatPort
 
     @BeforeEach
     fun setUp(
@@ -117,10 +127,25 @@ class ReservationControllerDocsTest {
                 expiresAt = expiresAt
             )
 
+        val seat =
+            Seat(
+                id = seatId,
+                number = 1L,
+                price = 1000L
+            )
+
+        val payment =
+            Payment(
+                userId = userUUID,
+                price = seat.price
+            )
+
         // mock
         BDDMockito.given(concertSeatPort.getConcertSeat(concertSeatId)).willReturn(concertSeat)
         BDDMockito.given(concertSchedulePort.getSchedule(scheduleId)).willReturn(schedule)
+        BDDMockito.given(seatPort.getSeat(seatId)).willReturn(seat)
         BDDMockito.willDoNothing().given(reservationPort).save(reservation)
+        BDDMockito.willDoNothing().given(paymentPort).save(payment)
 
         // when
         val result: ResultActions =

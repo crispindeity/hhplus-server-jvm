@@ -9,6 +9,8 @@ internal class FakeSeatPort : SeatPort {
     override fun getAllSeat(seatIds: List<Long>): List<Seat> =
         seatIds.mapNotNull { seatStorage[it] }
 
+    override fun getSeat(id: Long): Seat? = seatStorage[id]
+
     fun saveSingleSeat() {
         seatStorage[1L] =
             Seat(
