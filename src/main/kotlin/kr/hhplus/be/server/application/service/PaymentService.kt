@@ -15,7 +15,9 @@ import kr.hhplus.be.server.domain.Payment
 import kr.hhplus.be.server.domain.PointWallet
 import kr.hhplus.be.server.domain.QueueToken
 import kr.hhplus.be.server.domain.Reservation
+import org.springframework.stereotype.Service
 
+@Service
 internal class PaymentService(
     private val paymentPort: PaymentPort,
     private val reservationPort: ReservationPort,
