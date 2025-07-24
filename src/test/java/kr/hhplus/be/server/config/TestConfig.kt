@@ -13,6 +13,7 @@ import kr.hhplus.be.server.application.port.UserPort
 import kr.hhplus.be.server.application.service.ConcertService
 import kr.hhplus.be.server.application.service.EntryQueueService
 import kr.hhplus.be.server.application.service.JWTHelper
+import kr.hhplus.be.server.application.service.PaymentService
 import kr.hhplus.be.server.application.service.QueueAccessValidator
 import kr.hhplus.be.server.application.service.ReservationContextLoader
 import kr.hhplus.be.server.application.service.ReservationService
@@ -110,4 +111,22 @@ internal class TestConfig {
 
     @Bean
     fun seatPort(): SeatPort = mock(SeatPort::class.java)
+
+    @Bean
+    fun paymentService(
+        paymentPort: PaymentPort,
+        reservationPort: ReservationPort,
+        pointWalletPort: PointWalletPort,
+        concertSeatPort: ConcertSeatPort,
+        entryQueuePort: EntryQueuePort,
+        seatHoldPort: SeatHoldPort
+    ): PaymentService =
+        PaymentService(
+            paymentPort,
+            reservationPort,
+            pointWalletPort,
+            concertSeatPort,
+            entryQueuePort,
+            seatHoldPort
+        )
 }

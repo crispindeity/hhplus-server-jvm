@@ -136,6 +136,7 @@ class ReservationControllerDocsTest {
 
         val payment =
             Payment(
+                id = 1L,
                 userId = userUUID,
                 price = seat.price
             )
@@ -145,7 +146,7 @@ class ReservationControllerDocsTest {
         BDDMockito.given(concertSchedulePort.getSchedule(scheduleId)).willReturn(schedule)
         BDDMockito.given(seatPort.getSeat(seatId)).willReturn(seat)
         BDDMockito.willDoNothing().given(reservationPort).save(reservation)
-        BDDMockito.willDoNothing().given(paymentPort).save(payment)
+        BDDMockito.given(paymentPort.save(payment)).willReturn(payment.id)
 
         // when
         val result: ResultActions =

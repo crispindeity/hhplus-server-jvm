@@ -17,11 +17,8 @@ internal class FakeReservationPort : ReservationPort {
         }
     }
 
-    override fun getInProgressReservations(userId: UUID): List<Reservation> =
-        storage.values.filter {
-            it.userId == userId &&
-                it.status == Reservation.Status.IN_PROGRESS
-        }
+    override fun getAll(userId: String): List<Reservation> =
+        storage.values.filter { it.userId.toString() == userId }.toList()
 
     override fun update(reservation: Reservation) {
         storage[reservation.id] = reservation
