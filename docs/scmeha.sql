@@ -32,7 +32,8 @@ CREATE INDEX idx_concert_status
 
 CREATE TABLE USERS
 (
-  id         VARCHAR(36) PRIMARY KEY,
+  id         BIGINT PRIMARY KEY,
+  user_id    VARCHAR(36) PRIMARY KEY,
   created_at TIMESTAMP NOT NULL,
   updated_at TIMESTAMP NOT NULL
 );
@@ -124,5 +125,3 @@ CREATE TABLE SEAT_HOLDS
   expires_at      TIMESTAMP   NOT NULL,
   UNIQUE (concert_seat_id)
 );
-
-CREATE INDEX idx_status_expires_at ON SEAT_HOLDS (status, expires_at);

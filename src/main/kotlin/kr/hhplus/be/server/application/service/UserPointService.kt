@@ -8,7 +8,9 @@ import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.PointWallet
 import org.slf4j.Logger
+import org.springframework.stereotype.Service
 
+@Service
 internal class UserPointService(
     private val userPort: UserPort,
     private val pointWalletPort: PointWalletPort

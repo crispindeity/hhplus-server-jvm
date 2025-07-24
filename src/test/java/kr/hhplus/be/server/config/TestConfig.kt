@@ -5,14 +5,17 @@ import kr.hhplus.be.server.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.application.port.ConcertSeatPort
 import kr.hhplus.be.server.application.port.EntryQueuePort
 import kr.hhplus.be.server.application.port.PaymentPort
+import kr.hhplus.be.server.application.port.PointWalletPort
 import kr.hhplus.be.server.application.port.ReservationPort
 import kr.hhplus.be.server.application.port.SeatHoldPort
+import kr.hhplus.be.server.application.port.UserPort
 import kr.hhplus.be.server.application.service.ConcertService
 import kr.hhplus.be.server.application.service.EntryQueueService
 import kr.hhplus.be.server.application.service.JWTHelper
 import kr.hhplus.be.server.application.service.QueueAccessValidator
 import kr.hhplus.be.server.application.service.ReservationContextLoader
 import kr.hhplus.be.server.application.service.ReservationService
+import kr.hhplus.be.server.application.service.UserPointService
 import org.mockito.Mockito.mock
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -78,5 +81,21 @@ internal class TestConfig {
             reservationPort,
             paymentPort,
             reservationContextLoader
+        )
+
+    @Bean
+    fun userPort(): UserPort = mock(UserPort::class.java)
+
+    @Bean
+    fun pointWalletPort(): PointWalletPort = mock(PointWalletPort::class.java)
+
+    @Bean
+    fun userPointService(
+        userPort: UserPort,
+        pointWalletPort: PointWalletPort
+    ): UserPointService =
+        UserPointService(
+            userPort,
+            pointWalletPort
         )
 }

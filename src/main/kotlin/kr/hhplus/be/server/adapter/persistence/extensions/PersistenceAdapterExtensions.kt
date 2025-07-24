@@ -5,12 +5,14 @@ import java.util.UUID
 import kr.hhplus.be.server.adapter.persistence.dto.AvailableSeatProjection
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertScheduleEntity
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertSeatEntity
+import kr.hhplus.be.server.adapter.persistence.entity.PointWalletEntity
 import kr.hhplus.be.server.adapter.persistence.entity.QueueTokenJpaEntity
 import kr.hhplus.be.server.adapter.persistence.entity.ReservationEntity
 import kr.hhplus.be.server.adapter.persistence.entity.SeatHoldEntity
 import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
 import kr.hhplus.be.server.domain.ConcertSchedule
 import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.domain.PointWallet
 import kr.hhplus.be.server.domain.QueueToken
 import kr.hhplus.be.server.domain.Reservation
 import kr.hhplus.be.server.domain.SeatHold
@@ -119,4 +121,18 @@ internal fun ConcertSeat.toEntity(): ConcertSeatEntity =
                 ConcertSeat.SeatStatus.AVAILABLE -> ConcertSeatEntity.Status.AVAILABLE
                 ConcertSeat.SeatStatus.RESERVED -> ConcertSeatEntity.Status.RESERVED
             }
+    )
+
+internal fun PointWalletEntity.toDomain(): PointWallet =
+    PointWallet(
+        id = this.id!!,
+        userId = UUID.fromString(this.userId),
+        balance = this.balance
+    )
+
+internal fun PointWallet.toEntity(): PointWalletEntity =
+    PointWalletEntity(
+        id = this.id,
+        userId = this.userId.toString(),
+        balance = this.balance
     )
