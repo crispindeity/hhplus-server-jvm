@@ -4,10 +4,15 @@ import kr.hhplus.be.server.application.port.ConcertPort
 import kr.hhplus.be.server.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.application.port.ConcertSeatPort
 import kr.hhplus.be.server.application.port.EntryQueuePort
+import kr.hhplus.be.server.application.port.PaymentPort
+import kr.hhplus.be.server.application.port.ReservationPort
+import kr.hhplus.be.server.application.port.SeatHoldPort
 import kr.hhplus.be.server.application.service.ConcertService
 import kr.hhplus.be.server.application.service.EntryQueueService
 import kr.hhplus.be.server.application.service.JWTHelper
 import kr.hhplus.be.server.application.service.QueueAccessValidator
+import kr.hhplus.be.server.application.service.ReservationContextLoader
+import kr.hhplus.be.server.application.service.ReservationService
 import org.mockito.Mockito.mock
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -45,4 +50,33 @@ internal class TestConfig {
         concertSchedulePort: ConcertSchedulePort,
         concertSeatPort: ConcertSeatPort
     ): ConcertService = ConcertService(concertPort, concertSchedulePort, concertSeatPort)
+
+    @Bean
+    fun seatHoldPort(): SeatHoldPort = mock(SeatHoldPort::class.java)
+
+    @Bean
+    fun reservationPort(): ReservationPort = mock(ReservationPort::class.java)
+
+    @Bean
+    fun reservationContextLoader(): ReservationContextLoader =
+        mock(ReservationContextLoader::class.java)
+
+    @Bean
+    fun paymentPort(): PaymentPort = mock(PaymentPort::class.java)
+
+    @Bean
+    fun reservationService(
+        seatHoldPort: SeatHoldPort,
+        concertSeatPort: ConcertSeatPort,
+        reservationPort: ReservationPort,
+        paymentPort: PaymentPort,
+        reservationContextLoader: ReservationContextLoader
+    ): ReservationService =
+        ReservationService(
+            seatHoldPort,
+            concertSeatPort,
+            reservationPort,
+            paymentPort,
+            reservationContextLoader
+        )
 }
