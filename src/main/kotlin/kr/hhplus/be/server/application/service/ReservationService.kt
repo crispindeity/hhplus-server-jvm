@@ -13,7 +13,9 @@ import kr.hhplus.be.server.domain.Payment
 import kr.hhplus.be.server.domain.Reservation
 import kr.hhplus.be.server.domain.SeatHold
 import org.slf4j.Logger
+import org.springframework.stereotype.Service
 
+@Service
 internal class ReservationService(
     private val seatHoldPort: SeatHoldPort,
     private val concertSeatPort: ConcertSeatPort,

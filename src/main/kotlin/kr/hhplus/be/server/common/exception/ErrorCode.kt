@@ -25,5 +25,6 @@ enum class ErrorCode(
     NOT_FOUND_CONCERT_SEAT(code = 404, message = "not found concert seat."),
     INVALID_CONCERT_DATE(code = 400, message = "invalid concert date."),
     ALREADY_RESERVED(code = 400, message = "already reserved."),
+    NOT_FOUND_USER_ID_IN_ATTRIBUTE(code = 404, message = "not found user id in attribute."),
     NOT_FOUND_SEAT(code = 404, message = "not found seat.")
 }

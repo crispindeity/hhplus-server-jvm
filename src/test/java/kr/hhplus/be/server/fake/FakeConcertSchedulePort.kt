@@ -25,6 +25,8 @@ internal class FakeConcertSchedulePort(
         date: LocalDate
     ): ConcertSchedule? = storage.values.find { it.concertId == concertId && it.date == date }
 
+    override fun getSchedule(scheduleId: Long): ConcertSchedule? = storage[scheduleId]
+
     fun saveSingleSchedule(id: Long) {
         storage[id] =
             ConcertSchedule(

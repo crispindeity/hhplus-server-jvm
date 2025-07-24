@@ -1,10 +1,14 @@
 package kr.hhplus.be.server.adapter.web
 
+import jakarta.servlet.ServletRequest
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
-import java.time.LocalDateTime
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
 import kr.hhplus.be.server.adapter.web.dto.response.MakeReservationResponse
+import kr.hhplus.be.server.application.service.ReservationService
+import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ErrorCode
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -12,19 +16,25 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/reservations")
-internal class ReservationController {
+internal class ReservationController(
+    private val reservationService: ReservationService
+) {
     @PostMapping
     fun makeReservation(
-        @RequestBody @Valid request: MakeReservationRequest
+        @RequestBody @Valid request: MakeReservationRequest,
+        servletRequest: HttpServletRequest
     ): ApiResponse<MakeReservationResponse> {
-        val response =
-            MakeReservationResponse(
-                id = 1L,
-                userId = 1L,
-                concertId = 1L,
-                reservedAt = LocalDateTime.now(),
-                expiresAt = LocalDateTime.now().plusMinutes(5)
+        val userId: String =
+            servletRequest.getUserIdOrNull()
+                ?: throw CustomException(ErrorCode.NOT_FOUND_USER_ID_IN_ATTRIBUTE)
+        val response: MakeReservationResponse =
+            reservationService.makeReservation(
+                date = request.date,
+                concertSeatId = request.seat,
+                userId = userId
             )
         return ApiResponse.success(result = response)
     }
+
+    private fun ServletRequest.getUserIdOrNull(): String? = this.getAttribute("userId") as String?
 }

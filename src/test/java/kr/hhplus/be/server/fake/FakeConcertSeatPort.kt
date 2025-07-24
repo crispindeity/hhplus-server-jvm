@@ -8,22 +8,23 @@ import kr.hhplus.be.server.domain.Seat
 internal class FakeConcertSeatPort(
     private val seatPort: FakeSeatPort
 ) : ConcertSeatPort {
-    private val storage = mutableMapOf<Long, MutableList<ConcertSeat>>()
+    private val storage = mutableMapOf<Long, ConcertSeat>()
 
     override fun getAvailableSeats(scheduleId: Long): List<AvailableSeatDto> {
         val concertSeats: List<ConcertSeat> =
-            storage[scheduleId]
-                .orEmpty()
-                .filter { it.status == ConcertSeat.SeatStatus.AVAILABLE }
+            storage.values
+                .filter {
+                    it.scheduleId == scheduleId &&
+                        it.status == ConcertSeat.SeatStatus.AVAILABLE
+                }
 
         val seatIds: List<Long> = concertSeats.map { it.seatId }
         val seats: Map<Long, Seat> = seatPort.getAllSeat(seatIds).associateBy { it.id }
 
         return concertSeats.mapNotNull { concertSeat ->
-            val seat: Seat? = seats[concertSeat.seatId]
-            seat?.let {
+            seats[concertSeat.seatId]?.let { seat ->
                 AvailableSeatDto(
-                    id = seat.id,
+                    id = concertSeat.id,
                     number = seat.number,
                     price = seat.price,
                     status = concertSeat.status
@@ -32,18 +33,22 @@ internal class FakeConcertSeatPort(
         }
     }
 
+    override fun getConcertSeat(concertSeatId: Long): ConcertSeat? = storage[concertSeatId]
+
+    override fun update(concertSeat: ConcertSeat) {
+        storage[concertSeat.id] = concertSeat
+    }
+
     fun saveSingleSeat(
         id: Long,
         status: ConcertSeat.SeatStatus = ConcertSeat.SeatStatus.AVAILABLE
     ) {
         storage[id] =
-            mutableListOf(
-                ConcertSeat(
-                    id = id,
-                    scheduleId = id,
-                    seatId = id,
-                    status = status
-                )
+            ConcertSeat(
+                id = id,
+                scheduleId = id,
+                seatId = id,
+                status = status
             )
     }
 }
