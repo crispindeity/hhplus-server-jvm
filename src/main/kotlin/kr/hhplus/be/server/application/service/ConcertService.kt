@@ -13,7 +13,9 @@ import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.ConcertSchedule
 import org.slf4j.Logger
+import org.springframework.stereotype.Service
 
+@Service
 internal class ConcertService(
     private val concertPort: ConcertPort,
     private val concertSchedulePort: ConcertSchedulePort,
