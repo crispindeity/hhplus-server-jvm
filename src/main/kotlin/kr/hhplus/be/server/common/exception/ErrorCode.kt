@@ -21,5 +21,9 @@ enum class ErrorCode(
     NO_REQUEST_CONTEXT(code = 400, message = "no request context."),
     MISSING_REQUEST_ATTRIBUTE(code = 400, message = "missing request attribute."),
     NOT_FOUND_CONCERT(code = 404, message = "not found concert."),
-    NOT_FOUND_CONCERT_SCHEDULE(code = 404, message = "not found concert schedule.")
+    NOT_FOUND_CONCERT_SCHEDULE(code = 404, message = "not found concert schedule."),
+    NOT_FOUND_CONCERT_SEAT(code = 404, message = "not found concert seat."),
+    INVALID_CONCERT_DATE(code = 400, message = "invalid concert date."),
+    ALREADY_RESERVED(code = 400, message = "already reserved."),
+    NOT_FOUND_SEAT(code = 404, message = "not found seat.")
 }

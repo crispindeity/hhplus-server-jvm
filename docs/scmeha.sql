@@ -60,27 +60,18 @@ CREATE INDEX idx_user_id ON POINT_WALLETS (user_id);
 
 CREATE TABLE RESERVATIONS
 (
-  id           BIGINT PRIMARY KEY,
-  user_id      VARCHAR(36) NOT NULL,
-  concert_id   BIGINT      NOT NULL,
-  payment_id   BIGINT      NOT NULL,
-  confirmed_at TIMESTAMP DEFAULT NULL,
-  reserved_at  TIMESTAMP   NOT NULL,
-  expires_at   TIMESTAMP   NOT NULL,
-  status       VARCHAR(20) NOT NULL CHECK (status IN
-                                           ('IN_PROGRESS', 'CANCELLED', 'CONFIRMED', 'EXPIRED')),
-  created_at   TIMESTAMP   NOT NULL,
-  updated_at   TIMESTAMP   NOT NULL
-);
-
-CREATE TABLE RESERVATION_SEATS
-(
   id              BIGINT PRIMARY KEY,
-  reservation_id  BIGINT    NOT NULL,
-  concert_seat_id BIGINT    NOT NULL,
-  created_at      TIMESTAMP NOT NULL,
-  updated_at      TIMESTAMP NOT NULL,
-  UNIQUE (reservation_id, concert_seat_id)
+  user_id         VARCHAR(36) NOT NULL,
+  concert_id      BIGINT      NOT NULL,
+  payment_id      BIGINT      NOT NULL,
+  concert_seat_id BIGINT      NOT NULL,
+  confirmed_at    TIMESTAMP DEFAULT NULL,
+  reserved_at     TIMESTAMP   NOT NULL,
+  expires_at      TIMESTAMP   NOT NULL,
+  status          VARCHAR(20) NOT NULL CHECK (status IN
+                                              ('IN_PROGRESS', 'CANCELLED', 'CONFIRMED', 'EXPIRED')),
+  created_at      TIMESTAMP   NOT NULL,
+  updated_at      TIMESTAMP   NOT NULL
 );
 
 CREATE TABLE QUEUE_TOKENS

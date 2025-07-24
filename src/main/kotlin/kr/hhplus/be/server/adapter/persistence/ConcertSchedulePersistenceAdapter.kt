@@ -18,4 +18,8 @@ internal class ConcertSchedulePersistenceAdapter(
         concertId: Long,
         date: LocalDate
     ): ConcertSchedule = repository.findSchedule(concertId, date).toDomain()
+
+    override fun getSchedule(scheduleId: Long): ConcertSchedule? {
+        TODO("Not yet implemented")
+    }
 }

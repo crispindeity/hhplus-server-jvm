@@ -10,4 +10,6 @@ internal interface ConcertSchedulePort {
         concertId: Long,
         date: LocalDate
     ): ConcertSchedule?
+
+    fun getSchedule(scheduleId: Long): ConcertSchedule?
 }
