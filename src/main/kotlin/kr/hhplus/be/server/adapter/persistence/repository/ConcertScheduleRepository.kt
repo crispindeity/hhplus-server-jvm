@@ -10,4 +10,6 @@ internal interface ConcertScheduleRepository {
         concertId: Long,
         date: LocalDate
     ): ConcertScheduleEntity
+
+    fun findSchedule(scheduleId: Long): ConcertScheduleEntity?
 }

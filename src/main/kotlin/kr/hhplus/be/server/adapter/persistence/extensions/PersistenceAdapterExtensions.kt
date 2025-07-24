@@ -6,10 +6,14 @@ import kr.hhplus.be.server.adapter.persistence.dto.AvailableSeatProjection
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertScheduleEntity
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertSeatEntity
 import kr.hhplus.be.server.adapter.persistence.entity.QueueTokenJpaEntity
+import kr.hhplus.be.server.adapter.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.adapter.persistence.entity.SeatHoldEntity
 import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
 import kr.hhplus.be.server.domain.ConcertSchedule
 import kr.hhplus.be.server.domain.ConcertSeat
 import kr.hhplus.be.server.domain.QueueToken
+import kr.hhplus.be.server.domain.Reservation
+import kr.hhplus.be.server.domain.SeatHold
 
 internal fun QueueToken.toEntity(): QueueTokenJpaEntity =
     QueueTokenJpaEntity(
@@ -62,5 +66,57 @@ internal fun AvailableSeatProjection.toDto(): AvailableSeatDto =
                 ConcertSeatEntity.Status.HELD -> ConcertSeat.SeatStatus.HELD
                 ConcertSeatEntity.Status.AVAILABLE -> ConcertSeat.SeatStatus.AVAILABLE
                 ConcertSeatEntity.Status.RESERVED -> ConcertSeat.SeatStatus.RESERVED
+            }
+    )
+
+internal fun Reservation.toEntity(): ReservationEntity =
+    ReservationEntity(
+        userId = this.userId.toString(),
+        concertId = this.concertId,
+        paymentId = this.paymentId,
+        concertSeatId = this.concertSeatId,
+        confirmedAt = this.confirmedAt,
+        reservedAt = this.reservedAt,
+        expiresAt = this.expiresAt,
+        status =
+            when (this.status) {
+                Reservation.Status.IN_PROGRESS -> ReservationEntity.Status.IN_PROGRESS
+                Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
+                Reservation.Status.COMFIRMED -> ReservationEntity.Status.CONFIRMED
+                Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
+            }
+    )
+
+internal fun SeatHold.toEntity(): SeatHoldEntity =
+    SeatHoldEntity(
+        concertSeatId = this.concertSeatId,
+        userId = this.userId.toString(),
+        heldAt = this.heldAt,
+        expiresAt = this.expiresAt
+    )
+
+internal fun ConcertSeatEntity.toDomain(): ConcertSeat =
+    ConcertSeat(
+        id = this.id!!,
+        scheduleId = this.scheduleId,
+        seatId = this.seatId,
+        status =
+            when (this.status) {
+                ConcertSeatEntity.Status.HELD -> ConcertSeat.SeatStatus.HELD
+                ConcertSeatEntity.Status.AVAILABLE -> ConcertSeat.SeatStatus.AVAILABLE
+                ConcertSeatEntity.Status.RESERVED -> ConcertSeat.SeatStatus.RESERVED
+            }
+    )
+
+internal fun ConcertSeat.toEntity(): ConcertSeatEntity =
+    ConcertSeatEntity(
+        id = this.id,
+        scheduleId = this.scheduleId,
+        seatId = this.seatId,
+        status =
+            when (this.status) {
+                ConcertSeat.SeatStatus.HELD -> ConcertSeatEntity.Status.HELD
+                ConcertSeat.SeatStatus.AVAILABLE -> ConcertSeatEntity.Status.AVAILABLE
+                ConcertSeat.SeatStatus.RESERVED -> ConcertSeatEntity.Status.RESERVED
             }
     )

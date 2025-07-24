@@ -14,8 +14,10 @@ import kr.hhplus.be.server.domain.Reservation
 import kr.hhplus.be.server.domain.SeatHold
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 internal class ReservationService(
     private val seatHoldPort: SeatHoldPort,
     private val concertSeatPort: ConcertSeatPort,
@@ -25,6 +27,7 @@ internal class ReservationService(
 ) {
     private val logger: Logger = Log.getLogger(ReservationService::class.java)
 
+    @Transactional
     fun makeReservation(
         date: LocalDate,
         concertSeatId: Long,

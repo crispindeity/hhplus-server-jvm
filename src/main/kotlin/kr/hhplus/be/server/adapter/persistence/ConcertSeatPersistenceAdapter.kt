@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.adapter.persistence
 
+import kr.hhplus.be.server.adapter.persistence.extensions.toDomain
 import kr.hhplus.be.server.adapter.persistence.extensions.toDto
+import kr.hhplus.be.server.adapter.persistence.extensions.toEntity
 import kr.hhplus.be.server.adapter.persistence.repository.ConcertSeatRepository
 import kr.hhplus.be.server.application.port.ConcertSeatPort
 import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
@@ -14,11 +16,10 @@ internal class ConcertSeatPersistenceAdapter(
     override fun getAvailableSeats(scheduleId: Long): List<AvailableSeatDto> =
         repository.findAvailableSeats(scheduleId).map { it.toDto() }
 
-    override fun getConcertSeat(concertSeatId: Long): ConcertSeat? {
-        TODO("Not yet implemented")
-    }
+    override fun getConcertSeat(concertSeatId: Long): ConcertSeat? =
+        repository.findConcertSeat(concertSeatId)?.toDomain()
 
-    override fun update(heldSeat: ConcertSeat) {
-        TODO("Not yet implemented")
+    override fun update(concertSeat: ConcertSeat) {
+        repository.update(concertSeat.toEntity())
     }
 }
