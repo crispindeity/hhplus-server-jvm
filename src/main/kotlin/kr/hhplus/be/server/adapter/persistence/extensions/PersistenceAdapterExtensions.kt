@@ -2,7 +2,13 @@ package kr.hhplus.be.server.adapter.persistence.extensions
 
 import java.time.Instant
 import java.util.UUID
+import kr.hhplus.be.server.adapter.persistence.dto.AvailableSeatProjection
+import kr.hhplus.be.server.adapter.persistence.entity.ConcertScheduleEntity
+import kr.hhplus.be.server.adapter.persistence.entity.ConcertSeatEntity
 import kr.hhplus.be.server.adapter.persistence.entity.QueueTokenJpaEntity
+import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
+import kr.hhplus.be.server.domain.ConcertSchedule
+import kr.hhplus.be.server.domain.ConcertSeat
 import kr.hhplus.be.server.domain.QueueToken
 
 internal fun QueueToken.toEntity(): QueueTokenJpaEntity =
@@ -38,3 +44,23 @@ internal fun QueueTokenJpaEntity.Status.toDomain(): QueueToken.Status =
         QueueTokenJpaEntity.Status.CANCELLED -> QueueToken.Status.CANCELLED
         QueueTokenJpaEntity.Status.EXPIRED -> QueueToken.Status.EXPIRED
     }
+
+internal fun ConcertScheduleEntity.toDomain(): ConcertSchedule =
+    ConcertSchedule(
+        id = this.id!!,
+        concertId = this.concertId,
+        date = this.date
+    )
+
+internal fun AvailableSeatProjection.toDto(): AvailableSeatDto =
+    AvailableSeatDto(
+        id = this.concertSeatId,
+        number = this.seatNumber,
+        price = this.price,
+        status =
+            when (this.status) {
+                ConcertSeatEntity.Status.HELD -> ConcertSeat.SeatStatus.HELD
+                ConcertSeatEntity.Status.AVAILABLE -> ConcertSeat.SeatStatus.AVAILABLE
+                ConcertSeatEntity.Status.RESERVED -> ConcertSeat.SeatStatus.RESERVED
+            }
+    )
