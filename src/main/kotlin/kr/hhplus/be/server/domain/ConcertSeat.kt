@@ -23,4 +23,16 @@ internal data class ConcertSeat(
             status = SeatStatus.HELD
         )
     }
+
+    fun reserved(): ConcertSeat {
+        if (status != SeatStatus.HELD) {
+            throw CustomException(
+                codeInterface = ErrorCode.INVALID_STATUS,
+                additionalMessage = "SeatStatus: $status"
+            )
+        }
+        return this.copy(
+            status = SeatStatus.RESERVED
+        )
+    }
 }

@@ -31,7 +31,7 @@ internal class UserPointService(
 
             val chargedWallet: PointWallet = foundWallet.chargePoint(amount)
 
-            pointWalletPort.chargePoint(chargedWallet)
+            pointWalletPort.update(chargedWallet)
             chargedWallet.balance
         }
 

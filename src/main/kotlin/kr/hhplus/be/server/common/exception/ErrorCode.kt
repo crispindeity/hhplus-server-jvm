@@ -28,5 +28,10 @@ enum class ErrorCode(
     NOT_FOUND_USER_ID_IN_ATTRIBUTE(code = 404, message = "not found user id in attribute."),
     NOT_FOUND_SEAT(code = 404, message = "not found seat."),
     NOT_FOUND_USER(code = 404, message = "not found user."),
-    NOT_FOUND_USER_POINT_WALLET(code = 404, message = "not found user point wallet.")
+    NOT_FOUND_USER_POINT_WALLET(code = 404, message = "not found user point wallet."),
+    NOT_FOUND_RESERVATION(code = 404, message = "not found reservation."),
+    NOT_FOUND_PAYMENT_INFO(code = 404, message = "not found payment info."),
+    ALREADY_PAYMENT(code = 400, message = "already payment"),
+    INSUFFICIENT_POINT(code = 400, message = "not enough point to complete the operation"),
+    INVALID_STATUS(code = 400, message = "invalid status.")
 }

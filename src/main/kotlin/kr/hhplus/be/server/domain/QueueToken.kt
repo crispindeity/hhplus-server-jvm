@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.domain
 
 import java.util.UUID
+import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ErrorCode
 
 data class QueueToken(
     var id: Long = 0L,
@@ -14,5 +16,17 @@ data class QueueToken(
         COMPLETED,
         CANCELLED,
         EXPIRED
+    }
+
+    fun completed(): QueueToken {
+        if (Status.WAITING != status) {
+            throw CustomException(
+                codeInterface = ErrorCode.INVALID_STATUS,
+                additionalMessage = "queueStatus: $status"
+            )
+        }
+        return this.copy(
+            status = Status.COMPLETED
+        )
     }
 }

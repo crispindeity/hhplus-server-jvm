@@ -84,7 +84,7 @@ internal fun Reservation.toEntity(): ReservationEntity =
             when (this.status) {
                 Reservation.Status.IN_PROGRESS -> ReservationEntity.Status.IN_PROGRESS
                 Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
-                Reservation.Status.COMFIRMED -> ReservationEntity.Status.CONFIRMED
+                Reservation.Status.CONFIRMED -> ReservationEntity.Status.CONFIRMED
                 Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
             }
     )

@@ -49,21 +49,23 @@ internal class ReservationService(
                 )
             )
 
+            val paymentId: Long =
+                paymentPort.save(
+                    Payment(
+                        userId = userUUID,
+                        price = context.seat.price
+                    )
+                )
+
             val reservation =
                 Reservation(
                     userId = userUUID,
                     concertSeatId = concertSeatId,
                     concertId = context.schedule.concertId,
+                    paymentId = paymentId,
                     status = Reservation.Status.IN_PROGRESS
                 )
             reservationPort.save(reservation)
-
-            paymentPort.save(
-                Payment(
-                    userId = userUUID,
-                    price = context.seat.price
-                )
-            )
 
             MakeReservationResponse(
                 userId = userId,
