@@ -1,7 +1,6 @@
 package kr.hhplus.be.server.payment.application.service
 
 import java.util.UUID
-import kotlin.collections.get
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
@@ -10,6 +9,8 @@ import kr.hhplus.be.server.payment.adapter.web.dto.response.PaymentResponse
 import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.payment.domain.Payment
 import kr.hhplus.be.server.payment.exception.PaymentException
+import kr.hhplus.be.server.pointtransaction.application.port.PointTransactionPort
+import kr.hhplus.be.server.pointtransaction.domain.PointTransaction
 import kr.hhplus.be.server.pointwallet.application.port.PointWalletPort
 import kr.hhplus.be.server.pointwallet.domain.PointWallet
 import kr.hhplus.be.server.pointwallet.exception.PointWalletException
@@ -31,7 +32,8 @@ internal class PaymentService(
     private val pointWalletPort: PointWalletPort,
     private val concertSeatPort: ConcertSeatPort,
     private val entryQueuePort: EntryQueuePort,
-    private val seatHoldPort: SeatHoldPort
+    private val seatHoldPort: SeatHoldPort,
+    private val pointTransactionPort: PointTransactionPort
 ) {
     @Transactional
     fun payment(userId: String): PaymentResponse {
@@ -77,7 +79,15 @@ internal class PaymentService(
             pointWalletPort.getWallet(userUUID)
                 ?: throw PointWalletException(ErrorCode.NOT_FOUND_USER_POINT_WALLET)
         val usedWallet: PointWallet = wallet.usePoint(totalPrice)
+
         pointWalletPort.update(usedWallet)
+        pointTransactionPort.save(
+            PointTransaction(
+                pointWalletId = usedWallet.id,
+                amount = totalPrice,
+                type = PointTransaction.Type.USED
+            )
+        )
     }
 
     private fun processReservationAndPayment(

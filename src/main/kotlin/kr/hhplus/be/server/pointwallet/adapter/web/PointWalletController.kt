@@ -6,7 +6,7 @@ import kr.hhplus.be.server.common.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import kr.hhplus.be.server.pointwallet.adapter.web.request.ChargePointsRequest
 import kr.hhplus.be.server.pointwallet.adapter.web.response.FindUserPointResponse
-import kr.hhplus.be.server.pointwallet.application.service.UserPointService
+import kr.hhplus.be.server.pointwallet.application.service.PointWalletService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-internal class UserPointController(
-    private val userPointService: UserPointService
+internal class PointWalletController(
+    private val userPointService: PointWalletService
 ) {
     @RequireQueueAccess
     @PostMapping("/{id}/points/charge")
