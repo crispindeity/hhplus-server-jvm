@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import java.util.UUID
-import kr.hhplus.be.server.application.port.EntryQueuePort
-import kr.hhplus.be.server.domain.QueueToken
+import kr.hhplus.be.server.queuetoken.application.port.EntryQueuePort
+import kr.hhplus.be.server.queuetoken.domain.QueueToken
 
 class FakeEntryQueuePort : EntryQueuePort {
     private val storage: MutableMap<Long, QueueToken> = mutableMapOf()

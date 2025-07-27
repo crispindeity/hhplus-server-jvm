@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import java.util.UUID
-import kr.hhplus.be.server.application.port.PointWalletPort
-import kr.hhplus.be.server.domain.PointWallet
+import kr.hhplus.be.server.pointwallet.application.port.PointWalletPort
+import kr.hhplus.be.server.pointwallet.domain.PointWallet
 
 internal class FakePointWalletPort : PointWalletPort {
     private val storage: MutableMap<Long, PointWallet> = mutableMapOf()

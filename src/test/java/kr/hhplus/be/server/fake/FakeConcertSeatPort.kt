@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.fake
 
-import kr.hhplus.be.server.application.port.ConcertSeatPort
-import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
-import kr.hhplus.be.server.domain.ConcertSeat
-import kr.hhplus.be.server.domain.Seat
+import kr.hhplus.be.server.concert.application.service.dto.AvailableSeatDto
+import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
+import kr.hhplus.be.server.concertseat.domain.ConcertSeat
+import kr.hhplus.be.server.seat.domain.Seat
 
 internal class FakeConcertSeatPort(
     private val seatPort: FakeSeatPort

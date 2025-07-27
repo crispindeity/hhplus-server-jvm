@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import java.util.UUID
-import kr.hhplus.be.server.application.port.UserPort
-import kr.hhplus.be.server.domain.User
+import kr.hhplus.be.server.user.application.port.UserPort
+import kr.hhplus.be.server.user.domain.User
 
 class FakeUserPort : UserPort {
     private val storage: MutableMap<Long, User> = mutableMapOf()

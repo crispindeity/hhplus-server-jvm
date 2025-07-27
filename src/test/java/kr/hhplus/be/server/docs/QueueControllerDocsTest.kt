@@ -4,12 +4,12 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.UUID
-import kr.hhplus.be.server.adapter.web.EntryQueueController
-import kr.hhplus.be.server.adapter.web.dto.request.EntryQueueTokenRequest
-import kr.hhplus.be.server.application.port.EntryQueuePort
-import kr.hhplus.be.server.application.service.JWTHelper
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.queuetoken.adapter.web.EntryQueueController
+import kr.hhplus.be.server.queuetoken.adapter.web.request.EntryQueueTokenRequest
+import kr.hhplus.be.server.queuetoken.application.port.EntryQueuePort
+import kr.hhplus.be.server.queuetoken.application.service.JWTHelper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

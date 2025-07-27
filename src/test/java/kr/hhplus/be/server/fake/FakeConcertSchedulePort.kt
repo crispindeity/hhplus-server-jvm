@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.fake
 
 import java.time.LocalDate
-import kr.hhplus.be.server.application.port.ConcertSchedulePort
-import kr.hhplus.be.server.application.port.ConcertSeatPort
-import kr.hhplus.be.server.domain.ConcertSchedule
-import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
+import kr.hhplus.be.server.concertschedule.domain.ConcertSchedule
+import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
+import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 
 internal class FakeConcertSchedulePort(
     private val concertSeatPort: ConcertSeatPort

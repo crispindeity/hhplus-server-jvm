@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.config.web
 
-import kr.hhplus.be.server.adapter.web.EntryQueueTokenInterceptor
+import kr.hhplus.be.server.queuetoken.adapter.web.EntryQueueTokenInterceptor
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry

@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.fake
 
-import kr.hhplus.be.server.application.port.ConcertPort
-import kr.hhplus.be.server.domain.Concert
+import kr.hhplus.be.server.concert.application.port.ConcertPort
+import kr.hhplus.be.server.concert.domain.Concert
 
 class FakeConcertPort : ConcertPort {
     private val storage: MutableMap<Long, Concert> = mutableMapOf()
