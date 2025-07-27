@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.reservation.adapter.persistence.extensions
 
+import java.util.UUID
 import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
 import kr.hhplus.be.server.reservation.domain.Reservation
 
@@ -37,5 +38,24 @@ internal fun Reservation.toUpdateEntity(): ReservationEntity =
                 Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
                 Reservation.Status.CONFIRMED -> ReservationEntity.Status.CONFIRMED
                 Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
+            }
+    )
+
+internal fun ReservationEntity.toDomain(): Reservation =
+    Reservation(
+        id = this.id!!,
+        userId = UUID.fromString(this.userId),
+        concertId = this.concertId,
+        concertSeatId = this.concertSeatId,
+        paymentId = this.paymentId,
+        confirmedAt = this.confirmedAt,
+        reservedAt = this.reservedAt,
+        expiresAt = this.expiresAt,
+        status =
+            when (this.status) {
+                ReservationEntity.Status.IN_PROGRESS -> Reservation.Status.IN_PROGRESS
+                ReservationEntity.Status.CANCELLED -> Reservation.Status.CANCELLED
+                ReservationEntity.Status.CONFIRMED -> Reservation.Status.CONFIRMED
+                ReservationEntity.Status.EXPIRED -> Reservation.Status.EXPIRED
             }
     )

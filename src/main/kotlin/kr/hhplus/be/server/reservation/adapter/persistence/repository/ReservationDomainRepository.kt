@@ -16,4 +16,7 @@ internal class ReservationDomainRepository(
     override fun update(entity: ReservationEntity) {
         entityManager.merge(entity)
     }
+
+    override fun findAll(userId: String): List<ReservationEntity> =
+        jpaRepository.findAllByUserId(userId)
 }

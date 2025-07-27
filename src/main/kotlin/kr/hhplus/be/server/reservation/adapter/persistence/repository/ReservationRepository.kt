@@ -6,4 +6,6 @@ internal interface ReservationRepository {
     fun save(entity: ReservationEntity)
 
     fun update(entity: ReservationEntity)
+
+    fun findAll(userId: String): List<ReservationEntity>
 }
