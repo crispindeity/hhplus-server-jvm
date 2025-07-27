@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.common.log
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.LogException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -28,7 +28,7 @@ object Log {
         result.fold(
             onSuccess = {
                 log.info(toJson(logInfo))
-                return it ?: throw CustomException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
+                return it ?: throw LogException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
             },
             onFailure = {
                 logInfo["exceptionMessage"] = it.message ?: "Unknown"
@@ -46,7 +46,7 @@ object Log {
         val logWarn: MutableMap<String, Any> = mutableMapOf()
         val result: T? = function(logWarn)
         log.warn(toJson(logWarn))
-        return result ?: throw CustomException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
+        return result ?: throw LogException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
     }
 
     fun <T> errorLogging(
@@ -62,7 +62,7 @@ object Log {
 
         log.error(toJson(logError))
         log.error("trace", exception)
-        return result ?: throw CustomException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
+        return result ?: throw LogException(ErrorCode.FAILED_TO_INVOKE_IN_LOG)
     }
 
     private fun now(): Long = System.currentTimeMillis()

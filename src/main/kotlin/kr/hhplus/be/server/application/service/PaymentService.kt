@@ -8,8 +8,12 @@ import kr.hhplus.be.server.application.port.PaymentPort
 import kr.hhplus.be.server.application.port.PointWalletPort
 import kr.hhplus.be.server.application.port.ReservationPort
 import kr.hhplus.be.server.application.port.SeatHoldPort
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.PaymentException
+import kr.hhplus.be.server.common.exception.PointWalletException
+import kr.hhplus.be.server.common.exception.QueueTokenException
+import kr.hhplus.be.server.common.exception.ReservationException
 import kr.hhplus.be.server.domain.ConcertSeat
 import kr.hhplus.be.server.domain.Payment
 import kr.hhplus.be.server.domain.PointWallet
@@ -32,7 +36,7 @@ internal class PaymentService(
         val reservations: List<Reservation> =
             reservationPort.getAll(userUUID.toString())
         if (reservations.isEmpty()) {
-            throw CustomException(ErrorCode.NOT_FOUND_RESERVATION)
+            throw ReservationException(ErrorCode.NOT_FOUND_RESERVATION)
         }
 
         val payments: Map<Long, Payment> = loadPayments(reservations)
@@ -43,7 +47,7 @@ internal class PaymentService(
         reservations.forEach { reservation ->
             val payment: Payment =
                 payments[reservation.paymentId]
-                    ?: throw CustomException(ErrorCode.NOT_FOUND_PAYMENT_INFO)
+                    ?: throw PaymentException(ErrorCode.NOT_FOUND_PAYMENT_INFO)
             processReservationAndPayment(reservation, payment)
         }
 
@@ -67,7 +71,7 @@ internal class PaymentService(
     ) {
         val wallet: PointWallet =
             pointWalletPort.getWallet(userUUID)
-                ?: throw CustomException(ErrorCode.NOT_FOUND_USER_POINT_WALLET)
+                ?: throw PointWalletException(ErrorCode.NOT_FOUND_USER_POINT_WALLET)
         val usedWallet: PointWallet = wallet.usePoint(totalPrice)
         pointWalletPort.update(usedWallet)
     }
@@ -77,7 +81,7 @@ internal class PaymentService(
         payment: Payment
     ) {
         if (payment.status != Payment.Status.PENDING) {
-            throw CustomException(ErrorCode.ALREADY_PAYMENT)
+            throw PaymentException(ErrorCode.ALREADY_PAYMENT)
         }
 
         val completedPayment: Payment = payment.complete()
@@ -88,7 +92,7 @@ internal class PaymentService(
 
         val concertSeat: ConcertSeat =
             concertSeatPort.getConcertSeat(reservation.concertId)
-                ?: throw CustomException(ErrorCode.NOT_FOUND_CONCERT_SEAT)
+                ?: throw ConcertSeatException(ErrorCode.NOT_FOUND_CONCERT_SEAT)
         concertSeat.reserved()
         concertSeatPort.update(concertSeat)
     }
@@ -96,7 +100,7 @@ internal class PaymentService(
     private fun completeEntryQueue(userUUID: UUID) {
         val token: QueueToken =
             entryQueuePort.getEntryQueueToken(userUUID)
-                ?: throw CustomException(ErrorCode.NOT_FOUND_QUEUE_TOKEN)
+                ?: throw QueueTokenException(ErrorCode.NOT_FOUND_QUEUE_TOKEN)
         val completed: QueueToken = token.completed()
         entryQueuePort.update(completed)
     }

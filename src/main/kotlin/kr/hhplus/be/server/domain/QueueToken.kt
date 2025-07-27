@@ -2,8 +2,8 @@ package kr.hhplus.be.server.domain
 
 import java.time.Instant
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.QueueTokenException
 
 data class QueueToken(
     var id: Long = 0L,
@@ -22,9 +22,9 @@ data class QueueToken(
 
     fun completed(): QueueToken {
         if (Status.WAITING != status) {
-            throw CustomException(
-                codeInterface = ErrorCode.INVALID_STATUS,
-                additionalMessage = "queueStatus: $status"
+            throw QueueTokenException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "queueStatus: $status"
             )
         }
         return this.copy(

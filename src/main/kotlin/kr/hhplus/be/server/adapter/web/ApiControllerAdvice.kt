@@ -1,8 +1,19 @@
 package kr.hhplus.be.server.adapter.web
 
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertException
+import kr.hhplus.be.server.common.exception.ConcertScheduleException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.LogException
+import kr.hhplus.be.server.common.exception.PaymentException
+import kr.hhplus.be.server.common.exception.PointWalletException
+import kr.hhplus.be.server.common.exception.QueueTokenException
+import kr.hhplus.be.server.common.exception.ReservationException
+import kr.hhplus.be.server.common.exception.SeatException
+import kr.hhplus.be.server.common.exception.SeatHoldException
+import kr.hhplus.be.server.common.exception.ServletException
+import kr.hhplus.be.server.common.exception.UserException
 import kr.hhplus.be.server.common.log.Log
 import org.slf4j.Logger
 import org.springframework.http.HttpStatus
@@ -51,9 +62,131 @@ class ApiControllerAdvice {
             )
         }
 
-    @ExceptionHandler(CustomException::class)
-    fun handlerCustomException(exception: CustomException): ApiResponse<Unit> =
+    @ExceptionHandler(ConcertException::class)
+    fun concertException(exception: ConcertException): ApiResponse<Unit> =
         Log.warnLogging(logger) { log ->
+            log["exception"] = "concertException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(ConcertScheduleException::class)
+    fun concertScheduleException(exception: ConcertScheduleException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "concertScheduleException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(ConcertSeatException::class)
+    fun concertSeatException(exception: ConcertSeatException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "concertSeatException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(PaymentException::class)
+    fun paymentException(exception: PaymentException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "paymentException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(PointWalletException::class)
+    fun pointWalletException(exception: PointWalletException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "pointWalletException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(QueueTokenException::class)
+    fun queueTokenException(exception: QueueTokenException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "queueTokenException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(ReservationException::class)
+    fun reservationException(exception: ReservationException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "reservationException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(SeatException::class)
+    fun seatException(exception: SeatException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "seatException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(SeatHoldException::class)
+    fun seatHoldException(exception: SeatHoldException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "seatHoldException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(ServletException::class)
+    fun servletException(exception: ServletException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "servletException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(UserException::class)
+    fun userException(exception: UserException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "userException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(LogException::class)
+    fun logException(exception: LogException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "logException()"
             log["message"] = exception.codeInterface.message
             ApiResponse.fail(
                 code = exception.codeInterface.code,

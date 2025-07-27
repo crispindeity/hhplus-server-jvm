@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.application.service
 
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.PointWalletException
 import kr.hhplus.be.server.fake.FakePointWalletPort
 import kr.hhplus.be.server.fake.FakeUserPort
 import org.assertj.core.api.Assertions
@@ -66,7 +66,7 @@ class UserPointServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             userPointService.chargePoint(userId, amount)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(PointWalletException::class.java)
                         .message()
                         .isEqualTo("not found user point wallet.")
                 }
@@ -109,7 +109,7 @@ class UserPointServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             userPointService.getPoint(userId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(PointWalletException::class.java)
                         .message()
                         .isEqualTo("not found user point wallet.")
                 }

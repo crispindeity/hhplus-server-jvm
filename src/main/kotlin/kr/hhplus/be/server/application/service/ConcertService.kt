@@ -8,7 +8,8 @@ import kr.hhplus.be.server.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.application.port.ConcertSeatPort
 import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
 import kr.hhplus.be.server.application.service.extensions.toResponse
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertException
+import kr.hhplus.be.server.common.exception.ConcertScheduleException
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.ConcertSchedule
@@ -43,7 +44,7 @@ internal class ConcertService(
             log["method"] = "getAvailableSeats()"
             verifyConcert(concertId)
             val schedule: ConcertSchedule =
-                concertSchedulePort.getSchedule(concertId, date) ?: throw CustomException(
+                concertSchedulePort.getSchedule(concertId, date) ?: throw ConcertScheduleException(
                     ErrorCode.NOT_FOUND_CONCERT_SCHEDULE
                 )
             val availableSeats: List<AvailableSeatDto> =
@@ -53,7 +54,7 @@ internal class ConcertService(
 
     private fun verifyConcert(concertId: Long) {
         if (!concertPort.existsConcert(concertId)) {
-            throw CustomException(ErrorCode.NOT_FOUND_CONCERT)
+            throw ConcertException(ErrorCode.NOT_FOUND_CONCERT)
         }
     }
 }

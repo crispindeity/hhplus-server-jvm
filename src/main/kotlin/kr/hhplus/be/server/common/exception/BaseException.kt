@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.common.exception
 
-class CustomException(
+abstract class BaseException(
     val codeInterface: CodeInterface,
     additionalMessage: String? = null
 ) : RuntimeException(

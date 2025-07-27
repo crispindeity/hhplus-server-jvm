@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.application.service
 
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.QueueTokenException
 import kr.hhplus.be.server.domain.QueueToken
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
 import org.assertj.core.api.Assertions
@@ -70,7 +70,7 @@ class QueueAccessValidatorTest {
                             notAllowedQueueToken.userId,
                             notAllowedQueueToken.queueNumber
                         )
-                    }.isInstanceOf(CustomException::class.java)
+                    }.isInstanceOf(QueueTokenException::class.java)
                     .message()
                     .isEqualTo("queue not yet allowed.")
             }
@@ -96,7 +96,7 @@ class QueueAccessValidatorTest {
                             userId = userId,
                             queueNumber = 1
                         )
-                    }.isInstanceOf(CustomException::class.java)
+                    }.isInstanceOf(QueueTokenException::class.java)
                     .message()
                     .isEqualTo("invalid token status.")
             }
@@ -124,7 +124,7 @@ class QueueAccessValidatorTest {
                             userId = userId,
                             queueNumber = tokenNumber
                         )
-                    }.isInstanceOf(CustomException::class.java)
+                    }.isInstanceOf(QueueTokenException::class.java)
                     .message()
                     .isEqualTo("invalid queue token.")
             }

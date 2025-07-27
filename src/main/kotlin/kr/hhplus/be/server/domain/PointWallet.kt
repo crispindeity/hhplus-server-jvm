@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.domain
 
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.PointWalletException
 
 internal data class PointWallet(
     val id: Long = 0L,
@@ -25,9 +25,9 @@ internal data class PointWallet(
         if (amount >= 0 && this.balance - amount >= 0) {
             return
         }
-        throw CustomException(
-            codeInterface = ErrorCode.INSUFFICIENT_POINT,
-            additionalMessage = "amount: $amount, balance: ${this.balance}"
+        throw PointWalletException(
+            code = ErrorCode.INSUFFICIENT_POINT,
+            message = "amount: $amount, balance: ${this.balance}"
         )
     }
 }

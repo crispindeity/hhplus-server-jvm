@@ -5,8 +5,8 @@ import jakarta.servlet.http.HttpServletRequest
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.response.PaymentResponse
 import kr.hhplus.be.server.application.service.PaymentService
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.ServletException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -20,7 +20,7 @@ internal class PaymentController(
     fun payWithPoints(servletRequest: HttpServletRequest): ApiResponse<PaymentResponse> {
         val userId: String =
             servletRequest.getUserIdOrNull()
-                ?: throw CustomException(ErrorCode.NOT_FOUND_USER_ID_IN_ATTRIBUTE)
+                ?: throw ServletException(ErrorCode.NOT_FOUND_USER_ID_IN_ATTRIBUTE)
         val response: PaymentResponse = paymentService.payment(userId)
         return ApiResponse.success(result = response)
     }

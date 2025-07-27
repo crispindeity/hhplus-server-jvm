@@ -3,7 +3,8 @@ package kr.hhplus.be.server.application.service
 import java.time.LocalDate
 import java.util.UUID
 import kr.hhplus.be.server.adapter.web.dto.response.MakeReservationResponse
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertScheduleException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import kr.hhplus.be.server.domain.ConcertSeat
 import kr.hhplus.be.server.fake.FakeConcertPort
 import kr.hhplus.be.server.fake.FakeConcertSchedulePort
@@ -109,7 +110,7 @@ class ReservationServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             reservationService.makeReservation(date, concertSeatId, userId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(ConcertSeatException::class.java)
                         .message()
                         .isEqualTo("not found concert seat.")
                 }
@@ -132,7 +133,7 @@ class ReservationServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             reservationService.makeReservation(date, concertSeatId, userId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(ConcertScheduleException::class.java)
                         .message()
                         .isEqualTo("invalid concert date.")
                 }
@@ -155,7 +156,7 @@ class ReservationServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             reservationService.makeReservation(date, concertSeatId, userId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(ConcertSeatException::class.java)
                         .message()
                         .isEqualTo("already reserved.")
                 }

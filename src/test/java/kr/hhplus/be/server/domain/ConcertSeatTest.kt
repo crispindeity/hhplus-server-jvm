@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain
 
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -55,7 +55,7 @@ class ConcertSeatTest {
                     Assertions
                         .assertThatThrownBy { availableSeat.held() }
                         .isInstanceOf(
-                            CustomException::class.java
+                            ConcertSeatException::class.java
                         ).message()
                         .isEqualTo("already reserved.")
                 }

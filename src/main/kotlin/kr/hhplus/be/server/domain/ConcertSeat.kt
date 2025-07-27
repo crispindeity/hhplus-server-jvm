@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.domain
 
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import kr.hhplus.be.server.common.exception.ErrorCode
 
 internal data class ConcertSeat(
@@ -17,7 +17,7 @@ internal data class ConcertSeat(
 
     fun held(): ConcertSeat {
         if (status != SeatStatus.AVAILABLE) {
-            throw CustomException(ErrorCode.ALREADY_RESERVED)
+            throw ConcertSeatException(ErrorCode.ALREADY_RESERVED)
         }
         return this.copy(
             status = SeatStatus.HELD
@@ -26,9 +26,9 @@ internal data class ConcertSeat(
 
     fun reserved(): ConcertSeat {
         if (status != SeatStatus.HELD) {
-            throw CustomException(
-                codeInterface = ErrorCode.INVALID_STATUS,
-                additionalMessage = "SeatStatus: $status"
+            throw ConcertSeatException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "SeatStatus: $status"
             )
         }
         return this.copy(

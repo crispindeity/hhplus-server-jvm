@@ -2,8 +2,8 @@ package kr.hhplus.be.server.domain
 
 import java.time.LocalDateTime
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.ReservationException
 
 internal data class Reservation(
     val id: Long = 0L,
@@ -25,9 +25,9 @@ internal data class Reservation(
 
     fun confirm(): Reservation {
         if (status != Status.IN_PROGRESS) {
-            throw CustomException(
-                codeInterface = ErrorCode.INVALID_STATUS,
-                additionalMessage = "ReservationStatus: $status"
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status"
             )
         }
         return this.copy(

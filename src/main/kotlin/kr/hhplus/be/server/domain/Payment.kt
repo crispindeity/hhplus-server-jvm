@@ -2,8 +2,8 @@ package kr.hhplus.be.server.domain
 
 import java.time.LocalDateTime
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.PaymentException
 
 internal data class Payment(
     val id: Long = 0L,
@@ -20,9 +20,9 @@ internal data class Payment(
 
     fun complete(): Payment {
         if (status != Status.PENDING) {
-            throw CustomException(
-                codeInterface = ErrorCode.INVALID_STATUS,
-                additionalMessage = "paymentStatus: $status"
+            throw PaymentException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "paymentStatus: $status"
             )
         }
         return this.copy(

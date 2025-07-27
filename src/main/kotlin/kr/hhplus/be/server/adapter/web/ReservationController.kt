@@ -7,8 +7,8 @@ import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
 import kr.hhplus.be.server.adapter.web.dto.response.MakeReservationResponse
 import kr.hhplus.be.server.application.service.ReservationService
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.ReservationException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -26,7 +26,7 @@ internal class ReservationController(
     ): ApiResponse<MakeReservationResponse> {
         val userId: String =
             servletRequest.getUserIdOrNull()
-                ?: throw CustomException(ErrorCode.NOT_FOUND_USER_ID_IN_ATTRIBUTE)
+                ?: throw ReservationException(ErrorCode.NOT_FOUND_USER_ID_IN_ATTRIBUTE)
         val response: MakeReservationResponse =
             reservationService.makeReservation(
                 date = request.date,

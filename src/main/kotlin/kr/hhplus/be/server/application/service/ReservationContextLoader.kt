@@ -5,8 +5,10 @@ import kr.hhplus.be.server.application.extensions.orThrow
 import kr.hhplus.be.server.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.application.port.ConcertSeatPort
 import kr.hhplus.be.server.application.port.SeatPort
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertScheduleException
+import kr.hhplus.be.server.common.exception.ConcertSeatException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.SeatException
 import kr.hhplus.be.server.domain.ConcertSchedule
 import kr.hhplus.be.server.domain.ConcertSeat
 import kr.hhplus.be.server.domain.Seat
@@ -31,25 +33,25 @@ internal class ReservationContextLoader(
         val concertSeat: ConcertSeat =
             concertSeatPort
                 .getConcertSeat(concertSeatId)
-                .orThrow { CustomException(ErrorCode.NOT_FOUND_CONCERT_SEAT) }
+                .orThrow { ConcertSeatException(ErrorCode.NOT_FOUND_CONCERT_SEAT) }
 
         val schedule: ConcertSchedule =
             concertSchedulePort
                 .getSchedule(concertSeat.scheduleId)
-                .orThrow { CustomException(ErrorCode.NOT_FOUND_CONCERT_SCHEDULE) }
+                .orThrow { ConcertScheduleException(ErrorCode.NOT_FOUND_CONCERT_SCHEDULE) }
 
         if (schedule.date != date) {
-            throw CustomException(ErrorCode.INVALID_CONCERT_DATE)
+            throw ConcertScheduleException(ErrorCode.INVALID_CONCERT_DATE)
         }
 
         if (concertSeat.status != ConcertSeat.SeatStatus.AVAILABLE) {
-            throw CustomException(ErrorCode.ALREADY_RESERVED)
+            throw ConcertSeatException(ErrorCode.ALREADY_RESERVED)
         }
 
         val seat: Seat =
             seatPort
                 .getSeat(concertSeat.seatId)
-                .orThrow { CustomException(ErrorCode.NOT_FOUND_SEAT) }
+                .orThrow { SeatException(ErrorCode.NOT_FOUND_SEAT) }
 
         return ReservationContext(seat, concertSeat, schedule)
     }

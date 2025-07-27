@@ -3,7 +3,7 @@ package kr.hhplus.be.server.application.service
 import java.time.LocalDate
 import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableDatesResponse
 import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableSeatsResponses
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.ConcertException
 import kr.hhplus.be.server.fake.FakeConcertPort
 import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
@@ -77,7 +77,7 @@ class ConcertServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             concertService.getAvailableDates(concertId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(ConcertException::class.java)
                         .message()
                         .isEqualTo("not found concert.")
                 }
@@ -124,7 +124,7 @@ class ConcertServiceTest {
                     Assertions
                         .assertThatThrownBy {
                             concertService.getAvailableDates(concertId)
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(ConcertException::class.java)
                         .message()
                         .isEqualTo("not found concert.")
                 }

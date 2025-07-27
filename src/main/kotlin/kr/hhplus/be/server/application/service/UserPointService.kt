@@ -3,8 +3,9 @@ package kr.hhplus.be.server.application.service
 import java.util.UUID
 import kr.hhplus.be.server.application.port.PointWalletPort
 import kr.hhplus.be.server.application.port.UserPort
-import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.exception.PointWalletException
+import kr.hhplus.be.server.common.exception.UserException
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.PointWallet
 import org.slf4j.Logger
@@ -25,7 +26,7 @@ internal class UserPointService(
             log["method"] = "chargePoint()"
             verifyUser(userId)
             val foundWallet: PointWallet =
-                pointWalletPort.getWallet(userId) ?: throw CustomException(
+                pointWalletPort.getWallet(userId) ?: throw PointWalletException(
                     ErrorCode.NOT_FOUND_USER_POINT_WALLET
                 )
 
@@ -40,7 +41,7 @@ internal class UserPointService(
             log["method"] = "getPoint()"
             verifyUser(userId)
             val foundWallet: PointWallet =
-                pointWalletPort.getWallet(userId) ?: throw CustomException(
+                pointWalletPort.getWallet(userId) ?: throw PointWalletException(
                     ErrorCode.NOT_FOUND_USER_POINT_WALLET
                 )
             foundWallet.balance
@@ -48,7 +49,7 @@ internal class UserPointService(
 
     private fun verifyUser(userId: UUID) {
         if (!userPort.exists(userId)) {
-            CustomException(ErrorCode.NOT_FOUND_USER)
+            UserException(ErrorCode.NOT_FOUND_USER)
         }
     }
 }

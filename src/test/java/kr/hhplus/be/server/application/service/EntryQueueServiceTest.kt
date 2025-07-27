@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.application.service
 
 import java.util.UUID
-import kr.hhplus.be.server.common.exception.CustomException
+import kr.hhplus.be.server.common.exception.QueueTokenException
 import kr.hhplus.be.server.config.jwt.JWTProperties
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
 import org.assertj.core.api.Assertions
@@ -68,7 +68,7 @@ class EntryQueueServiceTest {
                             entryQueueService.createEntryQueueToken(
                                 userId
                             )
-                        }.isInstanceOf(CustomException::class.java)
+                        }.isInstanceOf(QueueTokenException::class.java)
                         .message()
                         .isEqualTo("token already issued. - $userId")
                 }
