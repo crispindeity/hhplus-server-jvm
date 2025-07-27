@@ -1,4 +1,16 @@
-CREATE TABLE CONCERTS
+DROP TABLE IF EXISTS seat_holds;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS point_transactions;
+DROP TABLE IF EXISTS queue_tokens;
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS point_wallets;
+DROP TABLE IF EXISTS seats;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS concert_seats;
+DROP TABLE IF EXISTS concert_schedules;
+DROP TABLE IF EXISTS concerts;
+
+CREATE TABLE concerts
 (
   id         BIGINT PRIMARY KEY,
   title      VARCHAR(255) NOT NULL,
@@ -6,7 +18,7 @@ CREATE TABLE CONCERTS
   updated_at TIMESTAMP    NOT NULL
 );
 
-CREATE TABLE CONCERT_SCHEDULES
+CREATE TABLE concert_schedules
 (
   id         BIGINT PRIMARY KEY,
   concert_id BIGINT    NOT NULL,
@@ -16,7 +28,7 @@ CREATE TABLE CONCERT_SCHEDULES
   UNIQUE (concert_id, date)
 );
 
-CREATE TABLE CONCERT_SEATS
+CREATE TABLE concert_seats
 (
   id          BIGINT PRIMARY KEY,
   schedule_id BIGINT      NOT NULL,
@@ -27,18 +39,17 @@ CREATE TABLE CONCERT_SEATS
   UNIQUE (schedule_id, seat_id)
 );
 
-CREATE INDEX idx_concert_status
-  ON CONCERT_SEATS (schedule_id, status);
+CREATE INDEX idx_concert_status ON concert_seats (schedule_id, status);
 
-CREATE TABLE USERS
+CREATE TABLE users
 (
   id         BIGINT PRIMARY KEY,
-  user_id    VARCHAR(36) PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL
+  user_id    VARCHAR(36) NOT NULL,
+  created_at TIMESTAMP   NOT NULL,
+  updated_at TIMESTAMP   NOT NULL
 );
 
-CREATE TABLE SEATS
+CREATE TABLE seats
 (
   id         BIGINT PRIMARY KEY,
   number     INT       NOT NULL,
@@ -47,7 +58,7 @@ CREATE TABLE SEATS
   updated_at TIMESTAMP NOT NULL
 );
 
-CREATE TABLE POINT_WALLETS
+CREATE TABLE point_wallets
 (
   id         BIGINT PRIMARY KEY,
   user_id    VARCHAR(36) NOT NULL,
@@ -57,9 +68,9 @@ CREATE TABLE POINT_WALLETS
   version    BIGINT      NOT NULL
 );
 
-CREATE INDEX idx_user_id ON POINT_WALLETS (user_id);
+CREATE INDEX idx_user_id ON point_wallets (user_id);
 
-CREATE TABLE RESERVATIONS
+CREATE TABLE reservations
 (
   id              BIGINT PRIMARY KEY,
   user_id         VARCHAR(36) NOT NULL,
@@ -75,7 +86,7 @@ CREATE TABLE RESERVATIONS
   updated_at      TIMESTAMP   NOT NULL
 );
 
-CREATE TABLE QUEUE_TOKENS
+CREATE TABLE queue_tokens
 (
   id           BIGINT PRIMARY KEY,
   user_id      VARCHAR(36)   NOT NULL,
@@ -87,10 +98,10 @@ CREATE TABLE QUEUE_TOKENS
   updated_at   TIMESTAMP     NOT NULL
 );
 
-CREATE INDEX idx_status ON QUEUE_TOKENS (status);
-CREATE INDEX idx_user_id ON QUEUE_TOKENS (user_id);
+CREATE INDEX idx_status ON queue_tokens (status);
+CREATE INDEX idx_user_id ON queue_tokens (user_id);
 
-CREATE TABLE POINT_TRANSACTIONS
+CREATE TABLE point_transactions
 (
   id              BIGINT PRIMARY KEY,
   point_wallet_id BIGINT      NOT NULL,
@@ -100,9 +111,9 @@ CREATE TABLE POINT_TRANSACTIONS
   updated_at      TIMESTAMP   NOT NULL
 );
 
-CREATE INDEX idx_point_wallet_id ON POINT_TRANSACTIONS (point_wallet_id);
+CREATE INDEX idx_point_wallet_id ON point_transactions (point_wallet_id);
 
-CREATE TABLE PAYMENTS
+CREATE TABLE payments
 (
   id         BIGINT PRIMARY KEY,
   user_id    VARCHAR(36) NOT NULL,
@@ -113,10 +124,10 @@ CREATE TABLE PAYMENTS
   updated_at TIMESTAMP   NOT NULL
 );
 
-CREATE INDEX idx_user_id_status ON PAYMENTS (user_id, status);
-CREATE INDEX idx_status ON PAYMENTS (status);
+CREATE INDEX idx_user_id_status ON payments (user_id, status);
+CREATE INDEX idx_status ON payments (status);
 
-CREATE TABLE SEAT_HOLDS
+CREATE TABLE seat_holds
 (
   id              BIGINT PRIMARY KEY,
   concert_seat_id BIGINT      NOT NULL,

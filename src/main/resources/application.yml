@@ -14,7 +14,6 @@ spring:
   jpa:
     open-in-view: false
     generate-ddl: false
-    show-sql: false
     hibernate:
       ddl-auto: none
     properties:
@@ -31,17 +30,21 @@ spring:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:sql/schema.sql
+        - classpath:sql/data.sql
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    defer-datasource-initialization: true
+
 jwt:
   secret: uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=
   expiration-minutes: 60
-
-
----
-spring:
-  config:
-    activate:
-      on-profile: mock
-
-use:
-  mock:
-    queue: true
