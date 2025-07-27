@@ -4,20 +4,31 @@ import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.LocalDateTime
+import java.util.UUID
+import kr.hhplus.be.server.adapter.web.ReservationController
 import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
+import kr.hhplus.be.server.application.port.ConcertSchedulePort
+import kr.hhplus.be.server.application.port.ConcertSeatPort
+import kr.hhplus.be.server.application.port.PaymentPort
+import kr.hhplus.be.server.application.port.ReservationPort
+import kr.hhplus.be.server.application.port.SeatPort
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.domain.ConcertSchedule
+import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.domain.Payment
+import kr.hhplus.be.server.domain.Reservation
+import kr.hhplus.be.server.domain.Seat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
@@ -32,16 +43,30 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ExtendWith(RestDocumentationExtension::class)
+@ControllerDocsTest
+@Import(TestConfig::class)
+@WebMvcTest(controllers = [ReservationController::class])
 class ReservationControllerDocsTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
     private val objectMapper = ObjectMapper()
+
+    @Autowired
+    private lateinit var concertSchedulePort: ConcertSchedulePort
+
+    @Autowired
+    private lateinit var concertSeatPort: ConcertSeatPort
+
+    @Autowired
+    private lateinit var reservationPort: ReservationPort
+
+    @Autowired
+    private lateinit var paymentPort: PaymentPort
+
+    @Autowired
+    private lateinit var seatPort: SeatPort
 
     @BeforeEach
     fun setUp(
@@ -64,10 +89,64 @@ class ReservationControllerDocsTest {
         // given
         val request =
             MakeReservationRequest(
-                date = LocalDate.now().plusDays(1),
-                time = LocalTime.now(),
+                date = LocalDate.of(2025, 7, 30),
                 seat = 1L
             )
+        val concertSeatId = 1L
+        val scheduleId = 10L
+        val seatId = 100L
+        val concertId = 1000L
+        val date: LocalDate = LocalDate.of(2025, 7, 30)
+        val userUUID: UUID = UUID.randomUUID()
+
+        val concertSeat =
+            ConcertSeat(
+                id = concertSeatId,
+                scheduleId = scheduleId,
+                seatId = seatId,
+                status = ConcertSeat.SeatStatus.AVAILABLE
+            )
+
+        val schedule =
+            ConcertSchedule(
+                id = scheduleId,
+                concertId = concertId,
+                date = date
+            )
+
+        val reservedAt: LocalDateTime = LocalDateTime.now()
+        val expiresAt: LocalDateTime = reservedAt.plusMinutes(15)
+
+        val reservation =
+            Reservation(
+                userId = userUUID,
+                concertId = concertId,
+                concertSeatId = concertSeatId,
+                status = Reservation.Status.IN_PROGRESS,
+                reservedAt = reservedAt,
+                expiresAt = expiresAt
+            )
+
+        val seat =
+            Seat(
+                id = seatId,
+                number = 1L,
+                price = 1000L
+            )
+
+        val payment =
+            Payment(
+                id = 1L,
+                userId = userUUID,
+                price = seat.price
+            )
+
+        // mock
+        BDDMockito.given(concertSeatPort.getConcertSeat(concertSeatId)).willReturn(concertSeat)
+        BDDMockito.given(concertSchedulePort.getSchedule(scheduleId)).willReturn(schedule)
+        BDDMockito.given(seatPort.getSeat(seatId)).willReturn(seat)
+        BDDMockito.willDoNothing().given(reservationPort).save(reservation)
+        BDDMockito.given(paymentPort.save(payment)).willReturn(payment.id)
 
         // when
         val result: ResultActions =
@@ -76,6 +155,7 @@ class ReservationControllerDocsTest {
                     MockMvcRequestBuilders
                         .post("/api/reservations")
                         .content(objectMapper.writeValueAsString(request))
+                        .requestAttr("userId", userUUID.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("EntryQueueToken", "token")
                 )
@@ -103,10 +183,6 @@ class ReservationControllerDocsTest {
                                     .type(JsonFieldType.STRING)
                                     .description("예약 일자"),
                                 PayloadDocumentation
-                                    .fieldWithPath("time")
-                                    .type(JsonFieldType.STRING)
-                                    .description("예약 시간"),
-                                PayloadDocumentation
                                     .fieldWithPath("seat")
                                     .type(JsonFieldType.NUMBER)
                                     .description("좌석")
@@ -131,17 +207,17 @@ class ReservationControllerDocsTest {
                                     .type(JsonFieldType.STRING)
                                     .description("응답 메시지"),
                                 PayloadDocumentation
-                                    .fieldWithPath("result.id")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("예약 식별자"),
-                                PayloadDocumentation
                                     .fieldWithPath("result.userId")
-                                    .type(JsonFieldType.NUMBER)
+                                    .type(JsonFieldType.STRING)
                                     .description("유저 식별자"),
                                 PayloadDocumentation
-                                    .fieldWithPath("result.concertId")
+                                    .fieldWithPath("result.concertSeatId")
                                     .type(JsonFieldType.NUMBER)
-                                    .description("콘서트 식별자"),
+                                    .description("콘서트 좌석 식별자"),
+                                PayloadDocumentation
+                                    .fieldWithPath("result.concertDate")
+                                    .type(JsonFieldType.STRING)
+                                    .description("콘서트 날짜"),
                                 PayloadDocumentation
                                     .fieldWithPath("result.reservedAt")
                                     .type(JsonFieldType.STRING)
@@ -171,7 +247,6 @@ class ReservationControllerDocsTest {
         val request =
             MakeReservationRequest(
                 date = LocalDate.now().plusDays(1),
-                time = LocalTime.now(),
                 seat = -1L
             )
 
@@ -210,10 +285,6 @@ class ReservationControllerDocsTest {
                                     .fieldWithPath("date")
                                     .type(JsonFieldType.STRING)
                                     .description("예약 일자"),
-                                PayloadDocumentation
-                                    .fieldWithPath("time")
-                                    .type(JsonFieldType.STRING)
-                                    .description("예약 시간"),
                                 PayloadDocumentation
                                     .fieldWithPath("seat")
                                     .type(JsonFieldType.NUMBER)

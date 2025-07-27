@@ -2,20 +2,28 @@ package kr.hhplus.be.server.docs
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
-import com.fasterxml.jackson.databind.ObjectMapper
-import kr.hhplus.be.server.adapter.web.dto.request.PayWithPointsRequest
-import kr.hhplus.be.server.common.exception.ErrorCode
+import java.util.UUID
+import kr.hhplus.be.server.adapter.web.PaymentController
+import kr.hhplus.be.server.application.port.ConcertSeatPort
+import kr.hhplus.be.server.application.port.EntryQueuePort
+import kr.hhplus.be.server.application.port.PaymentPort
+import kr.hhplus.be.server.application.port.PointWalletPort
+import kr.hhplus.be.server.application.port.ReservationPort
+import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.domain.Payment
+import kr.hhplus.be.server.domain.PointWallet
+import kr.hhplus.be.server.domain.QueueToken
+import kr.hhplus.be.server.domain.Reservation
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers.anyList
+import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
@@ -30,16 +38,27 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ExtendWith(RestDocumentationExtension::class)
+@ControllerDocsTest
+@Import(TestConfig::class)
+@WebMvcTest(controllers = [PaymentController::class])
 class PaymentControllerDocsTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private val objectMapper = ObjectMapper()
+    private lateinit var reservationPort: ReservationPort
+
+    @Autowired
+    private lateinit var paymentPort: PaymentPort
+
+    @Autowired
+    private lateinit var pointWalletPort: PointWalletPort
+
+    @Autowired
+    private lateinit var concertSeatPort: ConcertSeatPort
+
+    @Autowired
+    private lateinit var entryQueuePort: EntryQueuePort
 
     @BeforeEach
     fun setUp(
@@ -60,17 +79,62 @@ class PaymentControllerDocsTest {
     @DisplayName("[문서] 포인트 결제 요청")
     fun paymentPoints() {
         // given
-        val reservationId = 1L
-        val request = PayWithPointsRequest(1000L)
+        val userId: UUID = UUID.randomUUID()
+        val reservation =
+            Reservation(
+                id = 1L,
+                userId = userId,
+                concertSeatId = 1L,
+                concertId = 1L,
+                paymentId = 1L,
+                status = Reservation.Status.IN_PROGRESS
+            )
+        val payment =
+            Payment(
+                id = 1L,
+                userId = userId,
+                price = 1000L
+            )
+
+        // mock
+
+        BDDMockito.given(reservationPort.getAll(userId.toString())).willReturn(
+            listOf(
+                reservation
+            )
+        )
+        BDDMockito.given(paymentPort.getAll(anyList())).willReturn(listOf(payment))
+        BDDMockito.given(pointWalletPort.getWallet(userId)).willReturn(
+            PointWallet(
+                id = 1L,
+                userId = userId,
+                balance = 2000L
+            )
+        )
+        BDDMockito.given(concertSeatPort.getConcertSeat(1L)).willReturn(
+            ConcertSeat(
+                id = 1L,
+                scheduleId = 1L,
+                seatId = 1L,
+                status = ConcertSeat.SeatStatus.HELD
+            )
+        )
+        BDDMockito.given(entryQueuePort.getEntryQueueToken(userId)).willReturn(
+            QueueToken(
+                id = 1L,
+                userId = userId,
+                queueNumber = 1,
+                token = "token"
+            )
+        )
 
         // when
         val result: ResultActions =
             mockMvc
                 .perform(
                     MockMvcRequestBuilders
-                        .post("/api/reservations/{id}/payment/points", reservationId)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .post("/api/payments")
+                        .requestAttr("userId", userId.toString())
                         .header("EntryQueueToken", "token")
                 )
 
@@ -101,111 +165,13 @@ class PaymentControllerDocsTest {
                                     .type(JsonFieldType.STRING)
                                     .description("응답 메시지"),
                                 PayloadDocumentation
-                                    .fieldWithPath("result.userId")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("유저 식별자"),
-                                PayloadDocumentation
-                                    .fieldWithPath("result.reservationId")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("예약 식별자"),
-                                PayloadDocumentation
-                                    .fieldWithPath("result.price")
+                                    .fieldWithPath("result.totalPrice")
                                     .type(JsonFieldType.NUMBER)
                                     .description("가격"),
                                 PayloadDocumentation
-                                    .fieldWithPath("result.paidAt")
-                                    .type(JsonFieldType.STRING)
-                                    .description("결제 일자")
-                            ),
-                            PayloadDocumentation.requestFields(
-                                PayloadDocumentation
-                                    .fieldWithPath("price")
+                                    .fieldWithPath("result.reservationCount")
                                     .type(JsonFieldType.NUMBER)
-                                    .description("가격")
-                            ),
-                            HeaderDocumentation.requestHeaders(
-                                HeaderDocumentation
-                                    .headerWithName("EntryQueueToken")
-                                    .description("대기열 토큰")
-                                    .attributes(
-                                        Attributes
-                                            .key("EntryQueueToken")
-                                            .value("Token")
-                                    )
-                            )
-                        ),
-                    requestPreprocessor =
-                        Preprocessors.preprocessRequest(
-                            Preprocessors.prettyPrint()
-                        ),
-                    responsePreprocessor =
-                        Preprocessors.preprocessResponse(
-                            Preprocessors.prettyPrint()
-                        )
-                )
-            )
-    }
-
-    @Test
-    @DisplayName("[문서] 포인트 결제 요청")
-    fun paymentPointsBadRequest() {
-        // given
-        val reservationId = 1L
-        val request = PayWithPointsRequest(-1L)
-
-        // when
-        val result: ResultActions =
-            mockMvc
-                .perform(
-                    MockMvcRequestBuilders
-                        .post("/api/reservations/{id}/payment/points", reservationId)
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("EntryQueueToken", "token")
-                )
-
-        // then
-        result
-            .andExpectAll(
-                MockMvcResultMatchers.status().isOk,
-                MockMvcResultMatchers
-                    .jsonPath("$.code")
-                    .value(ErrorCode.INVALID_REQUEST_VALUE.code),
-                MockMvcResultMatchers
-                    .jsonPath("$.message")
-                    .value(ErrorCode.INVALID_REQUEST_VALUE.message)
-            ).andDo(
-                MockMvcRestDocumentationWrapper.document(
-                    identifier = "포인트 결제 - 잘못된 요청",
-                    resourceDetails =
-                        ResourceSnippetParameters
-                            .builder()
-                            .tag("결제"),
-                    snippets =
-                        arrayOf(
-                            PayloadDocumentation.responseFields(
-                                PayloadDocumentation
-                                    .fieldWithPath("code")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("응답 코드"),
-                                PayloadDocumentation
-                                    .fieldWithPath("message")
-                                    .type(JsonFieldType.STRING)
-                                    .description("응답 메시지"),
-                                PayloadDocumentation
-                                    .fieldWithPath("result.errors[0].field")
-                                    .type(JsonFieldType.STRING)
-                                    .description("잘못 요청한 필드 이름"),
-                                PayloadDocumentation
-                                    .fieldWithPath("result.errors[0].value")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("잘못 요청한 필드 값")
-                            ),
-                            PayloadDocumentation.requestFields(
-                                PayloadDocumentation
-                                    .fieldWithPath("price")
-                                    .type(JsonFieldType.NUMBER)
-                                    .description("가격")
+                                    .description("예약 건수")
                             ),
                             HeaderDocumentation.requestHeaders(
                                 HeaderDocumentation

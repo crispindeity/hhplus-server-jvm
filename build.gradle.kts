@@ -26,6 +26,7 @@ version = getGitHash()
 val restdocsSpecMockMvcVersion = "0.18.2"
 val kotlinCoroutineVersion = "1.10.2"
 val restAssuredVersion = "5.5.0"
+val nimbusJWTVersion = "10.3"
 
 java {
     toolchain {
@@ -77,6 +78,9 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // JWT
+    implementation("com.nimbusds:nimbus-jose-jwt:${nimbusJWTVersion}")
 }
 
 tasks.withType<Test> {

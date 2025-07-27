@@ -2,19 +2,24 @@ package kr.hhplus.be.server.docs
 
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
-import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDate
+import kr.hhplus.be.server.adapter.web.ConcertController
+import kr.hhplus.be.server.application.port.ConcertPort
+import kr.hhplus.be.server.application.port.ConcertSchedulePort
+import kr.hhplus.be.server.application.port.ConcertSeatPort
+import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
+import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.domain.ConcertSchedule
+import kr.hhplus.be.server.domain.ConcertSeat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
@@ -30,16 +35,21 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ExtendWith(RestDocumentationExtension::class)
+@ControllerDocsTest
+@Import(TestConfig::class)
+@WebMvcTest(controllers = [ConcertController::class])
 class ConcertControllerDocsTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
-    private val objectMapper = ObjectMapper()
+    private lateinit var concertPort: ConcertPort
+
+    @Autowired
+    private lateinit var concertSchedulePort: ConcertSchedulePort
+
+    @Autowired
+    private lateinit var concertSeatPort: ConcertSeatPort
 
     @BeforeEach
     fun setUp(
@@ -61,6 +71,15 @@ class ConcertControllerDocsTest {
     fun findAvailableDates() {
         // given
         val concertId = 1L
+        val schedules: List<ConcertSchedule> =
+            listOf(
+                ConcertSchedule(id = 1L, concertId = concertId, date = LocalDate.now()),
+                ConcertSchedule(id = 2L, concertId = concertId, date = LocalDate.now())
+            )
+
+        // mock
+        BDDMockito.given(concertPort.existsConcert(concertId)).willReturn(true)
+        BDDMockito.given(concertSchedulePort.getAvailableSchedules(concertId)).willReturn(schedules)
 
         // when
         val result: ResultActions =
@@ -131,6 +150,34 @@ class ConcertControllerDocsTest {
         // given
         val concertId = 1L
         val param: LocalDate = LocalDate.now().plusDays(1)
+        val scheduleId = 10L
+        val schedule = ConcertSchedule(id = scheduleId, concertId = concertId, date = param)
+        val availableSeats: List<AvailableSeatDto> =
+            listOf(
+                AvailableSeatDto(
+                    id = 1,
+                    number = 1,
+                    price = 1000,
+                    status = ConcertSeat.SeatStatus.AVAILABLE
+                ),
+                AvailableSeatDto(
+                    id = 2,
+                    number = 2,
+                    price = 3000,
+                    status = ConcertSeat.SeatStatus.AVAILABLE
+                )
+            )
+
+        // mock
+        BDDMockito
+            .given(concertPort.existsConcert(concertId))
+            .willReturn(true)
+        BDDMockito
+            .given(concertSchedulePort.getSchedule(concertId, date = param))
+            .willReturn(schedule)
+        BDDMockito
+            .given(concertSeatPort.getAvailableSeats(scheduleId))
+            .willReturn(availableSeats)
 
         // when
         val result: ResultActions =

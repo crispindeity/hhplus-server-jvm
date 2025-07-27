@@ -1,9 +1,11 @@
 package kr.hhplus.be.server.adapter.web
 
 import jakarta.validation.Valid
+import java.util.UUID
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.ChargePointsRequest
 import kr.hhplus.be.server.adapter.web.dto.response.FindUserPointResponse
+import kr.hhplus.be.server.application.service.UserPointService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -13,22 +15,23 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-internal class UserPointController {
+internal class UserPointController(
+    private val userPointService: UserPointService
+) {
     @PostMapping("/{id}/points/charge")
     fun chargePoint(
-        @PathVariable id: Long,
+        @PathVariable id: UUID,
         @RequestBody @Valid request: ChargePointsRequest
-    ): ApiResponse<Long> = ApiResponse.success(result = id)
+    ): ApiResponse<Long> {
+        val response: Long = userPointService.chargePoint(userId = id, amount = request.amount)
+        return ApiResponse.success(result = response)
+    }
 
     @GetMapping("/{id}/points")
     fun findUserPoint(
-        @PathVariable id: Long
+        @PathVariable id: UUID
     ): ApiResponse<FindUserPointResponse> {
-        val response =
-            FindUserPointResponse(
-                userId = id,
-                balance = 1000L
-            )
+        val response = FindUserPointResponse(userId = id, balance = userPointService.getPoint(id))
         return ApiResponse.success(result = response)
     }
 }

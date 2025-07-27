@@ -31,6 +31,10 @@ spring:
     url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+jwt:
+  secret: uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=
+  expiration-minutes: 60
+
 
 ---
 spring:

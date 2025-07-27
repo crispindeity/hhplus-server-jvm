@@ -3,19 +3,23 @@ package kr.hhplus.be.server.docs
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
+import java.util.UUID
+import kr.hhplus.be.server.adapter.web.UserPointController
 import kr.hhplus.be.server.adapter.web.dto.request.ChargePointsRequest
+import kr.hhplus.be.server.application.port.PointWalletPort
+import kr.hhplus.be.server.application.port.UserPort
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.domain.PointWallet
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.BDDMockito
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.headers.HeaderDocumentation
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
 import org.springframework.restdocs.operation.preprocess.Preprocessors
@@ -30,16 +34,21 @@ import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-@ExtendWith(RestDocumentationExtension::class)
+@ControllerDocsTest
+@Import(TestConfig::class)
+@WebMvcTest(controllers = [UserPointController::class])
 class UserPointControllerDocsTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
     @Autowired
     private val objectMapper = ObjectMapper()
+
+    @Autowired
+    private lateinit var userPort: UserPort
+
+    @Autowired
+    private lateinit var pointWalletPort: PointWalletPort
 
     @BeforeEach
     fun setUp(
@@ -60,8 +69,14 @@ class UserPointControllerDocsTest {
     @DisplayName("[문서] 유저 포인트 충전 요청")
     fun chargePoints() {
         // given
-        val userId = 1L
+        val userId: UUID = UUID.randomUUID()
         val request = ChargePointsRequest(1000L)
+        val pointWallet = PointWallet(userId = userId, balance = 1000L)
+
+        // mock
+        BDDMockito.given(userPort.exists(userId)).willReturn(true)
+        BDDMockito.given(pointWalletPort.getWallet(userId)).willReturn(pointWallet)
+        BDDMockito.willDoNothing().given(pointWalletPort).update(pointWallet.chargePoint(500L))
 
         // when
         val result: ResultActions =
@@ -138,7 +153,7 @@ class UserPointControllerDocsTest {
     @DisplayName("[문서] 유저 포인트 충전 요청 - 잘못된 요청")
     fun chargePointsBadRequest() {
         // given
-        val userId = 1L
+        val userId: UUID = UUID.randomUUID()
         val request = ChargePointsRequest(-1L)
 
         // when
@@ -222,7 +237,12 @@ class UserPointControllerDocsTest {
     @DisplayName("[문서] 유저 포인트 조회 요청")
     fun findPoint() {
         // given
-        val userId = 1L
+        val userId: UUID = UUID.randomUUID()
+        val pointWallet = PointWallet(userId = userId, balance = 1000L)
+
+        // mock
+        BDDMockito.given(userPort.exists(userId)).willReturn(true)
+        BDDMockito.given(pointWalletPort.getWallet(userId)).willReturn(pointWallet)
 
         // when
         val result: ResultActions =
@@ -261,7 +281,7 @@ class UserPointControllerDocsTest {
                                     .description("응답 메시지"),
                                 PayloadDocumentation
                                     .fieldWithPath("result.userId")
-                                    .type(JsonFieldType.NUMBER)
+                                    .type(JsonFieldType.STRING)
                                     .description("유저 식별자"),
                                 PayloadDocumentation
                                     .fieldWithPath("result.balance")
