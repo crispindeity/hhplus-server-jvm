@@ -8,8 +8,10 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.QueueToken
 import org.slf4j.Logger
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
+@Transactional(readOnly = true)
 internal class QueueAccessValidator(
     private val entryQueuePort: EntryQueuePort
 ) {

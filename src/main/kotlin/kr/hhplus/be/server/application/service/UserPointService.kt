@@ -10,14 +10,17 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.PointWallet
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 internal class UserPointService(
     private val userPort: UserPort,
     private val pointWalletPort: PointWalletPort
 ) {
     private val logger: Logger = Log.getLogger(UserPointService::class.java)
 
+    @Transactional
     fun chargePoint(
         userId: UUID,
         amount: Long

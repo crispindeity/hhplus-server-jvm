@@ -20,8 +20,10 @@ import kr.hhplus.be.server.domain.PointWallet
 import kr.hhplus.be.server.domain.QueueToken
 import kr.hhplus.be.server.domain.Reservation
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 internal class PaymentService(
     private val paymentPort: PaymentPort,
     private val reservationPort: ReservationPort,
@@ -30,6 +32,7 @@ internal class PaymentService(
     private val entryQueuePort: EntryQueuePort,
     private val seatHoldPort: SeatHoldPort
 ) {
+    @Transactional
     fun payment(userId: String): PaymentResponse {
         val userUUID: UUID = UUID.fromString(userId)
 

@@ -8,14 +8,17 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.QueueToken
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 internal class EntryQueueService(
     private val entryQueuePort: EntryQueuePort,
     private val jwtHelper: JWTHelper
 ) {
     private val logger: Logger = Log.getLogger(EntryQueueService::class.java)
 
+    @Transactional
     fun createEntryQueueToken(userId: UUID): String =
         Log.logging(logger) { log ->
             log["method"] = "createEntryQueueToken()"

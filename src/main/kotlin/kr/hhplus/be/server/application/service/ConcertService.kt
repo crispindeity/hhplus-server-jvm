@@ -15,8 +15,10 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.domain.ConcertSchedule
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 internal class ConcertService(
     private val concertPort: ConcertPort,
     private val concertSchedulePort: ConcertSchedulePort,
