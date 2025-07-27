@@ -30,7 +30,7 @@ internal class PaymentService(
         val userUUID: UUID = UUID.fromString(userId)
 
         val reservations: List<Reservation> =
-            reservationPort.getInProgressReservations(userUUID)
+            reservationPort.getAll(userUUID.toString())
         if (reservations.isEmpty()) {
             throw CustomException(ErrorCode.NOT_FOUND_RESERVATION)
         }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 internal class PointWalletPersistenceAdapter(
     private val repository: PointWalletRepository
 ) : PointWalletPort {
-    override fun chargePoint(wallet: PointWallet) {
+    override fun update(wallet: PointWallet) {
         repository.update(wallet.toEntity())
     }
 

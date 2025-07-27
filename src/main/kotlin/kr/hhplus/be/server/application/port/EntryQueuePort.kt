@@ -13,4 +13,6 @@ internal interface EntryQueuePort {
     fun getCurrentAllowedQueueNumber(): Int
 
     fun getEntryQueueToken(userId: UUID): QueueToken?
+
+    fun update(token: QueueToken)
 }

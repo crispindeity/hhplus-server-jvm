@@ -13,4 +13,8 @@ internal class SeatHoldPersistenceAdapter(
     override fun save(seatHold: SeatHold) {
         repository.save(seatHold.toEntity())
     }
+
+    override fun deleteAll(seatIds: List<Long>) {
+        repository.deleteAll(seatIds)
+    }
 }

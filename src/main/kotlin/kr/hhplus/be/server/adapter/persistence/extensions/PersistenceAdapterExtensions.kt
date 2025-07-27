@@ -1,20 +1,23 @@
 package kr.hhplus.be.server.adapter.persistence.extensions
 
-import java.time.Instant
 import java.util.UUID
 import kr.hhplus.be.server.adapter.persistence.dto.AvailableSeatProjection
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertScheduleEntity
 import kr.hhplus.be.server.adapter.persistence.entity.ConcertSeatEntity
+import kr.hhplus.be.server.adapter.persistence.entity.PaymentEntity
 import kr.hhplus.be.server.adapter.persistence.entity.PointWalletEntity
 import kr.hhplus.be.server.adapter.persistence.entity.QueueTokenJpaEntity
 import kr.hhplus.be.server.adapter.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.adapter.persistence.entity.SeatEntity
 import kr.hhplus.be.server.adapter.persistence.entity.SeatHoldEntity
 import kr.hhplus.be.server.application.service.dto.AvailableSeatDto
 import kr.hhplus.be.server.domain.ConcertSchedule
 import kr.hhplus.be.server.domain.ConcertSeat
+import kr.hhplus.be.server.domain.Payment
 import kr.hhplus.be.server.domain.PointWallet
 import kr.hhplus.be.server.domain.QueueToken
 import kr.hhplus.be.server.domain.Reservation
+import kr.hhplus.be.server.domain.Seat
 import kr.hhplus.be.server.domain.SeatHold
 
 internal fun QueueToken.toEntity(): QueueTokenJpaEntity =
@@ -23,7 +26,7 @@ internal fun QueueToken.toEntity(): QueueTokenJpaEntity =
         queueNumber = this.queueNumber,
         token = this.token,
         status = this.status.toEntity(),
-        expiresAt = Instant.now().plusSeconds(60 * 60 * 24)
+        expiresAt = this.expiresAt
     )
 
 internal fun QueueToken.Status.toEntity(): QueueTokenJpaEntity.Status =
@@ -135,4 +138,80 @@ internal fun PointWallet.toEntity(): PointWalletEntity =
         id = this.id,
         userId = this.userId.toString(),
         balance = this.balance
+    )
+
+internal fun QueueToken.toUpdateEntity(): QueueTokenJpaEntity =
+    QueueTokenJpaEntity(
+        id = this.id,
+        userId = this.userId.toString(),
+        queueNumber = this.queueNumber,
+        token = this.token,
+        status = this.status.toEntity(),
+        expiresAt = this.expiresAt
+    )
+
+internal fun Reservation.toUpdateEntity(): ReservationEntity =
+    ReservationEntity(
+        id = this.id,
+        userId = this.userId.toString(),
+        concertId = this.concertId,
+        paymentId = this.paymentId,
+        concertSeatId = this.concertSeatId,
+        confirmedAt = this.confirmedAt,
+        reservedAt = this.reservedAt,
+        expiresAt = this.expiresAt,
+        status =
+            when (this.status) {
+                Reservation.Status.IN_PROGRESS -> ReservationEntity.Status.IN_PROGRESS
+                Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
+                Reservation.Status.CONFIRMED -> ReservationEntity.Status.CONFIRMED
+                Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
+            }
+    )
+
+internal fun SeatEntity.toDomain(): Seat =
+    Seat(
+        id = this.id!!,
+        number = this.number,
+        price = this.price
+    )
+
+internal fun Payment.toEntity(): PaymentEntity =
+    PaymentEntity(
+        userId = this.userId.toString(),
+        price = this.price,
+        status =
+            when (this.status) {
+                Payment.Status.PENDING -> PaymentEntity.Status.PENDING
+                Payment.Status.COMPLETED -> PaymentEntity.Status.COMPLETED
+                Payment.Status.CANCELLED -> PaymentEntity.Status.CANCELLED
+            }
+    )
+
+internal fun PaymentEntity.toDomain(): Payment =
+    Payment(
+        id = this.id!!,
+        userId = UUID.fromString(this.userId),
+        price = this.price,
+        paidAt = this.paidAt,
+        status =
+            when (this.status) {
+                PaymentEntity.Status.PENDING -> Payment.Status.PENDING
+                PaymentEntity.Status.COMPLETED -> Payment.Status.COMPLETED
+                PaymentEntity.Status.CANCELLED -> Payment.Status.CANCELLED
+            }
+    )
+
+internal fun Payment.toUpdateEntity(): PaymentEntity =
+    PaymentEntity(
+        id = this.id,
+        userId = this.userId.toString(),
+        price = this.price,
+        paidAt = this.paidAt,
+        status =
+            when (this.status) {
+                Payment.Status.PENDING -> PaymentEntity.Status.PENDING
+                Payment.Status.COMPLETED -> PaymentEntity.Status.COMPLETED
+                Payment.Status.CANCELLED -> PaymentEntity.Status.CANCELLED
+            }
     )

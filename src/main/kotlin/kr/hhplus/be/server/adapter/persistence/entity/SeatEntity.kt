@@ -8,7 +8,7 @@ import jakarta.persistence.Table
 @Table(name = "seats")
 internal class SeatEntity(
     @Column(nullable = false)
-    val number: Int,
+    val number: Long,
     @Column(nullable = false)
     val price: Long
 ) : BaseEntity()

@@ -15,4 +15,6 @@ internal interface EntryQueueRepository {
     fun findCurrentAllowedQueueNumber(): Int
 
     fun findEntryQueueNextNumber(): Int
+
+    fun update(entity: QueueTokenJpaEntity)
 }

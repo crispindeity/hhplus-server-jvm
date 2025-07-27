@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.adapter.persistence
 
 import kr.hhplus.be.server.adapter.persistence.extensions.toEntity
+import kr.hhplus.be.server.adapter.persistence.extensions.toUpdateEntity
 import kr.hhplus.be.server.adapter.persistence.repository.ReservationRepository
 import kr.hhplus.be.server.application.port.ReservationPort
 import kr.hhplus.be.server.domain.Reservation
@@ -12,5 +13,13 @@ internal class ReservationPersistenceAdapter(
 ) : ReservationPort {
     override fun save(reservation: Reservation) {
         repository.save(reservation.toEntity())
+    }
+
+    override fun getAll(userId: String): List<Reservation> {
+        TODO()
+    }
+
+    override fun update(reservation: Reservation) {
+        repository.update(reservation.toUpdateEntity())
     }
 }

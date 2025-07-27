@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.domain
 
+import java.time.Instant
 import java.util.UUID
 import kr.hhplus.be.server.common.exception.CustomException
 import kr.hhplus.be.server.common.exception.ErrorCode
@@ -9,7 +10,8 @@ data class QueueToken(
     val userId: UUID,
     val queueNumber: Int,
     val token: String,
-    var status: Status = Status.WAITING
+    var status: Status = Status.WAITING,
+    val expiresAt: Instant = Instant.now().plusSeconds(60 * 60 * 24)
 ) {
     enum class Status {
         WAITING,

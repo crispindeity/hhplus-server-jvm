@@ -10,4 +10,8 @@ internal class SeatHoldDomainRepository(
     override fun save(entity: SeatHoldEntity) {
         jpaRepository.save(entity)
     }
+
+    override fun deleteAll(ids: List<Long>) {
+        jpaRepository.deleteAllByIdInBatch(ids)
+    }
 }

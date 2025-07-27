@@ -3,6 +3,7 @@ package kr.hhplus.be.server.adapter.persistence
 import java.util.UUID
 import kr.hhplus.be.server.adapter.persistence.extensions.toDomain
 import kr.hhplus.be.server.adapter.persistence.extensions.toEntity
+import kr.hhplus.be.server.adapter.persistence.extensions.toUpdateEntity
 import kr.hhplus.be.server.adapter.persistence.repository.EntryQueueRepository
 import kr.hhplus.be.server.application.port.EntryQueuePort
 import kr.hhplus.be.server.domain.QueueToken
@@ -28,4 +29,8 @@ internal class EntryQueuePersistenceAdapter(
 
     override fun getEntryQueueToken(userId: UUID): QueueToken? =
         repository.findBy(userId.toString())?.toDomain()
+
+    override fun update(token: QueueToken) {
+        repository.update(token.toUpdateEntity())
+    }
 }

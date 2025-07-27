@@ -10,6 +10,7 @@ import java.time.Instant
 @Entity
 @Table(name = "queue_tokens")
 internal class QueueTokenJpaEntity(
+    override val id: Long? = null,
     @Column(nullable = false, length = 36)
     val userId: String,
     @Column(nullable = false)
