@@ -5,11 +5,13 @@ import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
 import kr.hhplus.be.server.fake.FakePaymentPort
+import kr.hhplus.be.server.fake.FakePointTransactionPort
 import kr.hhplus.be.server.fake.FakePointWalletPort
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeSeatHoldPort
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.payment.adapter.web.dto.response.PaymentResponse
+import kr.hhplus.be.server.pointtransaction.application.port.PointTransactionPort
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -25,6 +27,7 @@ class PaymentServiceTest {
     private lateinit var pointWalletPort: FakePointWalletPort
     private lateinit var concertSeatPort: FakeConcertSeatPort
     private lateinit var seatPort: FakeSeatPort
+    private lateinit var pointTransactionPort: PointTransactionPort
 
     @BeforeEach
     fun setUp() {
@@ -35,6 +38,7 @@ class PaymentServiceTest {
         reservationPort = FakeReservationPort()
         pointWalletPort = FakePointWalletPort()
         concertSeatPort = FakeConcertSeatPort(seatPort)
+        pointTransactionPort = FakePointTransactionPort()
         paymentService =
             PaymentService(
                 paymentPort = paymentPort,
@@ -42,7 +46,8 @@ class PaymentServiceTest {
                 pointWalletPort = pointWalletPort,
                 concertSeatPort = concertSeatPort,
                 entryQueuePort = entryQueuePort,
-                seatHoldPort = seatHoldPort
+                seatHoldPort = seatHoldPort,
+                pointTransactionPort = pointTransactionPort
             )
     }
 
