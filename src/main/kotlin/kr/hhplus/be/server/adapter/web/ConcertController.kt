@@ -5,6 +5,7 @@ import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableDatesResponse
 import kr.hhplus.be.server.adapter.web.dto.response.FindAvailableSeatsResponses
 import kr.hhplus.be.server.application.service.ConcertService
+import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 internal class ConcertController(
     private val concertService: ConcertService
 ) {
+    @RequireQueueAccess
     @GetMapping("/{id}/reservations/available-dates")
     fun findAvailableDates(
         @PathVariable id: Long
@@ -24,6 +26,7 @@ internal class ConcertController(
         return ApiResponse.success(result = response)
     }
 
+    @RequireQueueAccess
     @GetMapping("/{id}/reservations/available-seats")
     fun findAvailableSeats(
         @PathVariable id: Long,

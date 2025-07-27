@@ -6,6 +6,7 @@ import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.ChargePointsRequest
 import kr.hhplus.be.server.adapter.web.dto.response.FindUserPointResponse
 import kr.hhplus.be.server.application.service.UserPointService
+import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 internal class UserPointController(
     private val userPointService: UserPointService
 ) {
+    @RequireQueueAccess
     @PostMapping("/{id}/points/charge")
     fun chargePoint(
         @PathVariable id: UUID,
@@ -27,6 +29,7 @@ internal class UserPointController(
         return ApiResponse.success(result = response)
     }
 
+    @RequireQueueAccess
     @GetMapping("/{id}/points")
     fun findUserPoint(
         @PathVariable id: UUID

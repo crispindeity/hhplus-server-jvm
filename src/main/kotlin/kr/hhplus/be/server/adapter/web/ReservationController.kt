@@ -7,6 +7,7 @@ import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.request.MakeReservationRequest
 import kr.hhplus.be.server.adapter.web.dto.response.MakeReservationResponse
 import kr.hhplus.be.server.application.service.ReservationService
+import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.exception.ReservationException
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,6 +21,7 @@ internal class ReservationController(
     private val reservationService: ReservationService
 ) {
     @PostMapping
+    @RequireQueueAccess
     fun makeReservation(
         @RequestBody @Valid request: MakeReservationRequest,
         servletRequest: HttpServletRequest

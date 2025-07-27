@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest
 import kr.hhplus.be.server.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.adapter.web.dto.response.PaymentResponse
 import kr.hhplus.be.server.application.service.PaymentService
+import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.exception.ServletException
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,6 +18,7 @@ internal class PaymentController(
     private val paymentService: PaymentService
 ) {
     @PostMapping
+    @RequireQueueAccess
     fun payWithPoints(servletRequest: HttpServletRequest): ApiResponse<PaymentResponse> {
         val userId: String =
             servletRequest.getUserIdOrNull()
