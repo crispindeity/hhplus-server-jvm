@@ -1,7 +1,7 @@
 package kr.hhplus.be.server.fake
 
-import kr.hhplus.be.server.application.port.SeatPort
-import kr.hhplus.be.server.domain.Seat
+import kr.hhplus.be.server.seat.application.port.SeatPort
+import kr.hhplus.be.server.seat.domain.Seat
 
 internal class FakeSeatPort : SeatPort {
     private val seatStorage = mutableMapOf<Long, Seat>()

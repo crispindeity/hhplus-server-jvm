@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import java.util.UUID
-import kr.hhplus.be.server.application.port.PaymentPort
-import kr.hhplus.be.server.domain.Payment
+import kr.hhplus.be.server.payment.application.port.PaymentPort
+import kr.hhplus.be.server.payment.domain.Payment
 
 internal class FakePaymentPort : PaymentPort {
     private val storage: MutableMap<Long, Payment> = mutableMapOf()

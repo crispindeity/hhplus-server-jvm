@@ -1,23 +1,24 @@
 package kr.hhplus.be.server.config
 
-import kr.hhplus.be.server.application.port.ConcertPort
-import kr.hhplus.be.server.application.port.ConcertSchedulePort
-import kr.hhplus.be.server.application.port.ConcertSeatPort
-import kr.hhplus.be.server.application.port.EntryQueuePort
-import kr.hhplus.be.server.application.port.PaymentPort
-import kr.hhplus.be.server.application.port.PointWalletPort
-import kr.hhplus.be.server.application.port.ReservationPort
-import kr.hhplus.be.server.application.port.SeatHoldPort
-import kr.hhplus.be.server.application.port.SeatPort
-import kr.hhplus.be.server.application.port.UserPort
-import kr.hhplus.be.server.application.service.ConcertService
-import kr.hhplus.be.server.application.service.EntryQueueService
-import kr.hhplus.be.server.application.service.JWTHelper
-import kr.hhplus.be.server.application.service.PaymentService
-import kr.hhplus.be.server.application.service.QueueAccessValidator
-import kr.hhplus.be.server.application.service.ReservationContextLoader
-import kr.hhplus.be.server.application.service.ReservationService
-import kr.hhplus.be.server.application.service.UserPointService
+import kr.hhplus.be.server.concert.application.port.ConcertPort
+import kr.hhplus.be.server.concert.application.service.ConcertService
+import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
+import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
+import kr.hhplus.be.server.payment.application.port.PaymentPort
+import kr.hhplus.be.server.payment.application.service.PaymentService
+import kr.hhplus.be.server.pointtransaction.application.port.PointTransactionPort
+import kr.hhplus.be.server.pointwallet.application.port.PointWalletPort
+import kr.hhplus.be.server.pointwallet.application.service.PointWalletService
+import kr.hhplus.be.server.queuetoken.application.port.EntryQueuePort
+import kr.hhplus.be.server.queuetoken.application.service.EntryQueueService
+import kr.hhplus.be.server.queuetoken.application.service.JWTHelper
+import kr.hhplus.be.server.queuetoken.application.service.QueueAccessValidator
+import kr.hhplus.be.server.reservation.application.port.ReservationPort
+import kr.hhplus.be.server.reservation.application.service.ReservationContextLoader
+import kr.hhplus.be.server.reservation.application.service.ReservationService
+import kr.hhplus.be.server.seat.application.port.SeatPort
+import kr.hhplus.be.server.seathold.application.port.SeatHoldPort
+import kr.hhplus.be.server.user.application.port.UserPort
 import org.mockito.Mockito.mock
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -100,13 +101,18 @@ internal class TestConfig {
     fun pointWalletPort(): PointWalletPort = mock(PointWalletPort::class.java)
 
     @Bean
+    fun pointTransactionPort(): PointTransactionPort = mock(PointTransactionPort::class.java)
+
+    @Bean
     fun userPointService(
         userPort: UserPort,
-        pointWalletPort: PointWalletPort
-    ): UserPointService =
-        UserPointService(
+        pointWalletPort: PointWalletPort,
+        pointTransactionPort: PointTransactionPort
+    ): PointWalletService =
+        PointWalletService(
             userPort,
-            pointWalletPort
+            pointWalletPort,
+            pointTransactionPort
         )
 
     @Bean
@@ -119,7 +125,8 @@ internal class TestConfig {
         pointWalletPort: PointWalletPort,
         concertSeatPort: ConcertSeatPort,
         entryQueuePort: EntryQueuePort,
-        seatHoldPort: SeatHoldPort
+        seatHoldPort: SeatHoldPort,
+        pointTransactionPort: PointTransactionPort
     ): PaymentService =
         PaymentService(
             paymentPort,
@@ -127,6 +134,7 @@ internal class TestConfig {
             pointWalletPort,
             concertSeatPort,
             entryQueuePort,
-            seatHoldPort
+            seatHoldPort,
+            pointTransactionPort
         )
 }

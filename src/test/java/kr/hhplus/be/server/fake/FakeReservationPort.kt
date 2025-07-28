@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import java.util.UUID
-import kr.hhplus.be.server.application.port.ReservationPort
-import kr.hhplus.be.server.domain.Reservation
+import kr.hhplus.be.server.reservation.application.port.ReservationPort
+import kr.hhplus.be.server.reservation.domain.Reservation
 
 internal class FakeReservationPort : ReservationPort {
     private val storage: MutableMap<Long, Reservation> = mutableMapOf()
