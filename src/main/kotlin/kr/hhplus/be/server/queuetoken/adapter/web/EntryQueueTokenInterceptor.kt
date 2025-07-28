@@ -41,7 +41,7 @@ class EntryQueueTokenInterceptor(
         return try {
             val claims: JWTClaimsSet = jwtHelper.parseJWT(token)
             request.setAttribute("userId", claims.getStringClaim("userId"))
-            request.setAttribute("queueNumber", claims.getStringClaim("queueNumber"))
+            request.setAttribute("queueNumber", claims.getIntegerClaim("queueNumber"))
             true
         } catch (exception: Exception) {
             return Log.errorLogging(logger, exception) { log ->
