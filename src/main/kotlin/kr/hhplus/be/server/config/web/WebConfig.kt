@@ -17,7 +17,8 @@ class WebConfig(
             .addPathPatterns(
                 "/api/concerts/**",
                 "/api/reservations/**",
-                "/api/users/**"
+                "/api/users/**",
+                "/api/payments/**"
             )
     }
 }
