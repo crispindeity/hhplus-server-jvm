@@ -89,14 +89,14 @@ class ReservationControllerDocsTest {
         // given
         val request =
             MakeReservationRequest(
-                date = LocalDate.of(2025, 7, 30),
+                date = LocalDate.now().plusDays(1),
                 seat = 1L
             )
         val concertSeatId = 1L
         val scheduleId = 10L
         val seatId = 100L
         val concertId = 1000L
-        val date: LocalDate = LocalDate.of(2025, 7, 30)
+        val date: LocalDate = LocalDate.now().plusDays(1)
         val userUUID: UUID = UUID.randomUUID()
 
         val concertSeat =
