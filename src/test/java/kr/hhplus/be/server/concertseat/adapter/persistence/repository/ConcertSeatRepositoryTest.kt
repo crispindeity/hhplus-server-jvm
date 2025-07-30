@@ -17,7 +17,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 
 @DataJpaTest
-@Import(ConcertSeatDomainRepository::class, TestcontainersConfiguration::class)
+@Import(
+    ConcertSeatDomainRepository::class,
+    TestcontainersConfiguration::class,
+    ConcertSeatJdbcRepository::class
+)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ConcertSeatRepositoryTest {
     @Autowired
