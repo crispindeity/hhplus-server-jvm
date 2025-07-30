@@ -8,4 +8,6 @@ internal interface PaymentPort {
     fun getAll(paymentIds: List<Long>): List<Payment>
 
     fun update(payment: Payment)
+
+    fun updateStatusToCancelled(ids: List<Long>)
 }

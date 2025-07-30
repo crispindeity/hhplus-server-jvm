@@ -8,4 +8,6 @@ internal interface PaymentRepository {
     fun findAll(ids: List<Long>): List<PaymentEntity>
 
     fun update(entity: PaymentEntity)
+
+    fun updateStatusToCancelled(ids: List<Long>)
 }

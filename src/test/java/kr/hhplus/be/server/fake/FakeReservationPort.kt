@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.fake
 
+import java.time.LocalDateTime
 import java.util.UUID
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.domain.Reservation
@@ -22,6 +23,24 @@ internal class FakeReservationPort : ReservationPort {
 
     override fun update(reservation: Reservation) {
         storage[reservation.id] = reservation
+    }
+
+    override fun findAllByRangeAndInProgress(
+        start: LocalDateTime,
+        end: LocalDateTime
+    ): List<Reservation> =
+        storage.values
+            .filter { it.status == Reservation.Status.IN_PROGRESS }
+            .filter { it.reservedAt in start..end }
+            .toList()
+
+    override fun updateStatusToExpired(ids: List<Long>) {
+        ids.forEach { id ->
+            val reservation: Reservation? = storage[id]
+            if (reservation != null && reservation.status == Reservation.Status.IN_PROGRESS) {
+                storage[id] = reservation.copy(status = Reservation.Status.EXPIRED)
+            }
+        }
     }
 
     fun saveSingleReservation(userId: UUID) {

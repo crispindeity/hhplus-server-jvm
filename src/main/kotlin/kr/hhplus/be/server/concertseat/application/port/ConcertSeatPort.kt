@@ -9,4 +9,6 @@ internal interface ConcertSeatPort {
     fun getConcertSeat(concertSeatId: Long): ConcertSeat?
 
     fun update(concertSeat: ConcertSeat)
+
+    fun updateStatusToAvailable(ids: List<Long>)
 }

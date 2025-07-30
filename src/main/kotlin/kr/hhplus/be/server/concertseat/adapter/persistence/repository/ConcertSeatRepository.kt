@@ -9,4 +9,6 @@ internal interface ConcertSeatRepository {
     fun findConcertSeat(concertSeatId: Long): ConcertSeatEntity?
 
     fun update(entity: ConcertSeatEntity)
+
+    fun updateStatusToAvailable(ids: List<Long>)
 }

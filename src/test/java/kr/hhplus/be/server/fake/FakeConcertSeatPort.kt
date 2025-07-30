@@ -39,6 +39,15 @@ internal class FakeConcertSeatPort(
         storage[concertSeat.id] = concertSeat
     }
 
+    override fun updateStatusToAvailable(ids: List<Long>) {
+        ids.forEach { id ->
+            val concertSeat: ConcertSeat? = storage[id]
+            if (concertSeat != null && concertSeat.status == ConcertSeat.SeatStatus.HELD) {
+                storage[id] = concertSeat.copy(status = ConcertSeat.SeatStatus.AVAILABLE)
+            }
+        }
+    }
+
     fun saveSingleSeat(
         id: Long,
         status: ConcertSeat.SeatStatus = ConcertSeat.SeatStatus.AVAILABLE

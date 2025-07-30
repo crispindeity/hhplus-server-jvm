@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository
 @Repository
 internal class ConcertSeatDomainRepository(
     private val entityManager: EntityManager,
-    private val jpaRepository: ConcertSeatJpaRepository
+    private val jpaRepository: ConcertSeatJpaRepository,
+    private val jdbcRepository: ConcertSeatJdbcRepository
 ) : ConcertSeatRepository {
     override fun findAvailableSeats(scheduleId: Long): List<AvailableSeatProjection> =
         jpaRepository.findAvailableSeats(scheduleId)
@@ -19,5 +20,9 @@ internal class ConcertSeatDomainRepository(
 
     override fun update(entity: ConcertSeatEntity) {
         entityManager.merge(entity)
+    }
+
+    override fun updateStatusToAvailable(ids: List<Long>) {
+        jdbcRepository.updateStatusToAvailable(ids)
     }
 }

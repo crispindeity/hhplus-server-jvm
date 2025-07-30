@@ -37,7 +37,7 @@ internal class ReservationOrchestrator(
                         EXPIRE_MINUTES
                     ).toFullMinuteRange()
             val foundReservations: List<Reservation> =
-                reservationPort.findAllRange(timeRange.start, timeRange.end)
+                reservationPort.findAllByRangeAndInProgress(timeRange.start, timeRange.end)
             log["expiredCount"] = foundReservations.size
 
             if (foundReservations.isEmpty()) {

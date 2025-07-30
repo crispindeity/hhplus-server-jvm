@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository
 @Repository
 internal class PaymentDomainRepository(
     private val entityManager: EntityManager,
-    private val jpaRepository: PaymentJpaRepository
+    private val jpaRepository: PaymentJpaRepository,
+    private val jdbcRepository: PaymentJdbcRepository
 ) : PaymentRepository {
     override fun save(entity: PaymentEntity): Long = jpaRepository.save(entity).id!!
 
@@ -15,5 +16,9 @@ internal class PaymentDomainRepository(
 
     override fun update(entity: PaymentEntity) {
         entityManager.merge(entity)
+    }
+
+    override fun updateStatusToCancelled(ids: List<Long>) {
+        jdbcRepository.updateStatusToCancelled(ids)
     }
 }
