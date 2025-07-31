@@ -4,82 +4,113 @@ info:
   description: API Documents
   version: 1.0.0
 servers:
-- url: http://localhost:8080
-tags: []
+  - url: http://localhost:8080
+  - url: http://localhost:8081
+tags: [ ]
 paths:
-  /api/reservations:
+  /api/payments:
     post:
       tags:
-      - 예약
-      summary: 예약 생성 요청 API
-      description: 좌석을 예약할 때 사용되는 API 입니다.
-      operationId: 예약 생성
+        - 결제
+      summary: 포인트 결제 요청 API
+      description: 포인트 결제 시 사용되는 API
+      operationId: 포인트 결제
       parameters:
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/api-reservations-2110669849"
-            examples:
-              예약 생성 - 잘못된 요청:
-                value: |-
-                  {
-                    "date" : "2025-07-22",
-                    "time" : "11:42:51.321844",
-                    "seat" : -1
-                  }
-              예약 생성:
-                value: |-
-                  {
-                    "date" : "2025-07-22",
-                    "time" : "11:42:51.292738",
-                    "seat" : 1
-                  }
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
       responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                예약 생성 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
         "200":
           description: "200"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations1943643336"
+                $ref: "#/components/schemas/api-payments-263291135"
               examples:
+                포인트 결제:
+                  value: |-
+                    {
+                      "code" : 200,
+                      "message" : "success",
+                      "result" : {
+                        "totalPrice" : 1000,
+                        "reservationCount" : 1
+                      }
+                    }
+  /api/reservations:
+    post:
+      tags:
+        - 예약
+      summary: 예약 생성 요청 API
+      description: 좌석을 예약할 때 사용되는 API 입니다.
+      operationId: 예약 생성
+      parameters:
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/api-reservations-1797044994"
+            examples:
+              예약 생성 - 잘못된 요청:
+                value: |-
+                  {
+                    "date" : "2025-08-01",
+                    "seat" : -1
+                  }
+              예약 생성:
+                value: |-
+                  {
+                    "date" : "2025-08-01",
+                    "seat" : 1
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/api-reservations2069535653"
+              examples:
+                예약 생성 - 잘못된 요청:
+                  value: |-
+                    {
+                      "code" : 400,
+                      "message" : "invalid request value.",
+                      "result" : {
+                        "errors" : [ {
+                          "field" : "seat",
+                          "value" : -1
+                        } ]
+                      }
+                    }
                 예약 생성:
                   value: |-
                     {
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "id" : 1,
-                        "userId" : 1,
-                        "concertId" : 1,
-                        "reservedAt" : "2025-07-21T11:42:51.299521",
-                        "expiresAt" : "2025-07-21T11:47:51.299534"
+                        "userId" : "1d69bc52-e683-41d4-8442-1239c104d42e",
+                        "concertSeatId" : 1,
+                        "concertDate" : "2025-08-01",
+                        "reservedAt" : "2025-07-31T17:37:35.413207",
+                        "expiresAt" : "2025-07-31T17:43:35.413209"
                       }
                     }
   /api/queue/entry-token:
     post:
       tags:
-      - 대기열 토큰
+        - 대기열 토큰
       summary: 대기열 토큰 발급 API
       description: 대기열 토큰 발급 시 사용되는 API
       operationId: 대기열 토큰
@@ -92,7 +123,7 @@ paths:
               대기열 토큰:
                 value: |-
                   {
-                    "userId" : "b3e1f8a4-cfe5-4260-9db3-59d158b6d11e"
+                    "userId" : "007d914a-4122-4b5d-8042-cb77040247e2"
                   }
               대기열 토큰 - 잘못된 요청:
                 value: |-
@@ -110,7 +141,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
+                $ref: "#/components/schemas/api-queue-entry-token1812758081"
               examples:
                 대기열 토큰:
                   value: |-
@@ -118,60 +149,46 @@ paths:
                       "code" : 200,
                       "message" : "success"
                     }
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-queue-entry-token-859874659"
-              examples:
                 대기열 토큰 - 잘못된 요청:
                   value: |-
                     {
                       "code" : 400,
-                      "message" : "bad request"
+                      "message" : "invalid request value.",
+                      "result" : {
+                        "errors" : [ {
+                          "field" : "userId",
+                          "value" : ""
+                        } ]
+                      }
                     }
   /api/users/{id}/points:
     get:
       tags:
-      - 유저 포인트
+        - 유저 포인트
       summary: 유저 포인트 조회 API
       description: 유저 포인트 조회 시 사용되는 API
       operationId: 유저 포인트 조회
       parameters:
-      - name: id
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
+        - name: id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
       responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                유저 포인트 조회 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
         "200":
           description: "200"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-users-id-points-695636323"
+                $ref: "#/components/schemas/api-users-id-points1371282021"
               examples:
                 유저 포인트 조회:
                   value: |-
@@ -179,45 +196,32 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "userId" : 1,
+                        "userId" : "e3c6460d-e4b4-4687-97f1-3658ac9f87d8",
                         "balance" : 1000
                       }
                     }
   /api/concerts/{id}/reservations/available-dates:
     get:
       tags:
-      - 콘서트
+        - 콘서트
       summary: 콘서트 예약 가능 날짜 조회 API
       description: 콘서트 예약 가능 날짜를 조회할 때 사용하는 API
       operationId: 콘서트 예약 가능 날짜 조회
       parameters:
-      - name: id
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
+        - name: id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
       responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                콘서트 예약 가능 날짜 조회 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
         "200":
           description: "200"
           content:
@@ -231,50 +235,37 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "dates" : [ "2025-07-22", "2025-07-23", "2025-07-24" ]
+                        "dates" : [ "2025-07-31", "2025-07-31" ]
                       }
                     }
   /api/concerts/{id}/reservations/available-seats:
     get:
       tags:
-      - 콘서트
+        - 콘서트
       summary: 콘서트 예약 가능 좌석 조회 API
       description: 콘서트 예약 가능 좌석을 조회할 때 사용하는 API
       operationId: 콘서트 예약 가능 좌석 조회
       parameters:
-      - name: id
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: date
-        in: query
-        description: 좌석 조회 날짜
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
+        - name: id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          description: 좌석 조회 날짜
+          required: true
+          schema:
+            type: string
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
       responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                콘서트 예약 가능 좌석 조회 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
         "200":
           description: "200"
           content:
@@ -295,105 +286,31 @@ paths:
                         }, {
                           "id" : 2,
                           "number" : 2,
-                          "price" : 2000
-                        }, {
-                          "id" : 3,
-                          "number" : 3,
                           "price" : 3000
                         } ]
-                      }
-                    }
-  /api/reservations/{id}/payment/points:
-    post:
-      tags:
-      - 결제
-      summary: 포인트 결제 요청 API
-      description: 포인트 결제 시 사용되는 API
-      operationId: 포인트 결제
-      parameters:
-      - name: id
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/api-reservations-id-payment-points730362"
-            examples:
-              포인트 결제 - 잘못된 요청:
-                value: |-
-                  {
-                    "price" : -1
-                  }
-              포인트 결제:
-                value: |-
-                  {
-                    "price" : 1000
-                  }
-      responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                포인트 결제 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
-        "200":
-          description: "200"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points-230409006"
-              examples:
-                포인트 결제:
-                  value: |-
-                    {
-                      "code" : 200,
-                      "message" : "success",
-                      "result" : {
-                        "userId" : 1,
-                        "reservationId" : 1,
-                        "price" : 1000,
-                        "paidAt" : "2025-07-21T11:42:51.213424"
                       }
                     }
   /api/users/{id}/points/charge:
     post:
       tags:
-      - 유저 포인트
+        - 유저 포인트
       summary: 유저 포인트 충전 API
       description: 유저 포인트 충전 시 사용되는 API
       operationId: 유저 포인트 충전
       parameters:
-      - name: id
-        in: path
-        description: ""
-        required: true
-        schema:
-          type: string
-      - name: EntryQueueToken
-        in: header
-        description: 대기열 토큰
-        required: true
-        schema:
-          type: string
-        example: token
+        - name: id
+          in: path
+          description: ""
+          required: true
+          schema:
+            type: string
+        - name: EntryQueueToken
+          in: header
+          description: 대기열 토큰
+          required: true
+          schema:
+            type: string
+          example: token
       requestBody:
         content:
           application/json:
@@ -411,32 +328,31 @@ paths:
                     "amount" : 1000
                   }
       responses:
-        "400":
-          description: "400"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/api-reservations-id-payment-points623876813"
-              examples:
-                유저 포인트 충전 - 잘못된 요청:
-                  value: |-
-                    {
-                      "code" : 400,
-                      "message" : "bad request"
-                    }
         "200":
           description: "200"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/api-users-id-points-charge701277084"
+                $ref: "#/components/schemas/api-users-id-points-charge736669744"
               examples:
+                유저 포인트 충전 - 잘못된 요청:
+                  value: |-
+                    {
+                      "code" : 400,
+                      "message" : "invalid request value.",
+                      "result" : {
+                        "errors" : [ {
+                          "field" : "amount",
+                          "value" : -1
+                        } ]
+                      }
+                    }
                 유저 포인트 충전:
                   value: |-
                     {
                       "code" : 200,
                       "message" : "success",
-                      "result" : 1
+                      "result" : 2000
                     }
 components:
   schemas:
@@ -467,60 +383,6 @@ components:
         message:
           type: string
           description: 응답 메시지
-    api-users-id-points-charge701277084:
-      type: object
-      properties:
-        result:
-          type: number
-          description: 유저 식별자
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
-    api-reservations-id-payment-points730362:
-      type: object
-      properties:
-        price:
-          type: number
-          description: 가격
-    api-reservations1943643336:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            concertId:
-              type: number
-              description: 콘서트 식별자
-            id:
-              type: number
-              description: 예약 식별자
-            reservedAt:
-              type: string
-              description: 예약 일자
-            userId:
-              type: number
-              description: 유저 식별자
-            expiresAt:
-              type: string
-              description: 예약 만료 일자
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
-    api-reservations-id-payment-points623876813:
-      type: object
-      properties:
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
     api-concerts-id-reservations-available-dates2111023121:
       type: object
       properties:
@@ -532,37 +394,10 @@ components:
               description: 예약 가능 날짜 리스트
               items:
                 oneOf:
-                - type: object
-                - type: boolean
-                - type: string
-                - type: number
-        code:
-          type: number
-          description: 응답 코드
-        message:
-          type: string
-          description: 응답 메시지
-    api-queue-entry-token-859874659:
-      type: object
-      properties:
-        code:
-          type: number
-          description: 에러 코드
-        message:
-          type: string
-          description: 에러 메시지
-    api-users-id-points-695636323:
-      type: object
-      properties:
-        result:
-          type: object
-          properties:
-            balance:
-              type: number
-              description: 포인트 잔액
-            userId:
-              type: number
-              description: 유저 식별자
+                  - type: object
+                  - type: boolean
+                  - type: string
+                  - type: number
         code:
           type: number
           description: 응답 코드
@@ -575,23 +410,41 @@ components:
         amount:
           type: number
           description: 포인트 충전 금액
-    api-reservations-id-payment-points-230409006:
+    api-users-id-points-charge736669744:
       type: object
       properties:
         result:
           type: object
           properties:
-            reservationId:
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: 잘못 요청한 필드 이름
+                  value:
+                    type: number
+                    description: 잘못 요청한 필드 값
+          description: 유저 식별자
+        code:
+          type: number
+          description: 응답 코드
+        message:
+          type: string
+          description: 응답 메시지
+    api-users-id-points1371282021:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            balance:
               type: number
-              description: 예약 식별자
-            price:
-              type: number
-              description: 가격
-            paidAt:
-              type: string
-              description: 결제 일자
+              description: 포인트 잔액
             userId:
-              type: number
+              type: string
               description: 유저 식별자
         code:
           type: number
@@ -599,7 +452,30 @@ components:
         message:
           type: string
           description: 응답 메시지
-    api-reservations-2110669849:
+    api-queue-entry-token1812758081:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: 잘못 요청한 필드 이름
+                  value:
+                    type: string
+                    description: 잘못 요청한 필드 값
+        code:
+          type: number
+          description: 에러 코드
+        message:
+          type: string
+          description: 에러 메시지
+    api-reservations-1797044994:
       type: object
       properties:
         seat:
@@ -608,12 +484,65 @@ components:
         date:
           type: string
           description: 예약 일자
-        time:
-          type: string
-          description: 예약 시간
     api-queue-entry-token-200765834:
       type: object
       properties:
         userId:
           type: string
           description: 존재하지 않는 사용자 ID
+    api-payments-263291135:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            totalPrice:
+              type: number
+              description: 가격
+            reservationCount:
+              type: number
+              description: 예약 건수
+        code:
+          type: number
+          description: 응답 코드
+        message:
+          type: string
+          description: 응답 메시지
+    api-reservations2069535653:
+      type: object
+      properties:
+        result:
+          type: object
+          properties:
+            concertDate:
+              type: string
+              description: 콘서트 날짜
+            concertSeatId:
+              type: number
+              description: 콘서트 좌석 식별자
+            reservedAt:
+              type: string
+              description: 예약 일자
+            userId:
+              type: string
+              description: 유저 식별자
+            expiresAt:
+              type: string
+              description: 예약 만료 일자
+            errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field:
+                    type: string
+                    description: 잘못 요청한 필드 이름
+                  value:
+                    type: number
+                    description: 잘못 요청한 필드 값
+        code:
+          type: number
+          description: 응답 코드
+        message:
+          type: string
+          description: 응답 메시지
