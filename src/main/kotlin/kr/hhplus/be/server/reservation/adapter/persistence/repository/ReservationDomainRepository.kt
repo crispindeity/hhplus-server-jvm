@@ -20,7 +20,7 @@ internal class ReservationDomainRepository(
     }
 
     override fun findAll(userId: String): List<ReservationEntity> =
-        jpaRepository.findAllByUserId(userId)
+        jpaRepository.findAllByUserIdAndStatus(userId)
 
     override fun updateStatusToExpired(ids: List<Long>) {
         jdbcRepository.updateStatusToExpired(ids)

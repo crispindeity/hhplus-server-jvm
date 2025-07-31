@@ -69,7 +69,7 @@ internal class ReservationService(
 
             MakeReservationResponse(
                 userId = userId,
-                concertSeatId = context.schedule.concertId,
+                concertSeatId = context.concertSeat.id,
                 reservedAt = reservation.reservedAt,
                 expiresAt = reservation.expiresAt,
                 concertDate = context.schedule.date

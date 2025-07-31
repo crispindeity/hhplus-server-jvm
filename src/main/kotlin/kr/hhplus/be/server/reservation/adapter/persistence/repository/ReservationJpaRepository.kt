@@ -5,7 +5,10 @@ import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEnt
 import org.springframework.data.jpa.repository.JpaRepository
 
 internal interface ReservationJpaRepository : JpaRepository<ReservationEntity, Long> {
-    fun findAllByUserId(userId: String): List<ReservationEntity>
+    fun findAllByUserIdAndStatus(
+        userId: String,
+        status: ReservationEntity.Status = ReservationEntity.Status.IN_PROGRESS
+    ): List<ReservationEntity>
 
     fun findAllByReservedAtBetweenAndStatus(
         start: LocalDateTime,

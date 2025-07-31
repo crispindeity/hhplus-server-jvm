@@ -12,7 +12,8 @@ internal class PaymentDomainRepository(
 ) : PaymentRepository {
     override fun save(entity: PaymentEntity): Long = jpaRepository.save(entity).id!!
 
-    override fun findAll(ids: List<Long>): List<PaymentEntity> = jpaRepository.findAllByIdIn(ids)
+    override fun findAll(ids: List<Long>): List<PaymentEntity> =
+        jpaRepository.findAllByIdInAndStatus(ids)
 
     override fun update(entity: PaymentEntity) {
         entityManager.merge(entity)

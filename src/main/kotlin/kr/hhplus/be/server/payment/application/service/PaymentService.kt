@@ -105,7 +105,7 @@ internal class PaymentService(
         reservationPort.update(confirmedReservation)
 
         val concertSeat: ConcertSeat =
-            concertSeatPort.getConcertSeat(reservation.concertId)
+            concertSeatPort.getConcertSeat(reservation.concertSeatId)
                 ?: throw ConcertSeatException(ErrorCode.NOT_FOUND_CONCERT_SEAT)
         concertSeat.reserved()
         concertSeatPort.update(concertSeat)
