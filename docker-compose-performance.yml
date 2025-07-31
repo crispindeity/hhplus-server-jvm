@@ -1,0 +1,102 @@
+version: '3'
+services:
+  mysql1:
+    image: mysql:8.0
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=application
+      - MYSQL_PASSWORD=application
+      - MYSQL_DATABASE=hhplus
+    volumes:
+      - ./data_generator/mysql1:/var/lib/mysql-files
+      - ./data_generator/mysql1:/docker-entrypoint-initdb.d
+  mysql2:
+    image: mysql:8.0
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot" ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=application
+      - MYSQL_PASSWORD=application
+      - MYSQL_DATABASE=hhplus
+    volumes:
+      - ./data_generator/mysql2:/var/lib/mysql-files
+      - ./data_generator/mysql2:/docker-entrypoint-initdb.d
+  server1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      mysql1:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql1:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      - SPRING_SQL_INIT_MODE=never
+
+  server2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      mysql2:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql2:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      - SPRING_SQL_INIT_MODE=never
+      - SERVER_PORT=8081
+
+  data-generator1:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    depends_on:
+      - server1
+    volumes:
+      - ./data_generator/mysql1:/var/lib/mysql-files
+      - ./data_generator/mysql1:/app/csv
+    environment:
+      - DB_HOST=mysql1
+      - DB_PORT=3306
+      - DB_NAME=hhplus
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - CSV_DIR=/app/csv
+      - SCALE=2
+
+  data-generator2:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    depends_on:
+      - server2
+    volumes:
+      - ./data_generator/mysql2:/var/lib/mysql-files
+      - ./data_generator/mysql2:/app/csv
+    environment:
+      - DB_HOST=mysql2
+      - DB_PORT=3306
+      - DB_NAME=hhplus
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - CSV_DIR=/app/csv
+      - SCALE=2
+
+networks:
+  default:
+    driver: bridge

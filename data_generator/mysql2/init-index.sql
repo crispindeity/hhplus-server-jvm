@@ -121,3 +121,11 @@ CREATE TABLE seat_holds
   held_at         TIMESTAMP   NOT NULL,
   expires_at      TIMESTAMP   NOT NULL
 );
+
+CREATE INDEX idx_concert_schedules_concert_id ON concert_schedules (concert_id);
+CREATE INDEX idx_concert_seats_schedule_status ON concert_seats (schedule_id, status);
+CREATE INDEX idx_reservations_status_reserved_at ON reservations (status, reserved_at);
+CREATE INDEX idx_queue_tokens_user_id ON queue_tokens(user_id);
+CREATE INDEX idx_queue_status_expires_queue ON queue_tokens (status, expires_at, queue_number);
+CREATE INDEX idx_queue_tokens_queue_number ON queue_tokens(queue_number);
+CREATE INDEX idx_queue_tokens_user_status ON queue_tokens(user_id, status);
