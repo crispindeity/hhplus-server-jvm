@@ -28,7 +28,7 @@ internal data class ConcertSeat(
         if (status != SeatStatus.HELD) {
             throw ConcertSeatException(
                 code = ErrorCode.INVALID_STATUS,
-                message = "SeatStatus: $status"
+                message = "seatStatus: $status, id: $id"
             )
         }
         return this.copy(

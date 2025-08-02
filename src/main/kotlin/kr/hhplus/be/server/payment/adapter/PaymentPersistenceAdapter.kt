@@ -20,4 +20,8 @@ internal class PaymentPersistenceAdapter(
     override fun update(payment: Payment) {
         repository.update(payment.toUpdateEntity())
     }
+
+    override fun updateStatusToCancelled(ids: List<Long>) {
+        repository.updateStatusToCancelled(ids)
+    }
 }

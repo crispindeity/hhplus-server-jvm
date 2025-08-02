@@ -17,4 +17,8 @@ internal class SeatHoldPersistenceAdapter(
     override fun deleteAll(seatIds: List<Long>) {
         repository.deleteAll(seatIds)
     }
+
+    override fun deleteAllByConcertSeatIds(concertSeatIds: List<Long>) {
+        repository.deleteAllByConcertSeatIds(concertSeatIds)
+    }
 }

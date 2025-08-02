@@ -22,4 +22,8 @@ internal class ConcertSeatPersistenceAdapter(
     override fun update(concertSeat: ConcertSeat) {
         repository.update(concertSeat.toEntity())
     }
+
+    override fun updateStatusToAvailable(ids: List<Long>) {
+        repository.updateStatusToAvailable(ids)
+    }
 }

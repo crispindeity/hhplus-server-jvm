@@ -26,6 +26,15 @@ internal class FakePaymentPort : PaymentPort {
         storage[payment.id] = payment
     }
 
+    override fun updateStatusToCancelled(ids: List<Long>) {
+        ids.forEach { id ->
+            val payment: Payment? = storage[id]
+            if (payment != null && payment.status == Payment.Status.PENDING) {
+                storage[id] = payment.copy(status = Payment.Status.CANCELLED)
+            }
+        }
+    }
+
     fun saveSinglePayment(userId: UUID) {
         storage[1L] =
             Payment(

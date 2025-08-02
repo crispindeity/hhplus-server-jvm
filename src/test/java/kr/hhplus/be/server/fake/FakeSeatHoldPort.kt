@@ -24,4 +24,13 @@ internal class FakeSeatHoldPort : SeatHoldPort {
             }
         }
     }
+
+    override fun deleteAllByConcertSeatIds(concertSeatIds: List<Long>) {
+        concertSeatIds
+            .mapNotNull { id ->
+                storage.values.find { it.concertSeatId == id }
+            }.forEach { reservation ->
+                storage.remove(reservation.id)
+            }
+    }
 }

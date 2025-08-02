@@ -6,4 +6,6 @@ internal interface SeatHoldRepository {
     fun save(entity: SeatHoldEntity)
 
     fun deleteAll(ids: List<Long>)
+
+    fun deleteAllByConcertSeatIds(concertSeatIds: List<Long>)
 }

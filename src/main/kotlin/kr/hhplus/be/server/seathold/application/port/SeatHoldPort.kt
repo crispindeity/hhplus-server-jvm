@@ -6,4 +6,6 @@ internal interface SeatHoldPort {
     fun save(seatHold: SeatHold)
 
     fun deleteAll(seatIds: List<Long>)
+
+    fun deleteAllByConcertSeatIds(concertSeatIds: List<Long>)
 }

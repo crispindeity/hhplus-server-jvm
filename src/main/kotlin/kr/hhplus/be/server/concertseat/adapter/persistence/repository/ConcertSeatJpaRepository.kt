@@ -18,11 +18,11 @@ internal interface ConcertSeatJpaRepository : JpaRepository<ConcertSeatEntity, L
             FROM ConcertSeatEntity cs
             JOIN SeatEntity s ON cs.seatId = s.id
             JOIN ConcertScheduleEntity sched ON cs.scheduleId = sched.id
-            WHERE sched.concertId = :concertId
+            WHERE sched.id = :id
               AND cs.status = 'AVAILABLE'
         """
     )
     fun findAvailableSeats(
-        @Param("concertId") concertId: Long
+        @Param("id") id: Long
     ): List<AvailableSeatProjection>
 }

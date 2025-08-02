@@ -45,6 +45,9 @@ spring:
         show_sql: true
     defer-datasource-initialization: true
 
+server:
+  port: 8080
+
 jwt:
   secret: uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=
-  expiration-minutes: 60
+  expiration-minutes: 5
