@@ -17,6 +17,9 @@ services:
     volumes:
       - ./data_generator/mysql1:/var/lib/mysql-files
       - ./data_generator/mysql1:/docker-entrypoint-initdb.d
+    command: [
+      "--innodb_redo_log_capacity=2G"
+    ]
   mysql2:
     image: mysql:8.0
     healthcheck:
@@ -31,6 +34,9 @@ services:
       - MYSQL_USER=application
       - MYSQL_PASSWORD=application
       - MYSQL_DATABASE=hhplus
+    command: [
+      "--innodb_redo_log_capacity=2G"
+    ]
     volumes:
       - ./data_generator/mysql2:/var/lib/mysql-files
       - ./data_generator/mysql2:/docker-entrypoint-initdb.d
@@ -46,6 +52,7 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql1:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
       - SPRING_SQL_INIT_MODE=never
+      - SPRING_PROFILES_ACTIVE=performance
 
   server2:
     build:
@@ -60,6 +67,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql2:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
       - SPRING_SQL_INIT_MODE=never
       - SERVER_PORT=8081
+      - SPRING_PROFILES_ACTIVE=performance
 
   data-generator1:
     build:
@@ -77,7 +85,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - CSV_DIR=/app/csv
-      - SCALE=2
+      - SCALE=10
 
   data-generator2:
     build:
@@ -95,7 +103,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - CSV_DIR=/app/csv
-      - SCALE=2
+      - SCALE=10
 
 networks:
   default:
