@@ -2,7 +2,7 @@ spring:
   application:
     name: hhplus
   profiles:
-    active: local
+    active: local, scheduler
   datasource:
     name: HangHaePlusDataSource
     type: com.zaxxer.hikari.HikariDataSource
@@ -44,6 +44,31 @@ spring:
         format_sql: true
         show_sql: true
     defer-datasource-initialization: true
+
+jwt:
+  secret: uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=
+  expiration-minutes: 5
+
+---
+spring:
+  config:
+    activate:
+      on-profile: performance
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+    username: application
+    password: application
+
+  sql:
+    init:
+      mode: never
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
 
 server:
   port: 8080

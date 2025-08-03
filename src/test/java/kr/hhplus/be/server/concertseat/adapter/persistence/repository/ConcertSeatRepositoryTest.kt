@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import kr.hhplus.be.server.TestcontainersConfiguration
 import kr.hhplus.be.server.concertseat.adapter.persistence.dto.AvailableSeatProjection
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.SoftAssertions
 import org.hibernate.Session
 import org.hibernate.stat.Statistics
 import org.junit.jupiter.api.BeforeEach
@@ -59,8 +59,10 @@ class ConcertSeatRepositoryTest {
                     concertSeatRepository.findAvailableSeats(concertSeatId)
 
                 // then
-                Assertions.assertThat(stats.prepareStatementCount).isEqualTo(1)
-                Assertions.assertThat(actual.size).isNotZero
+                SoftAssertions.assertSoftly { softly ->
+                    softly.assertThat(stats.prepareStatementCount).isEqualTo(1)
+                    softly.assertThat(actual.size).isNotZero
+                }
             }
         }
     }
