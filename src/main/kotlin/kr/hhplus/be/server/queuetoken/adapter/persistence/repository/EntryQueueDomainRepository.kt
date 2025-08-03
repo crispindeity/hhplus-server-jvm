@@ -18,7 +18,8 @@ internal class EntryQueueDomainRepository(
         status: QueueTokenEntity.Status
     ): Boolean = jpaRepository.existsByUserIdAndStatus(userId, status)
 
-    override fun findBy(userId: String): QueueTokenEntity? = jpaRepository.findByUserId(userId)
+    override fun findBy(userId: String): QueueTokenEntity? =
+        jpaRepository.findByUserIdAndStatus(userId)
 
     override fun findCurrentAllowedQueueNumber(): Int =
         jpaRepository.findCurrentAllowedQueueNumber()

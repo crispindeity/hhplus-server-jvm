@@ -10,7 +10,10 @@ internal interface EntryQueueJpaRepository : JpaRepository<QueueTokenEntity, Lon
         status: QueueTokenEntity.Status
     ): Boolean
 
-    fun findByUserId(userId: String): QueueTokenEntity?
+    fun findByUserIdAndStatus(
+        userId: String,
+        status: QueueTokenEntity.Status = QueueTokenEntity.Status.WAITING
+    ): QueueTokenEntity?
 
     @Query(
         value = """
