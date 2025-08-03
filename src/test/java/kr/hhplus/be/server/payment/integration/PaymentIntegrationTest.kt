@@ -10,7 +10,7 @@ import kr.hhplus.be.server.fixture.UserFixture
 import kr.hhplus.be.server.steps.EntryQueueTokenSteps
 import kr.hhplus.be.server.steps.PointWalletSteps
 import kr.hhplus.be.server.steps.ReservationSteps
-import org.assertj.core.api.SoftAssertions
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -54,9 +54,7 @@ class PaymentIntegrationTest : AbstractIntegrationTest() {
                         }
 
                     // then
-                    SoftAssertions.assertSoftly { softly ->
-                        softly.assertThat(response.jsonPath().getInt("code")).isEqualTo(200)
-                    }
+                    Assertions.assertThat(response.jsonPath().getInt("code")).isEqualTo(200)
                 }
             }
         }
