@@ -178,11 +178,11 @@ docker-compose up -d
 
 #### 피드백 수정 내용
 
-- [ ] assertAll, ParamterizedTest, assertThat(리스트).hasSize 에 대해 학습.
-- [ ] 테스트 데이터 좀 더 많이 넣고, 성능 테스트 해보기.
+- [x] assertAll, ParamterizedTest, assertThat(리스트).hasSize 에 대해 학습.
+- [x] 테스트 데이터 좀 더 많이 넣고, 성능 테스트 해보기.
     - 테스트 데이터를 더 많이 넣으니 OOM 발생, 그리고 소요 시간이 너무 오래 걸리는 문제 발생 최적화 필요
     - OOM 해결, 소요 시간은 5분정도 소요
-- [ ] jdbc 사용 관련, 흠흠.. 이건 피드백 받을 줄 알고 있었는데. 의도한거니까 일단은 냅두자.
+- [x] jdbc 사용 관련, 흠흠.. 이건 피드백 받을 줄 알고 있었는데. 의도한거니까 일단은 냅두자.
 
 </details>
 
