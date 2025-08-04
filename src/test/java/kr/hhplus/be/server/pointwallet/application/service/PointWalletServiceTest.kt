@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.pointwallet.application.service
 
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.fake.FakePointTransactionPort
 import kr.hhplus.be.server.fake.FakePointWalletPort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeUserPort
 import kr.hhplus.be.server.pointwallet.exception.PointWalletException
 import org.assertj.core.api.Assertions
@@ -22,11 +24,13 @@ class PointWalletServiceTest {
         userPort = FakeUserPort()
         pointWalletPort = FakePointWalletPort()
         pointTransactionPort = FakePointTransactionPort()
+        val transactional = Transactional(FakeRunner())
         userPointService =
             PointWalletService(
                 userPort,
                 pointWalletPort,
-                pointTransactionPort
+                pointTransactionPort,
+                transactional
             )
     }
 

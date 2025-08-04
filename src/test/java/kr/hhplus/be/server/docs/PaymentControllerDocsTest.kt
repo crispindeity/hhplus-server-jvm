@@ -5,7 +5,13 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters
 import java.util.UUID
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
-import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.config.ConcertTestConfig
+import kr.hhplus.be.server.config.EntryQueueTestConfig
+import kr.hhplus.be.server.config.PaymentTestConfig
+import kr.hhplus.be.server.config.PointTestConfig
+import kr.hhplus.be.server.config.ReservationTestConfig
+import kr.hhplus.be.server.config.SeatTestConfig
+import kr.hhplus.be.server.config.TransactionalTestConfig
 import kr.hhplus.be.server.payment.adapter.web.PaymentController
 import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.payment.domain.Payment
@@ -39,7 +45,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
-@Import(TestConfig::class)
+@Import(
+    PaymentTestConfig::class,
+    TransactionalTestConfig::class,
+    ReservationTestConfig::class,
+    PointTestConfig::class,
+    ConcertTestConfig::class,
+    EntryQueueTestConfig::class,
+    SeatTestConfig::class
+)
 @WebMvcTest(controllers = [PaymentController::class])
 class PaymentControllerDocsTest {
     @Autowired

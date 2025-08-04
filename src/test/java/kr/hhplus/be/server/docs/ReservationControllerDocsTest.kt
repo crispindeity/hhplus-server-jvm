@@ -11,7 +11,13 @@ import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertschedule.domain.ConcertSchedule
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
-import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.config.ConcertTestConfig
+import kr.hhplus.be.server.config.EntryQueueTestConfig
+import kr.hhplus.be.server.config.PaymentTestConfig
+import kr.hhplus.be.server.config.PointTestConfig
+import kr.hhplus.be.server.config.ReservationTestConfig
+import kr.hhplus.be.server.config.SeatTestConfig
+import kr.hhplus.be.server.config.TransactionalTestConfig
 import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.payment.domain.Payment
 import kr.hhplus.be.server.reservation.adapter.web.ReservationController
@@ -44,7 +50,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
-@Import(TestConfig::class)
+@Import(
+    ConcertTestConfig::class,
+    TransactionalTestConfig::class,
+    ReservationTestConfig::class,
+    SeatTestConfig::class,
+    PaymentTestConfig::class,
+    PointTestConfig::class,
+    EntryQueueTestConfig::class
+)
 @WebMvcTest(controllers = [ReservationController::class])
 class ReservationControllerDocsTest {
     @Autowired

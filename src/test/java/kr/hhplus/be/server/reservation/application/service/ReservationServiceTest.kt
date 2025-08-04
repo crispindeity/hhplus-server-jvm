@@ -2,6 +2,7 @@ package kr.hhplus.be.server.reservation.application.service
 
 import java.time.LocalDate
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
@@ -10,6 +11,7 @@ import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakePaymentPort
 import kr.hhplus.be.server.fake.FakeReservationPort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatHoldPort
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
@@ -45,13 +47,15 @@ class ReservationServiceTest {
                 concertSeatPort,
                 concertSchedulePort
             )
+        val transactional = Transactional(FakeRunner())
         reservationService =
             ReservationService(
                 seatHoldPort = seatHoldPort,
                 concertSeatPort = concertSeatPort,
                 reservationPort = reservationPort,
                 paymentPort = paymentPort,
-                reservationContextLoader = reservationContextLoader
+                reservationContextLoader = reservationContextLoader,
+                transactional = transactional
             )
     }
 

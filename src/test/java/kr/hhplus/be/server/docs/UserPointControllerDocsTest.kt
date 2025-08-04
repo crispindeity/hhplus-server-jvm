@@ -5,7 +5,8 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.UUID
 import kr.hhplus.be.server.common.exception.ErrorCode
-import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.config.PointTestConfig
+import kr.hhplus.be.server.config.TransactionalTestConfig
 import kr.hhplus.be.server.pointwallet.adapter.web.PointWalletController
 import kr.hhplus.be.server.pointwallet.adapter.web.request.ChargePointsRequest
 import kr.hhplus.be.server.pointwallet.application.port.PointWalletPort
@@ -35,7 +36,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
-@Import(TestConfig::class)
+@Import(PointTestConfig::class, TransactionalTestConfig::class)
 @WebMvcTest(controllers = [PointWalletController::class])
 class UserPointControllerDocsTest {
     @Autowired

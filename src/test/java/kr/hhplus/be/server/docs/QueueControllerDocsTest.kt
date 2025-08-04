@@ -5,7 +5,8 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.util.UUID
 import kr.hhplus.be.server.common.exception.ErrorCode
-import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.config.EntryQueueTestConfig
+import kr.hhplus.be.server.config.TransactionalTestConfig
 import kr.hhplus.be.server.queuetoken.adapter.web.EntryQueueController
 import kr.hhplus.be.server.queuetoken.adapter.web.request.EntryQueueTokenRequest
 import kr.hhplus.be.server.queuetoken.application.port.EntryQueuePort
@@ -34,7 +35,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
-@Import(TestConfig::class)
+@Import(EntryQueueTestConfig::class, TransactionalTestConfig::class)
 @WebMvcTest(controllers = [EntryQueueController::class])
 internal class QueueControllerDocsTest {
     @Autowired

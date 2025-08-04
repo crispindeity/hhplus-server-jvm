@@ -2,6 +2,7 @@ package kr.hhplus.be.server.payment.application.service
 
 import java.util.UUID
 import kr.hhplus.be.server.common.exception.ErrorCode
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
@@ -22,10 +23,8 @@ import kr.hhplus.be.server.reservation.domain.Reservation
 import kr.hhplus.be.server.reservation.exception.ReservationException
 import kr.hhplus.be.server.seathold.application.port.SeatHoldPort
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
 internal class PaymentService(
     private val paymentPort: PaymentPort,
     private val reservationPort: ReservationPort,
@@ -33,37 +32,39 @@ internal class PaymentService(
     private val concertSeatPort: ConcertSeatPort,
     private val entryQueuePort: EntryQueuePort,
     private val seatHoldPort: SeatHoldPort,
-    private val pointTransactionPort: PointTransactionPort
+    private val pointTransactionPort: PointTransactionPort,
+    private val transactional: Transactional
 ) {
-    @Transactional
     fun payment(userId: String): PaymentResponse {
         val userUUID: UUID = UUID.fromString(userId)
 
-        val reservations: List<Reservation> =
-            reservationPort.getAll(userUUID.toString())
-        if (reservations.isEmpty()) {
-            throw ReservationException(ErrorCode.NOT_FOUND_RESERVATION)
+        return transactional.run {
+            val reservations: List<Reservation> =
+                reservationPort.getAll(userUUID.toString())
+            if (reservations.isEmpty()) {
+                throw ReservationException(ErrorCode.NOT_FOUND_RESERVATION)
+            }
+
+            val payments: Map<Long, Payment> = loadPayments(reservations)
+            val totalPrice: Long = payments.values.sumOf { it.price }
+
+            deductPoint(userUUID, totalPrice)
+
+            reservations.forEach { reservation ->
+                val payment: Payment =
+                    payments[reservation.paymentId]
+                        ?: throw PaymentException(ErrorCode.NOT_FOUND_PAYMENT_INFO)
+                processReservationAndPayment(reservation, payment)
+            }
+
+            completeEntryQueue(userUUID)
+            seatHoldPort.deleteAll(reservations.map { it.concertSeatId })
+
+            PaymentResponse(
+                totalPrice = totalPrice,
+                reservationCount = reservations.size
+            )
         }
-
-        val payments: Map<Long, Payment> = loadPayments(reservations)
-        val totalPrice: Long = payments.values.sumOf { it.price }
-
-        deductPoint(userUUID, totalPrice)
-
-        reservations.forEach { reservation ->
-            val payment: Payment =
-                payments[reservation.paymentId]
-                    ?: throw PaymentException(ErrorCode.NOT_FOUND_PAYMENT_INFO)
-            processReservationAndPayment(reservation, payment)
-        }
-
-        completeEntryQueue(userUUID)
-        seatHoldPort.deleteAll(reservations.map { it.concertSeatId })
-
-        return PaymentResponse(
-            totalPrice = totalPrice,
-            reservationCount = reservations.size
-        )
     }
 
     private fun loadPayments(reservations: List<Reservation>): Map<Long, Payment> {

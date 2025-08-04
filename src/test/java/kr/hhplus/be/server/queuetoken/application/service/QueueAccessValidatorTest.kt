@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.queuetoken.application.service
 
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.queuetoken.domain.QueueToken
 import kr.hhplus.be.server.queuetoken.exception.QueueTokenException
 import org.assertj.core.api.Assertions
@@ -19,9 +21,11 @@ class QueueAccessValidatorTest {
     @BeforeEach
     fun setUp() {
         entryQueuePort = FakeEntryQueuePort()
+        val transactional = Transactional(FakeRunner())
         validator =
             QueueAccessValidator(
-                entryQueuePort = entryQueuePort
+                entryQueuePort = entryQueuePort,
+                transactional = transactional
             )
     }
 

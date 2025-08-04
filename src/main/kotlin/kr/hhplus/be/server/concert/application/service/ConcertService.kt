@@ -3,6 +3,7 @@ package kr.hhplus.be.server.concert.application.service
 import java.time.LocalDate
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concert.adapter.web.response.FindAvailableDatesResponse
 import kr.hhplus.be.server.concert.adapter.web.response.FindAvailableSeatsResponses
 import kr.hhplus.be.server.concert.application.port.ConcertPort
@@ -15,14 +16,13 @@ import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import org.slf4j.Logger
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
 internal class ConcertService(
     private val concertPort: ConcertPort,
     private val concertSchedulePort: ConcertSchedulePort,
-    private val concertSeatPort: ConcertSeatPort
+    private val concertSeatPort: ConcertSeatPort,
+    private val transactional: Transactional
 ) {
     private val logger: Logger = Log.getLogger(ConcertService::class.java)
 
@@ -30,12 +30,13 @@ internal class ConcertService(
         Log.logging(logger) { log ->
             log["method"] = "getAvailableDates()"
             verifyConcert(concertId)
-            val availableSchedules: List<ConcertSchedule> =
-                concertSchedulePort.getAvailableSchedules(concertId)
 
-            FindAvailableDatesResponse(
-                availableSchedules.map { it.date }
-            )
+            val availableSchedules: List<ConcertSchedule> =
+                transactional.readOnly {
+                    concertSchedulePort.getAvailableSchedules(concertId)
+                }
+
+            FindAvailableDatesResponse(availableSchedules.map { it.date })
         }
 
     fun getAvailableSeats(
@@ -45,12 +46,15 @@ internal class ConcertService(
         Log.logging(logger) { log ->
             log["method"] = "getAvailableSeats()"
             verifyConcert(concertId)
-            val schedule: ConcertSchedule =
-                concertSchedulePort.getSchedule(concertId, date) ?: throw ConcertScheduleException(
-                    ErrorCode.NOT_FOUND_CONCERT_SCHEDULE
-                )
+
             val availableSeats: List<AvailableSeatDto> =
-                concertSeatPort.getAvailableSeats(schedule.id)
+                transactional.readOnly {
+                    val schedule: ConcertSchedule =
+                        concertSchedulePort.getSchedule(concertId, date)
+                            ?: throw ConcertScheduleException(ErrorCode.NOT_FOUND_CONCERT_SCHEDULE)
+                    concertSeatPort.getAvailableSeats(schedule.id)
+                }
+
             FindAvailableSeatsResponses(availableSeats.map { it.toResponse() })
         }
 
