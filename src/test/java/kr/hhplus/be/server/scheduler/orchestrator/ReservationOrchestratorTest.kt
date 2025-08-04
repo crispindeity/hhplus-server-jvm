@@ -2,9 +2,11 @@ package kr.hhplus.be.server.scheduler.orchestrator
 
 import java.time.LocalDateTime
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakePaymentPort
 import kr.hhplus.be.server.fake.FakeReservationPort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatHoldPort
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.reservation.domain.Reservation
@@ -29,12 +31,14 @@ class ReservationOrchestratorTest {
         paymentPort = FakePaymentPort()
         concertSeatPort = FakeConcertSeatPort(seatPort)
         seatHoldPort = FakeSeatHoldPort()
+        val transactional = Transactional(FakeRunner())
         reservationOrchestrator =
             ReservationOrchestrator(
                 reservationPort,
                 paymentPort,
                 seatHoldPort,
-                concertSeatPort
+                concertSeatPort,
+                transactional
             )
     }
 

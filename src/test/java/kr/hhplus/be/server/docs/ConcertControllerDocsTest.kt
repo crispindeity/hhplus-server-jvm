@@ -10,7 +10,8 @@ import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertschedule.domain.ConcertSchedule
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
-import kr.hhplus.be.server.config.TestConfig
+import kr.hhplus.be.server.config.ConcertTestConfig
+import kr.hhplus.be.server.config.TransactionalTestConfig
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -36,7 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 @ControllerDocsTest
-@Import(TestConfig::class)
+@Import(ConcertTestConfig::class, TransactionalTestConfig::class)
 @WebMvcTest(controllers = [ConcertController::class])
 class ConcertControllerDocsTest {
     @Autowired

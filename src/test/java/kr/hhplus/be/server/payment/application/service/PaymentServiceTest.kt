@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.payment.application.service
 
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
@@ -8,6 +9,7 @@ import kr.hhplus.be.server.fake.FakePaymentPort
 import kr.hhplus.be.server.fake.FakePointTransactionPort
 import kr.hhplus.be.server.fake.FakePointWalletPort
 import kr.hhplus.be.server.fake.FakeReservationPort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatHoldPort
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.payment.adapter.web.dto.response.PaymentResponse
@@ -39,6 +41,7 @@ class PaymentServiceTest {
         pointWalletPort = FakePointWalletPort()
         concertSeatPort = FakeConcertSeatPort(seatPort)
         pointTransactionPort = FakePointTransactionPort()
+        val transactional = Transactional(FakeRunner())
         paymentService =
             PaymentService(
                 paymentPort = paymentPort,
@@ -47,7 +50,8 @@ class PaymentServiceTest {
                 concertSeatPort = concertSeatPort,
                 entryQueuePort = entryQueuePort,
                 seatHoldPort = seatHoldPort,
-                pointTransactionPort = pointTransactionPort
+                pointTransactionPort = pointTransactionPort,
+                transactional = transactional
             )
     }
 

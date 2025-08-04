@@ -1,12 +1,14 @@
 package kr.hhplus.be.server.concert.application.service
 
 import java.time.LocalDate
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concert.adapter.web.response.FindAvailableDatesResponse
 import kr.hhplus.be.server.concert.adapter.web.response.FindAvailableSeatsResponses
 import kr.hhplus.be.server.concert.exception.ConcertException
 import kr.hhplus.be.server.fake.FakeConcertPort
 import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatPort
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -27,11 +29,13 @@ class ConcertServiceTest {
         seatPort = FakeSeatPort()
         concertSeatPort = FakeConcertSeatPort(seatPort)
         concertSchedulePort = FakeConcertSchedulePort(concertSeatPort)
+        val transactional = Transactional(FakeRunner())
         concertService =
             ConcertService(
                 concertPort = concertPort,
                 concertSchedulePort = concertSchedulePort,
-                concertSeatPort = concertSeatPort
+                concertSeatPort = concertSeatPort,
+                transactional = transactional
             )
     }
 
