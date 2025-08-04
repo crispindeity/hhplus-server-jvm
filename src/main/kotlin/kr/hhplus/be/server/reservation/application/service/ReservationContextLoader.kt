@@ -13,7 +13,6 @@ import kr.hhplus.be.server.seat.application.port.SeatPort
 import kr.hhplus.be.server.seat.domain.Seat
 import kr.hhplus.be.server.seat.exception.SeatException
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 
 internal data class ReservationContext(
     val seat: Seat,
@@ -22,7 +21,6 @@ internal data class ReservationContext(
 )
 
 @Component
-@Transactional(readOnly = true)
 internal class ReservationContextLoader(
     private val seatPort: SeatPort,
     private val concertSeatPort: ConcertSeatPort,
