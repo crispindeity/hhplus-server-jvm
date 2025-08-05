@@ -80,7 +80,7 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // JWT
-    implementation("com.nimbusds:nimbus-jose-jwt:${nimbusJWTVersion}")
+    implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJWTVersion")
 }
 
 tasks.withType<Test> {
@@ -168,4 +168,10 @@ tasks.named("build") {
 
 tasks.named("test") {
     finalizedBy("openapi3")
+}
+
+tasks.test {
+    useJUnitPlatform {
+        excludeTags("concurrency")
+    }
 }

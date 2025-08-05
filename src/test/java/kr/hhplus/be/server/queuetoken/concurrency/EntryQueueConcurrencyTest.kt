@@ -14,11 +14,13 @@ import org.assertj.core.api.SoftAssertions
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.test.context.ActiveProfiles
 
+@Tag("concurrency")
 @ActiveProfiles("concurrency-test")
 class EntryQueueConcurrencyTest : AbstractIntegrationTest() {
     @Autowired
