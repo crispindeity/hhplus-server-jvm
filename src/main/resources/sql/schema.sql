@@ -62,7 +62,7 @@ CREATE TABLE point_wallets
   balance    BIGINT      NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  version    BIGINT      NOT NULL
+  version    INT         NOT NULL
 );
 
 CREATE TABLE reservations
