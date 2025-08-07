@@ -34,5 +34,6 @@ enum class ErrorCode(
     ALREADY_PAYMENT(code = 400, message = "already payment"),
     INSUFFICIENT_POINT(code = 400, message = "not enough point to complete the operation"),
     INVALID_STATUS(code = 400, message = "invalid status."),
-    FAILED_RETRY(code = 409, message = "optimistic lock failed after retries.")
+    FAILED_RETRY(code = 409, message = "optimistic lock failed after retries."),
+    OPTIMISTIC_LOCKING_FAILURE(code = 409, message = "locking failed.")
 }
