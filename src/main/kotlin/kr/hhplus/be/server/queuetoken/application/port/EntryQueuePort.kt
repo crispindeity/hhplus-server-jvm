@@ -15,4 +15,8 @@ internal interface EntryQueuePort {
     fun getEntryQueueToken(userId: UUID): QueueToken?
 
     fun update(token: QueueToken)
+
+    fun getQueueNumberByIdForUpdate(numberId: String): Int
+
+    fun incrementNextNumber(nextNumber: Int)
 }

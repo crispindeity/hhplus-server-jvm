@@ -82,6 +82,9 @@ internal class QueueControllerDocsTest {
         BDDMockito
             .given(jwtHelper.createJWT(userId, 1))
             .willReturn("mock-token")
+        BDDMockito
+            .given(entryQueuePort.getQueueNumberByIdForUpdate("entry_queue"))
+            .willReturn(1)
 
         // when
         val result: ResultActions =

@@ -70,6 +70,22 @@ spring:
         format_sql: true
         show_sql: true
 
+---
+spring:
+  config:
+    activate:
+      on-profile: concurrency-test
+
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:sql/schema.sql
+        - classpath:sql/data.sql
+
+  jpa:
+    defer-datasource-initialization: true
+
 server:
   port: 8080
 

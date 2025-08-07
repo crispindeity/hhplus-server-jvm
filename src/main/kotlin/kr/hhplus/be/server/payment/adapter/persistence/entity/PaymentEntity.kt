@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import kr.hhplus.be.server.common.adapter.persistence.entity.BaseEntity
+import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 
 @Entity
 @Table(name = "payments")
@@ -24,7 +25,10 @@ internal class PaymentEntity(
     val status: Status,
     @Column(nullable = false)
     val price: Long,
-    val paidAt: LocalDateTime? = null
+    val paidAt: LocalDateTime? = null,
+    @jakarta.persistence.Version
+    @Column(nullable = false)
+    var version: Version
 ) : BaseEntity() {
     enum class Status {
         PENDING,

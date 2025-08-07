@@ -26,7 +26,8 @@ class DatabaseCleanup : InitializingBean {
             "concerts",
             "concert_schedules",
             "concert_seats",
-            "point_wallets"
+            "point_wallets",
+            "queue_numbers"
         )
 
     override fun afterPropertiesSet() {

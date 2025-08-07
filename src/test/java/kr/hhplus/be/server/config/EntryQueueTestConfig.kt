@@ -26,6 +26,7 @@ internal class EntryQueueTestConfig {
     @Bean
     fun entryQueueService(
         entryQueuePort: EntryQueuePort,
-        jwtHelper: JWTHelper
-    ): EntryQueueService = EntryQueueService(entryQueuePort, jwtHelper)
+        jwtHelper: JWTHelper,
+        transactional: Transactional
+    ): EntryQueueService = EntryQueueService(entryQueuePort, jwtHelper, transactional)
 }

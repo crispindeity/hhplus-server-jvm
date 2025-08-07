@@ -6,6 +6,7 @@ import kr.hhplus.be.server.queuetoken.domain.QueueToken
 
 class FakeEntryQueuePort : EntryQueuePort {
     private val storage: MutableMap<Long, QueueToken> = mutableMapOf()
+    private var queueNumber = 0
     private var sequence: Long = 0L
 
     override fun saveEntryQueueToken(token: QueueToken) {
@@ -34,6 +35,12 @@ class FakeEntryQueuePort : EntryQueuePort {
 
     override fun update(token: QueueToken) {
         storage[token.id] = token
+    }
+
+    override fun getQueueNumberByIdForUpdate(numberId: String): Int = queueNumber
+
+    override fun incrementNextNumber(nextNumber: Int) {
+        queueNumber += 1
     }
 
     override fun getEntryQueueNextNumber(): Int = storage.count().plus(1)

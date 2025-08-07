@@ -7,7 +7,8 @@ import kr.hhplus.be.server.pointwallet.exception.PointWalletException
 internal data class PointWallet(
     val id: Long = 0L,
     val userId: UUID,
-    val balance: Long
+    val balance: Long,
+    val version: Int = 0
 ) {
     fun chargePoint(amount: Long): PointWallet =
         this.copy(

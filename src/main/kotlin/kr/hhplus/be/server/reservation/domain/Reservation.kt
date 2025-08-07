@@ -14,7 +14,8 @@ internal data class Reservation(
     val confirmedAt: LocalDateTime? = null,
     val reservedAt: LocalDateTime = LocalDateTime.now(),
     val expiresAt: LocalDateTime = LocalDateTime.now().plusMinutes(6),
-    val status: Status
+    val status: Status,
+    val version: Int = 0
 ) {
     enum class Status {
         IN_PROGRESS,

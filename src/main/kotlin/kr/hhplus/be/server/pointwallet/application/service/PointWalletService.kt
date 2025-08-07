@@ -12,6 +12,7 @@ import kr.hhplus.be.server.pointwallet.exception.PointWalletException
 import kr.hhplus.be.server.user.application.port.UserPort
 import kr.hhplus.be.server.user.exception.UserException
 import org.slf4j.Logger
+import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 
 @Service
@@ -23,6 +24,11 @@ internal class PointWalletService(
 ) {
     private val logger: Logger = Log.getLogger(PointWalletService::class.java)
 
+    companion object {
+        const val MAX_RETRIES = 10
+        const val BACKOFF_MILLIS = 50L
+    }
+
     fun chargePoint(
         userId: UUID,
         amount: Long
@@ -30,26 +36,37 @@ internal class PointWalletService(
         Log.logging(logger) { log ->
             log["method"] = "chargePoint()"
             verifyUser(userId)
-            val chargedWallet: PointWallet =
-                transactional.run {
-                    val foundWallet: PointWallet =
-                        pointWalletPort.getWallet(userId) ?: throw PointWalletException(
-                            ErrorCode.NOT_FOUND_USER_POINT_WALLET
-                        )
 
-                    val chargedWallet: PointWallet = foundWallet.chargePoint(amount)
+            repeat(MAX_RETRIES) { attempt ->
+                try {
+                    val chargedWallet: PointWallet =
+                        transactional.run {
+                            val foundWallet: PointWallet =
+                                pointWalletPort.getWallet(userId)
+                                    ?: throw PointWalletException(
+                                        ErrorCode.NOT_FOUND_USER_POINT_WALLET
+                                    )
 
-                    pointWalletPort.update(chargedWallet)
-                    pointTransactionPort.save(
-                        PointTransaction(
-                            pointWalletId = chargedWallet.id,
-                            amount = amount,
-                            type = PointTransaction.Type.CHARGED
-                        )
-                    )
-                    chargedWallet
+                            val charged: PointWallet = foundWallet.chargePoint(amount)
+
+                            pointWalletPort.update(charged)
+
+                            pointTransactionPort.save(
+                                PointTransaction(
+                                    pointWalletId = charged.id,
+                                    amount = amount,
+                                    type = PointTransaction.Type.CHARGED
+                                )
+                            )
+                            charged
+                        }
+                    return@logging chargedWallet.balance
+                } catch (_: ObjectOptimisticLockingFailureException) {
+                    log["retry_attempt"] = attempt + 1
+                    Thread.sleep(BACKOFF_MILLIS)
                 }
-            chargedWallet.balance
+            }
+            throw PointWalletException(ErrorCode.FAILED_RETRY, "chargePoint() retry fail")
         }
 
     fun getPoint(userId: UUID): Long =
