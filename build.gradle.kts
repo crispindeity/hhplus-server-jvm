@@ -172,6 +172,11 @@ tasks.named("test") {
 
 tasks.test {
     useJUnitPlatform {
-        excludeTags("concurrency")
+        val includeConcurrencyTests: Boolean = project.hasProperty("includeConcurrencyTests")
+        if (includeConcurrencyTests) {
+            includeTags("concurrency")
+        } else {
+            excludeTags("concurrency")
+        }
     }
 }
