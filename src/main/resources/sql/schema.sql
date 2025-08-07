@@ -34,6 +34,7 @@ CREATE TABLE concert_seats
   schedule_id BIGINT      NOT NULL,
   seat_id     BIGINT      NOT NULL,
   status      VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'AVAILABLE', 'RESERVED')),
+  version     INT         NOT NULL,
   created_at  TIMESTAMP,
   updated_at  TIMESTAMP
 );

@@ -7,7 +7,8 @@ internal data class ConcertSeat(
     val id: Long,
     val scheduleId: Long,
     val seatId: Long,
-    val status: SeatStatus
+    val status: SeatStatus,
+    val version: Int = 0
 ) {
     enum class SeatStatus {
         HELD,

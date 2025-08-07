@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.concertseat.adapter.persistence.extensions
 
+import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 import kr.hhplus.be.server.concert.application.service.dto.AvailableSeatDto
 import kr.hhplus.be.server.concertseat.adapter.persistence.dto.AvailableSeatProjection
 import kr.hhplus.be.server.concertseat.adapter.persistence.entity.ConcertSeatEntity
@@ -10,6 +11,7 @@ internal fun ConcertSeatEntity.toDomain(): ConcertSeat =
         id = this.id!!,
         scheduleId = this.scheduleId,
         seatId = this.seatId,
+        version = version.value,
         status =
             when (this.status) {
                 ConcertSeatEntity.Status.HELD -> ConcertSeat.SeatStatus.HELD
@@ -36,6 +38,7 @@ internal fun ConcertSeat.toEntity(): ConcertSeatEntity =
         id = this.id,
         scheduleId = this.scheduleId,
         seatId = this.seatId,
+        version = Version(this.version),
         status =
             when (this.status) {
                 ConcertSeat.SeatStatus.HELD -> ConcertSeatEntity.Status.HELD
