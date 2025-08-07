@@ -78,6 +78,7 @@ CREATE TABLE reservations
   expires_at      TIMESTAMP   NOT NULL,
   status          VARCHAR(20) NOT NULL CHECK (status IN
                                               ('IN_PROGRESS', 'CANCELLED', 'CONFIRMED', 'EXPIRED')),
+  version         INT         NOT NULL,
   created_at      TIMESTAMP,
   updated_at      TIMESTAMP
 );
@@ -111,6 +112,7 @@ CREATE TABLE payments
   status     VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'CANCELLED')),
   price      BIGINT      NOT NULL,
   paid_at    TIMESTAMP DEFAULT NULL,
+  version    INT         NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );

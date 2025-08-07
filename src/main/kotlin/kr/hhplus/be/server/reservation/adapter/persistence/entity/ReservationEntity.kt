@@ -10,6 +10,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import kr.hhplus.be.server.common.adapter.persistence.entity.BaseEntity
+import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 
 @Entity
 @Table(name = "reservations")
@@ -31,7 +32,10 @@ internal class ReservationEntity(
     val expiresAt: LocalDateTime,
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val status: Status
+    val status: Status,
+    @jakarta.persistence.Version
+    @Column(nullable = false)
+    var version: Version
 ) : BaseEntity() {
     enum class Status {
         IN_PROGRESS,
