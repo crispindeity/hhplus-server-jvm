@@ -1,8 +1,10 @@
 package kr.hhplus.be.server.queuetoken.application.service
 
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.config.jwt.JWTProperties
 import kr.hhplus.be.server.fake.FakeEntryQueuePort
+import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.queuetoken.exception.QueueTokenException
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -17,6 +19,7 @@ class EntryQueueServiceTest {
     @BeforeEach
     fun setUp() {
         entryQueuePort = FakeEntryQueuePort()
+        val transactional = Transactional(FakeRunner())
         entryQueueService =
             EntryQueueService(
                 entryQueuePort = entryQueuePort,
@@ -25,7 +28,8 @@ class EntryQueueServiceTest {
                         secret = "uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=",
                         expirationMinutes = 60
                     )
-                )
+                ),
+                transactional
             )
     }
 

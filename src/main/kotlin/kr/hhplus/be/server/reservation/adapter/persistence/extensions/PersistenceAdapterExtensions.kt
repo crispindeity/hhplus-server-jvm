@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.reservation.adapter.persistence.extensions
 
 import java.util.UUID
+import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
 import kr.hhplus.be.server.reservation.domain.Reservation
 
@@ -19,7 +20,8 @@ internal fun Reservation.toEntity(): ReservationEntity =
                 Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
                 Reservation.Status.CONFIRMED -> ReservationEntity.Status.CONFIRMED
                 Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
-            }
+            },
+        version = Version(this.version)
     )
 
 internal fun Reservation.toUpdateEntity(): ReservationEntity =
@@ -38,7 +40,8 @@ internal fun Reservation.toUpdateEntity(): ReservationEntity =
                 Reservation.Status.CANCELLED -> ReservationEntity.Status.CANCELLED
                 Reservation.Status.CONFIRMED -> ReservationEntity.Status.CONFIRMED
                 Reservation.Status.EXPIRED -> ReservationEntity.Status.EXPIRED
-            }
+            },
+        version = Version(this.version)
     )
 
 internal fun ReservationEntity.toDomain(): Reservation =
@@ -57,5 +60,6 @@ internal fun ReservationEntity.toDomain(): Reservation =
                 ReservationEntity.Status.CANCELLED -> Reservation.Status.CANCELLED
                 ReservationEntity.Status.CONFIRMED -> Reservation.Status.CONFIRMED
                 ReservationEntity.Status.EXPIRED -> Reservation.Status.EXPIRED
-            }
+            },
+        version = this.version.value
     )

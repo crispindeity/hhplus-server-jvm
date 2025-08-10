@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.payment.adapter.persistence.extensions
 
 import java.util.UUID
+import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 import kr.hhplus.be.server.payment.adapter.persistence.entity.PaymentEntity
 import kr.hhplus.be.server.payment.domain.Payment
 
@@ -13,7 +14,8 @@ internal fun Payment.toEntity(): PaymentEntity =
                 Payment.Status.PENDING -> PaymentEntity.Status.PENDING
                 Payment.Status.COMPLETED -> PaymentEntity.Status.COMPLETED
                 Payment.Status.CANCELLED -> PaymentEntity.Status.CANCELLED
-            }
+            },
+        version = Version(this.version)
     )
 
 internal fun PaymentEntity.toDomain(): Payment =
@@ -27,7 +29,8 @@ internal fun PaymentEntity.toDomain(): Payment =
                 PaymentEntity.Status.PENDING -> Payment.Status.PENDING
                 PaymentEntity.Status.COMPLETED -> Payment.Status.COMPLETED
                 PaymentEntity.Status.CANCELLED -> Payment.Status.CANCELLED
-            }
+            },
+        version = this.version.value
     )
 
 internal fun Payment.toUpdateEntity(): PaymentEntity =
@@ -41,5 +44,6 @@ internal fun Payment.toUpdateEntity(): PaymentEntity =
                 Payment.Status.PENDING -> PaymentEntity.Status.PENDING
                 Payment.Status.COMPLETED -> PaymentEntity.Status.COMPLETED
                 Payment.Status.CANCELLED -> PaymentEntity.Status.CANCELLED
-            }
+            },
+        version = Version(this.version)
     )

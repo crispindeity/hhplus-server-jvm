@@ -33,5 +33,8 @@ enum class ErrorCode(
     NOT_FOUND_PAYMENT_INFO(code = 404, message = "not found payment info."),
     ALREADY_PAYMENT(code = 400, message = "already payment"),
     INSUFFICIENT_POINT(code = 400, message = "not enough point to complete the operation"),
-    INVALID_STATUS(code = 400, message = "invalid status.")
+    INVALID_STATUS(code = 400, message = "invalid status."),
+    FAILED_RETRY(code = 409, message = "optimistic lock failed after retries."),
+    OPTIMISTIC_LOCKING_FAILURE(code = 409, message = "locking failed."),
+    DUPLICATE_PAYMENT_ATTEMPT(code = 409, message = "duplicate payment request detected.")
 }

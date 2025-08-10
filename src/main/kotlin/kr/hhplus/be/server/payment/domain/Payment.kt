@@ -10,7 +10,8 @@ internal data class Payment(
     val userId: UUID,
     val price: Long,
     val paidAt: LocalDateTime? = null,
-    val status: Status = Status.PENDING
+    val status: Status = Status.PENDING,
+    val version: Int = 0
 ) {
     enum class Status {
         PENDING,

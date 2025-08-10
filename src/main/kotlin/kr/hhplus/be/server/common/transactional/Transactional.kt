@@ -54,7 +54,9 @@ class Transactional(
                 transactionManager.commit(status)
                 result
             } catch (exception: Throwable) {
-                transactionManager.rollback(status)
+                if (!status.isCompleted) {
+                    transactionManager.rollback(status)
+                }
                 throw exception
             }
         }
