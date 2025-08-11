@@ -1,8 +1,8 @@
-import {USER_IDS} from './user_ids.js';
-import {runFlowWithUserId} from './common.js';
+import { USER_IDS } from './user_ids.js';
+import { runFlowWithUserId } from './common.js';
 
 export const options = {
-  vus: Number(__ENV.VUS || 1),
+  vus: USER_IDS.length,
   iterations: USER_IDS.length,
   thresholds: {
     checks: ['rate>0.99'],
@@ -16,6 +16,8 @@ export const options = {
 };
 
 export default function () {
-  const userId = USER_IDS[__ITER];
+  const idx = __VU - 1;
+  const userId = USER_IDS[idx];
+  if (!userId) return;
   runFlowWithUserId(userId);
 }

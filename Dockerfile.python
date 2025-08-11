@@ -1,9 +1,0 @@
-FROM python:3.10-slim
-
-WORKDIR /app
-
-RUN pip install faker mysql-connector-python psutil
-
-COPY ./data_generator/generate_all.py .
-
-ENTRYPOINT ["python", "generate_all.py"]

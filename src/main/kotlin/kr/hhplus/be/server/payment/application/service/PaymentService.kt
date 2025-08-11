@@ -65,7 +65,7 @@ internal class PaymentService(
                     }
 
                     completeEntryQueue(userUUID)
-                    seatHoldPort.deleteAll(reservations.map { it.concertSeatId })
+                    seatHoldPort.deleteAllByConcertSeatIds(reservations.map { it.concertSeatId })
 
                     PaymentResponse(
                         totalPrice = totalPrice,

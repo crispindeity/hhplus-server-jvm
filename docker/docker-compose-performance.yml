@@ -15,8 +15,8 @@ services:
       - MYSQL_PASSWORD=application
       - MYSQL_DATABASE=hhplus
     volumes:
-      - ./data_generator/mysql1:/var/lib/mysql-files
-      - ./data_generator/mysql1:/docker-entrypoint-initdb.d
+      - ../data_generator/mysql1:/var/lib/mysql-files
+      - ../data_generator/mysql1:/docker-entrypoint-initdb.d
     command: [
       "--innodb_redo_log_capacity=2G"
     ]
@@ -38,8 +38,8 @@ services:
       "--innodb_redo_log_capacity=2G"
     ]
     volumes:
-      - ./data_generator/mysql2:/var/lib/mysql-files
-      - ./data_generator/mysql2:/docker-entrypoint-initdb.d
+      - ../data_generator/mysql2:/var/lib/mysql-files
+      - ../data_generator/mysql2:/docker-entrypoint-initdb.d
   server1:
     build:
       context: .
@@ -76,8 +76,8 @@ services:
     depends_on:
       - server1
     volumes:
-      - ./data_generator/mysql1:/var/lib/mysql-files
-      - ./data_generator/mysql1:/app/csv
+      - ../data_generator/mysql1:/var/lib/mysql-files
+      - ../data_generator/mysql1:/app/csv
     environment:
       - DB_HOST=mysql1
       - DB_PORT=3306
@@ -94,8 +94,8 @@ services:
     depends_on:
       - server2
     volumes:
-      - ./data_generator/mysql2:/var/lib/mysql-files
-      - ./data_generator/mysql2:/app/csv
+      - ../data_generator/mysql2:/var/lib/mysql-files
+      - ../data_generator/mysql2:/app/csv
     environment:
       - DB_HOST=mysql2
       - DB_PORT=3306
