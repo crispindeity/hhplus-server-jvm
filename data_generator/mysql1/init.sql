@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS concert_seats;
 DROP TABLE IF EXISTS concert_schedules;
 DROP TABLE IF EXISTS concerts;
+DROP TABLE IF EXISTS queue_numbers;
 
 CREATE TABLE concerts
 (
@@ -33,6 +34,7 @@ CREATE TABLE concert_seats
   schedule_id BIGINT      NOT NULL,
   seat_id     BIGINT      NOT NULL,
   status      VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'AVAILABLE', 'RESERVED')),
+  version     INT         NOT NULL,
   created_at  TIMESTAMP,
   updated_at  TIMESTAMP
 );
@@ -61,7 +63,7 @@ CREATE TABLE point_wallets
   balance    BIGINT      NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  version    BIGINT      NOT NULL
+  version    INT         NOT NULL
 );
 
 CREATE TABLE reservations
@@ -76,6 +78,7 @@ CREATE TABLE reservations
   expires_at      TIMESTAMP   NOT NULL,
   status          VARCHAR(20) NOT NULL CHECK (status IN
                                               ('IN_PROGRESS', 'CANCELLED', 'CONFIRMED', 'EXPIRED')),
+  version         INT         NOT NULL,
   created_at      TIMESTAMP,
   updated_at      TIMESTAMP
 );
@@ -109,6 +112,7 @@ CREATE TABLE payments
   status     VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'CANCELLED')),
   price      BIGINT      NOT NULL,
   paid_at    TIMESTAMP DEFAULT NULL,
+  version    INT         NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );
@@ -120,4 +124,12 @@ CREATE TABLE seat_holds
   user_id         VARCHAR(36) NOT NULL,
   held_at         TIMESTAMP   NOT NULL,
   expires_at      TIMESTAMP   NOT NULL
+);
+
+CREATE TABLE queue_numbers
+(
+  id         VARCHAR(20),
+  number     BIGINT NOT NULL,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
 );
