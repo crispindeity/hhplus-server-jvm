@@ -39,10 +39,6 @@ spring:
         - classpath:sql/data.sql
 
   jpa:
-    properties:
-      hibernate:
-        format_sql: true
-        show_sql: true
     defer-datasource-initialization: true
 
 jwt:

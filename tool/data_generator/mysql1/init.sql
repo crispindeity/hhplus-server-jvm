@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS concert_seats;
 DROP TABLE IF EXISTS concert_schedules;
 DROP TABLE IF EXISTS concerts;
+DROP TABLE IF EXISTS queue_numbers;
 
 CREATE TABLE concerts
 (
@@ -33,6 +34,7 @@ CREATE TABLE concert_seats
   schedule_id BIGINT      NOT NULL,
   seat_id     BIGINT      NOT NULL,
   status      VARCHAR(20) NOT NULL CHECK (status IN ('HELD', 'AVAILABLE', 'RESERVED')),
+  version     INT         NOT NULL,
   created_at  TIMESTAMP,
   updated_at  TIMESTAMP
 );
@@ -61,7 +63,7 @@ CREATE TABLE point_wallets
   balance    BIGINT      NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  version    BIGINT      NOT NULL
+  version    INT         NOT NULL
 );
 
 CREATE TABLE reservations
@@ -76,6 +78,7 @@ CREATE TABLE reservations
   expires_at      TIMESTAMP   NOT NULL,
   status          VARCHAR(20) NOT NULL CHECK (status IN
                                               ('IN_PROGRESS', 'CANCELLED', 'CONFIRMED', 'EXPIRED')),
+  version         INT         NOT NULL,
   created_at      TIMESTAMP,
   updated_at      TIMESTAMP
 );
@@ -109,6 +112,7 @@ CREATE TABLE payments
   status     VARCHAR(20) NOT NULL CHECK (status IN ('PENDING', 'COMPLETED', 'CANCELLED')),
   price      BIGINT      NOT NULL,
   paid_at    TIMESTAMP DEFAULT NULL,
+  version    INT         NOT NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );
@@ -122,10 +126,10 @@ CREATE TABLE seat_holds
   expires_at      TIMESTAMP   NOT NULL
 );
 
-CREATE INDEX idx_concert_schedules_concert_id ON concert_schedules (concert_id);
-CREATE INDEX idx_concert_seats_schedule_status ON concert_seats (schedule_id, status);
-CREATE INDEX idx_reservations_status_reserved_at ON reservations (status, reserved_at);
-CREATE INDEX idx_queue_tokens_user_id ON queue_tokens(user_id);
-CREATE INDEX idx_queue_status_expires_queue ON queue_tokens (status, expires_at, queue_number);
-CREATE INDEX idx_queue_tokens_queue_number ON queue_tokens(queue_number);
-CREATE INDEX idx_queue_tokens_user_status ON queue_tokens(user_id, status);
+CREATE TABLE queue_numbers
+(
+  id         VARCHAR(20),
+  number     BIGINT NOT NULL,
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP
+);

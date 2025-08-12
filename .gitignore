@@ -37,4 +37,4 @@ out/
 .vscode/
 
 data
-data_generator/*/*.csv
+tool/data_generator/*/*.csv

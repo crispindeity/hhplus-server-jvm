@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.payment.application.service
 
+import java.time.LocalDateTime
 import java.util.UUID
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
@@ -65,7 +66,7 @@ internal class PaymentService(
                     }
 
                     completeEntryQueue(userUUID)
-                    seatHoldPort.deleteAll(reservations.map { it.concertSeatId })
+                    seatHoldPort.deleteAllByConcertSeatIds(reservations.map { it.concertSeatId })
 
                     PaymentResponse(
                         totalPrice = totalPrice,
@@ -106,14 +107,15 @@ internal class PaymentService(
         reservation: Reservation,
         payment: Payment
     ) {
+        val now: LocalDateTime = LocalDateTime.now()
         if (payment.status != Payment.Status.PENDING) {
             throw PaymentException(ErrorCode.ALREADY_PAYMENT)
         }
 
-        val completedPayment: Payment = payment.complete()
+        val completedPayment: Payment = payment.complete(now)
         paymentPort.update(completedPayment)
 
-        val confirmedReservation: Reservation = reservation.confirm()
+        val confirmedReservation: Reservation = reservation.confirm(now)
         reservationPort.update(confirmedReservation)
 
         val concertSeat: ConcertSeat =

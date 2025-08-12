@@ -1,3 +1,6 @@
+INSERT INTO queue_numbers (id, number, created_at, updated_at)
+VALUES ('entry_queue', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
 INSERT INTO users (id, user_id, created_at, updated_at)
 VALUES (1, '1fa85f64-5717-4562-b3fc-2c963f66afa1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
        (2, '2d9c5c0f-9b42-401e-8c4f-bfa171de1f32', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

@@ -19,7 +19,7 @@ internal data class Payment(
         CANCELLED
     }
 
-    fun complete(): Payment {
+    fun complete(now: LocalDateTime = LocalDateTime.now()): Payment {
         if (status != Status.PENDING) {
             throw PaymentException(
                 code = ErrorCode.INVALID_STATUS,
@@ -27,7 +27,8 @@ internal data class Payment(
             )
         }
         return this.copy(
-            status = Status.COMPLETED
+            status = Status.COMPLETED,
+            paidAt = now
         )
     }
 }

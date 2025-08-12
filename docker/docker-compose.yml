@@ -1,0 +1,83 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hhplus-mysql
+    ports: [ "3306:3306" ]
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=application
+      - MYSQL_PASSWORD=application
+      - MYSQL_DATABASE=hhplus
+    volumes:
+      - ../data/csv:/var/lib/mysql-files
+      - ../data/mysql:/var/lib/mysql
+    restart: unless-stopped
+
+  pinpoint-hbase:
+    image: pinpointdocker/pinpoint-hbase:2.5.3
+    container_name: pinpoint-hbase
+    environment:
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    volumes:
+      - ../tool/pinpoint/hbase/hbase-site.xml:/opt/hbase/hbase-1.2.6/conf/hbase-site.xml:ro
+      - ../data/hbase:/opt/hbase/data
+      - ../data/zookeeper:/opt/zookeeper/data
+    restart: unless-stopped
+
+  pinpoint-collector:
+    image: pinpointdocker/pinpoint-collector:2.5.3
+    container_name: pinpoint-collector
+    environment:
+      - PINPOINT_ZOOKEEPER_ADDRESS=pinpoint-hbase:2181
+    volumes:
+      - ../tool/pinpoint/collector/pinpoint-collector.properties:/path/to/in-container/pinpoint-collector.properties
+    ports:
+      - "9991:9991"
+      - "9992:9992"
+      - "9993:9993"
+    restart: unless-stopped
+
+  pinpoint-web:
+    image: pinpointdocker/pinpoint-web:2.5.3
+    container_name: pinpoint-web
+    environment:
+      - PINPOINT_ZOOKEEPER_ADDRESS=pinpoint-hbase:2181
+    ports:
+      - "8079:8080"
+    restart: unless-stopped
+
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: hhplus-server
+    ports: [ "8080:8080" ]
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      - PINPOINT_COLLECTOR_IP=pinpoint-collector
+      - PINPOINT_AGENT_ID=backend-server
+      - PINPOINT_APPLICATION_NAME=hhplus-backend
+    restart: on-failure
+
+  data-generator:
+    container_name: data-generator
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.python
+    depends_on:
+      - server
+    volumes:
+      - ../data/csv:/var/lib/mysql-files
+      - ../data/csv:/app/csv
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=hhplus
+      - DB_USER=root
+      - DB_PASSWORD=root
+      - CSV_DIR=/app/csv
+      - SCALE=1
+
+networks:
+  default:
+    driver: bridge
