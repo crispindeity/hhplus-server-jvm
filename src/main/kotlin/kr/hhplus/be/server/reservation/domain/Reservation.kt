@@ -24,7 +24,7 @@ internal data class Reservation(
         EXPIRED
     }
 
-    fun confirm(): Reservation {
+    fun confirm(now: LocalDateTime = LocalDateTime.now()): Reservation {
         if (status != Status.IN_PROGRESS) {
             throw ReservationException(
                 code = ErrorCode.INVALID_STATUS,
@@ -32,7 +32,8 @@ internal data class Reservation(
             )
         }
         return this.copy(
-            status = Status.CONFIRMED
+            status = Status.CONFIRMED,
+            reservedAt = now
         )
     }
 }
