@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component
 
 @Aspect
 @Component
-class RedisLocksAspect(
+internal class RedisLocksAspect(
     private val redisson: RedissonClient,
     private val parser: SpelExpressionParser,
     private val parameterNameDiscoverer: DefaultParameterNameDiscoverer
@@ -30,7 +30,7 @@ class RedisLocksAspect(
         private const val PREFIX = "lock:"
     }
 
-    @Around("@annotation(kr.hhplus.be.server.common.lock.RedisLocks)")
+    @Around("@annotation(redisLocks)")
     fun redisLocks(
         joinPoint: ProceedingJoinPoint,
         redisLocks: RedisLocks
@@ -52,10 +52,10 @@ class RedisLocksAspect(
 
             if (!tryAcquire(lock, redisLocks.waitSeconds, redisLocks.leaseSeconds)) {
                 log["lock.keys"] = keys
-                throw RedissonException(
-                    code = ErrorCode.LOCK_ACQUIRE_TIME_OUT,
-                    message = "keys: $keys"
-                )
+                if (redisLocks.waitSeconds == 0L) {
+                    throw LockAcquisition(message = "keys: $keys")
+                }
+                throw RedisLockTimeoutException(message = "keys: $keys")
             }
 
             try {
