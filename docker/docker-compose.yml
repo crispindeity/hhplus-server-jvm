@@ -57,6 +57,7 @@ services:
     ports: [ "8080:8080" ]
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      - SPRING_DATA_REDIS_HOST=redis
       - PINPOINT_COLLECTOR_IP=pinpoint-collector
       - PINPOINT_AGENT_ID=backend-server
       - PINPOINT_APPLICATION_NAME=hhplus-backend
@@ -72,6 +73,7 @@ services:
     volumes:
       - ../data/csv:/var/lib/mysql-files
       - ../data/csv:/app/csv
+      - ../src/main/resources/sql:/app/sql
     environment:
       - DB_HOST=mysql
       - DB_PORT=3306
@@ -79,7 +81,7 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - CSV_DIR=/app/csv
-      - SCALE=1
+      - SCALE=10
 
   redis:
     image: redis:8.2
