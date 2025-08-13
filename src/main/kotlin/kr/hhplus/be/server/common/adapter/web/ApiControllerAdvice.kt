@@ -4,6 +4,8 @@ import kr.hhplus.be.server.common.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.exception.LogException
 import kr.hhplus.be.server.common.exception.ServletException
+import kr.hhplus.be.server.common.lock.RedisLockTimeoutException
+import kr.hhplus.be.server.common.lock.RedissonException
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.concert.exception.ConcertException
 import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
@@ -187,6 +189,28 @@ class ApiControllerAdvice {
     fun logException(exception: LogException): ApiResponse<Unit> =
         Log.warnLogging(logger) { log ->
             log["exception"] = "logException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(RedisLockTimeoutException::class)
+    fun redisLockTimeOutException(exception: RedisLockTimeoutException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "redisLockTimeOutException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(RedissonException::class)
+    fun redissonException(exception: RedissonException): ApiResponse<Unit> =
+        Log.logging(logger) { log ->
+            log["exception"] = "redissonException()"
             log["message"] = exception.codeInterface.message
             ApiResponse.fail(
                 code = exception.codeInterface.code,
