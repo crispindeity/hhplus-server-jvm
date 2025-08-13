@@ -36,5 +36,10 @@ enum class ErrorCode(
     INVALID_STATUS(code = 400, message = "invalid status."),
     FAILED_RETRY(code = 409, message = "optimistic lock failed after retries."),
     OPTIMISTIC_LOCKING_FAILURE(code = 409, message = "locking failed."),
-    DUPLICATE_PAYMENT_ATTEMPT(code = 409, message = "duplicate payment request detected.")
+    DUPLICATE_PAYMENT_ATTEMPT(code = 409, message = "duplicate payment request detected."),
+    LOCK_ACQUIRE_TIME_OUT(code = 500, message = "locking out of time."),
+    NOT_VALUE_IN_EXPRESSION(code = 500, message = "not value in expression."),
+    INVALID_RETURN_TYPE(code = 500, message = "invalid return types"),
+    KEYS_IS_EMPTY(code = 404, message = "is empty keys."),
+    FAILED_TO_UNLOCK(code = 500, message = "failed to unlock.")
 }
