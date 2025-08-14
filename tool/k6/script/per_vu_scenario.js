@@ -1,25 +1,25 @@
-import { SharedArray } from 'k6/data';
+import {SharedArray} from 'k6/data';
 import exec from 'k6/execution';
 import papaparse from 'https://jslib.k6.io/papaparse/5.1.1/index.js';
-import { runFlowWithUserId } from './common.js';
+import {runFlowWithUserId} from './common.js';
 
 const VUS = Number(__ENV.VUS || 50);
 const CSV_PATH = __ENV.USERS_CSV || '../../../data/csv/users.csv';
 
 const allUsers = new SharedArray('users', () => {
   const text = open(CSV_PATH);
-  const rows = papaparse.parse(text, { header: false }).data;
+  const rows = papaparse.parse(text, {header: false}).data;
   return rows.map(r => r && r[1]).filter(Boolean);
 });
 
 export const options = {
   stages: [
-    { duration: '30s', target: 30 },
-    { duration: '1m', target: 50 },
-    { duration: '3m', target: 40 },
-    { duration: '4m', target: 25 },
-    { duration: '1m', target: 35 },
-    { duration: '30s', target: 0 },
+    {duration: '30s', target: 30},
+    {duration: '1m', target: 50},
+    {duration: '3m', target: 40},
+    {duration: '4m', target: 25},
+    {duration: '1m', target: 35},
+    {duration: '30s', target: 0},
   ],
   thresholds: {
     checks: ['rate>0.99'],
@@ -39,7 +39,9 @@ let myUserIndex = 0;
 let initialized = false;
 
 function initializeMyUsers() {
-  if (initialized) return;
+  if (initialized) {
+    return;
+  }
   const vuId = exec.vu.idInTest;
   const totalUsers = allUsers.length;
   const usersPerVU = Math.floor(totalUsers / VUS);
@@ -64,8 +66,9 @@ function getNextUserId() {
 
 export default function () {
   const userId = getNextUserId();
+  const concertIds = Array.from({ length: 100 }, (_, i) => String(i + 1));
   if (!userId) {
     return;
   }
-  runFlowWithUserId(userId);
+  runFlowWithUserId(userId, concertIds);
 }

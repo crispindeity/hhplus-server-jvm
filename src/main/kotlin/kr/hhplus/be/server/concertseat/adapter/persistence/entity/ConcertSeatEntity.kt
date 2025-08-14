@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import kr.hhplus.be.server.common.adapter.persistence.entity.BaseEntity
-import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 
 @Entity
 @Table(name = "concert_seats")
@@ -23,10 +22,7 @@ internal class ConcertSeatEntity(
     val seatId: Long,
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    val status: Status,
-    @jakarta.persistence.Version
-    @Column(nullable = false)
-    var version: Version
+    val status: Status
 ) : BaseEntity() {
     enum class Status {
         HELD,

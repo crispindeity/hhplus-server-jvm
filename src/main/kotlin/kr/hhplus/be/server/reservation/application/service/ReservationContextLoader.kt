@@ -40,7 +40,7 @@ internal class ReservationContextLoader(
                 .getSchedule(concertSeat.scheduleId)
                 .orThrow { ConcertScheduleException(ErrorCode.NOT_FOUND_CONCERT_SCHEDULE) }
 
-        if (schedule.date != date) {
+        if (!schedule.date.isEqual(date)) {
             throw ConcertScheduleException(ErrorCode.INVALID_CONCERT_DATE)
         }
 

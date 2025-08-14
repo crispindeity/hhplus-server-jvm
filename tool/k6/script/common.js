@@ -189,7 +189,7 @@ function attemptPaymentWithTopUp({userId, authHeaders}) {
   return success ? 200 : code;
 }
 
-export function runFlowWithUserId(userId) {
+export function runFlowWithUserId(userId, { concertIds = CONCERT_IDS } = {}) {
   const tokenRes = requestWithLog(
       'POST',
       `${BASE_URL}/api/queue/entry-token`,
@@ -209,7 +209,7 @@ export function runFlowWithUserId(userId) {
     return;
   }
   const authHeaders = {headers: {accept: 'application/json', EntryQueueToken: entryQueueToken}};
-  const chosenConcertId = CONCERT_IDS[Math.floor(Math.random() * CONCERT_IDS.length)];
+  const chosenConcertId = concertIds[Math.floor(Math.random() * concertIds.length)];
   const availableDates = fetchAvailableDates(chosenConcertId, authHeaders);
   if (!Array.isArray(availableDates) || availableDates.length === 0) {
     return;
