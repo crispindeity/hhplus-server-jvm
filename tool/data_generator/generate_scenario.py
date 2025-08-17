@@ -29,8 +29,8 @@ MAX_WORKERS = int(os.environ.get("MAX_WORKERS", str(min(mp.cpu_count() * 2, 16))
 NUM_CONCERTS = 10 * SCALE
 NUM_SCHEDULES = 1000 * SCALE
 NUM_SEATS = 1000 * SCALE
-NUM_USERS = 100_000 * SCALE
-NUM_CONCERT_SEATS = 1_000_000 * SCALE
+NUM_USERS = 50_000
+NUM_CONCERT_SEATS = 500_000 * SCALE
 
 fake = Faker()
 now = datetime.now()
@@ -293,6 +293,7 @@ def main():
 
     with memory_monitor("DB 연결 및 데이터 삽입"):
         pool = create_connection_pool()
+        execute_ddl_from_file(pool, "./sql/schema.sql")
 
         dependency_order = [
             ("users", "id,user_id,created_at,updated_at", "users.csv"),
@@ -340,6 +341,23 @@ def main():
 
     logger.info("✅ 모든 데이터 삽입 완료.")
     log_memory("완료")
+
+def load_sql_from_file(path: str) -> str:
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
+
+def execute_ddl_from_file(pool, path: str):
+    with open(path, 'r', encoding='utf-8') as f:
+        ddl_sql = f.read()
+    conn = pool.get_connection()
+    try:
+        cur = conn.cursor()
+        statements = [stmt.strip() for stmt in ddl_sql.split(';') if stmt.strip()]
+        for stmt in statements:
+            cur.execute(stmt)
+        print(f"✅ {path} 실행 완료")
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     main()

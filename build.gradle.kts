@@ -27,6 +27,7 @@ val restdocsSpecMockMvcVersion = "0.18.2"
 val kotlinCoroutineVersion = "1.10.2"
 val restAssuredVersion = "5.5.0"
 val nimbusJWTVersion = "10.3"
+val redissonVersion = "3.44.0"
 
 java {
     toolchain {
@@ -63,9 +64,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
 
     // DB
     runtimeOnly("com.mysql:mysql-connector-j")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

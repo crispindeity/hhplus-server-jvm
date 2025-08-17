@@ -4,25 +4,24 @@ info:
   description: API Documents
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
-  - url: http://localhost:8081
-tags: [ ]
+- url: http://localhost:8080
+tags: []
 paths:
   /api/payments:
     post:
       tags:
-        - 결제
+      - 결제
       summary: 포인트 결제 요청 API
       description: 포인트 결제 시 사용되는 API
       operationId: 포인트 결제
       parameters:
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       responses:
         "200":
           description: "200"
@@ -44,18 +43,18 @@ paths:
   /api/reservations:
     post:
       tags:
-        - 예약
+      - 예약
       summary: 예약 생성 요청 API
       description: 좌석을 예약할 때 사용되는 API 입니다.
       operationId: 예약 생성
       parameters:
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       requestBody:
         content:
           application/json:
@@ -65,13 +64,13 @@ paths:
               예약 생성 - 잘못된 요청:
                 value: |-
                   {
-                    "date" : "2025-08-01",
+                    "date" : "2025-08-14",
                     "seat" : -1
                   }
               예약 생성:
                 value: |-
                   {
-                    "date" : "2025-08-01",
+                    "date" : "2025-08-14",
                     "seat" : 1
                   }
       responses:
@@ -100,17 +99,17 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "userId" : "1d69bc52-e683-41d4-8442-1239c104d42e",
+                        "userId" : "2785db52-57db-4e14-abd0-971bf9533e6c",
                         "concertSeatId" : 1,
-                        "concertDate" : "2025-08-01",
-                        "reservedAt" : "2025-07-31T17:37:35.413207",
-                        "expiresAt" : "2025-07-31T17:43:35.413209"
+                        "concertDate" : "2025-08-14",
+                        "reservedAt" : "2025-08-13T09:21:24.085296",
+                        "expiresAt" : "2025-08-13T09:27:24.085299"
                       }
                     }
   /api/queue/entry-token:
     post:
       tags:
-        - 대기열 토큰
+      - 대기열 토큰
       summary: 대기열 토큰 발급 API
       description: 대기열 토큰 발급 시 사용되는 API
       operationId: 대기열 토큰
@@ -123,7 +122,7 @@ paths:
               대기열 토큰:
                 value: |-
                   {
-                    "userId" : "007d914a-4122-4b5d-8042-cb77040247e2"
+                    "userId" : "deee7f1f-073d-4052-8ae8-9405897f79a5"
                   }
               대기열 토큰 - 잘못된 요청:
                 value: |-
@@ -164,24 +163,24 @@ paths:
   /api/users/{id}/points:
     get:
       tags:
-        - 유저 포인트
+      - 유저 포인트
       summary: 유저 포인트 조회 API
       description: 유저 포인트 조회 시 사용되는 API
       operationId: 유저 포인트 조회
       parameters:
-        - name: id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       responses:
         "200":
           description: "200"
@@ -196,31 +195,31 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "userId" : "e3c6460d-e4b4-4687-97f1-3658ac9f87d8",
+                        "userId" : "320c5aeb-e9d0-4f82-9951-d8bf1eb5a3e6",
                         "balance" : 1000
                       }
                     }
   /api/concerts/{id}/reservations/available-dates:
     get:
       tags:
-        - 콘서트
+      - 콘서트
       summary: 콘서트 예약 가능 날짜 조회 API
       description: 콘서트 예약 가능 날짜를 조회할 때 사용하는 API
       operationId: 콘서트 예약 가능 날짜 조회
       parameters:
-        - name: id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       responses:
         "200":
           description: "200"
@@ -235,36 +234,36 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "dates" : [ "2025-07-31", "2025-07-31" ]
+                        "dates" : [ "2025-08-13", "2025-08-13" ]
                       }
                     }
   /api/concerts/{id}/reservations/available-seats:
     get:
       tags:
-        - 콘서트
+      - 콘서트
       summary: 콘서트 예약 가능 좌석 조회 API
       description: 콘서트 예약 가능 좌석을 조회할 때 사용하는 API
       operationId: 콘서트 예약 가능 좌석 조회
       parameters:
-        - name: id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-        - name: date
-          in: query
-          description: 좌석 조회 날짜
-          required: true
-          schema:
-            type: string
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: 좌석 조회 날짜
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       responses:
         "200":
           description: "200"
@@ -293,24 +292,24 @@ paths:
   /api/users/{id}/points/charge:
     post:
       tags:
-        - 유저 포인트
+      - 유저 포인트
       summary: 유저 포인트 충전 API
       description: 유저 포인트 충전 시 사용되는 API
       operationId: 유저 포인트 충전
       parameters:
-        - name: id
-          in: path
-          description: ""
-          required: true
-          schema:
-            type: string
-        - name: EntryQueueToken
-          in: header
-          description: 대기열 토큰
-          required: true
-          schema:
-            type: string
-          example: token
+      - name: id
+        in: path
+        description: ""
+        required: true
+        schema:
+          type: string
+      - name: EntryQueueToken
+        in: header
+        description: 대기열 토큰
+        required: true
+        schema:
+          type: string
+        example: token
       requestBody:
         content:
           application/json:
@@ -394,10 +393,10 @@ components:
               description: 예약 가능 날짜 리스트
               items:
                 oneOf:
-                  - type: object
-                  - type: boolean
-                  - type: string
-                  - type: number
+                - type: object
+                - type: boolean
+                - type: string
+                - type: number
         code:
           type: number
           description: 응답 코드
