@@ -12,4 +12,9 @@ internal interface ConcertScheduleRepository {
     ): ConcertScheduleEntity
 
     fun findSchedule(scheduleId: Long): ConcertScheduleEntity?
+
+    fun decreaseSeatCount(
+        concertId: Long,
+        scheduleId: Long
+    ): Long
 }

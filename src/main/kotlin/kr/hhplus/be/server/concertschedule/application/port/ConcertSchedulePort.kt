@@ -12,4 +12,9 @@ internal interface ConcertSchedulePort {
     ): ConcertSchedule?
 
     fun getSchedule(scheduleId: Long): ConcertSchedule?
+
+    fun decreaseSeatCount(
+        concertId: Long,
+        scheduleId: Long
+    ): Long
 }
