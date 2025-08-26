@@ -19,11 +19,13 @@ class TestcontainersConfiguration {
                 .withDatabaseName("hhplus")
                 .withUsername("test")
                 .withPassword("test")
+                .withEnv("TZ", "Asia/Seoul")
                 .apply { start() }
 
         val redisContainer: GenericContainer<*> =
             GenericContainer(DockerImageName.parse("redis:8.2"))
                 .withExposedPorts(6379)
+                .withEnv("TZ", "Asia/Seoul")
                 .apply { start() }
 
         init {

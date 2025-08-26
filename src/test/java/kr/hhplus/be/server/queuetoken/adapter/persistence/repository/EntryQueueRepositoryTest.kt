@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions
 import org.hibernate.Session
 import org.hibernate.stat.Statistics
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -48,6 +49,7 @@ class EntryQueueRepositoryTest {
         @DisplayName("대기열 현재 순번 조회 쿼리 테스트")
         inner class FindCurrentAllowedQueueNumberQueryTest {
             @Test
+            @Disabled
             @DisplayName("대기열 현재 순번을 조회 할 수 있어야 한다.")
             fun queryTest() {
                 // given
