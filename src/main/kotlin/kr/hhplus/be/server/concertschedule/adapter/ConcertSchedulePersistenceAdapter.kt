@@ -21,4 +21,9 @@ internal class ConcertSchedulePersistenceAdapter(
 
     override fun getSchedule(scheduleId: Long): ConcertSchedule? =
         repository.findSchedule(scheduleId)?.toDomain()
+
+    override fun decreaseSeatCount(
+        concertId: Long,
+        scheduleId: Long
+    ): Long = repository.decreaseSeatCount(concertId, scheduleId)
 }

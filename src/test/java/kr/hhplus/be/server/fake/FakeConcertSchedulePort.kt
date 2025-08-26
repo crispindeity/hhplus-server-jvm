@@ -27,6 +27,13 @@ internal class FakeConcertSchedulePort(
 
     override fun getSchedule(scheduleId: Long): ConcertSchedule? = storage[scheduleId]
 
+    override fun decreaseSeatCount(
+        concertId: Long,
+        scheduleId: Long
+    ): Long {
+        TODO("Not yet implemented")
+    }
+
     fun saveSingleSchedule(id: Long) {
         storage[id] =
             ConcertSchedule(

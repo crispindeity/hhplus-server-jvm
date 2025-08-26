@@ -41,5 +41,6 @@ enum class ErrorCode(
     NOT_VALUE_IN_EXPRESSION(code = 500, message = "not value in expression."),
     INVALID_RETURN_TYPE(code = 500, message = "invalid return types"),
     KEYS_IS_EMPTY(code = 404, message = "is empty keys."),
-    FAILED_TO_UNLOCK(code = 500, message = "failed to unlock.")
+    FAILED_TO_UNLOCK(code = 500, message = "failed to unlock."),
+    NOT_FOUND_REDIS_KEY(code = 404, message = "not found redis key.")
 }

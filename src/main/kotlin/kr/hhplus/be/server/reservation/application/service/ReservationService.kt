@@ -5,10 +5,12 @@ import java.util.UUID
 import kr.hhplus.be.server.common.lock.RedisLocks
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.common.transactional.Transactional
+import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.payment.domain.Payment
+import kr.hhplus.be.server.ranking.application.port.RankingPort
 import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.domain.Reservation
@@ -24,7 +26,9 @@ internal class ReservationService(
     private val reservationPort: ReservationPort,
     private val paymentPort: PaymentPort,
     private val reservationContextLoader: ReservationContextLoader,
-    private val transactional: Transactional
+    private val transactional: Transactional,
+    private val rankingPort: RankingPort,
+    private val concertSchedulePort: ConcertSchedulePort
 ) {
     private val logger: Logger = Log.getLogger(ReservationService::class.java)
 
@@ -42,46 +46,64 @@ internal class ReservationService(
             log["method"] = "makeReservation()"
 
             val userUUID: UUID = UUID.fromString(userId)
-            transactional.run {
-                val context: ReservationContext =
-                    reservationContextLoader.load(concertSeatId, date)
+            val context: ReservationContext =
+                reservationContextLoader.load(concertSeatId, date)
 
-                val heldSeat: ConcertSeat = context.concertSeat.held()
+            val response: MakeReservationResponse =
+                transactional.run {
+                    val heldSeat: ConcertSeat = context.concertSeat.held()
+                    concertSeatPort.update(heldSeat)
 
-                concertSeatPort.update(heldSeat)
+                    seatHoldPort.save(SeatHold(concertSeatId = concertSeatId, userId = userUUID))
 
-                seatHoldPort.save(
-                    SeatHold(
-                        concertSeatId = concertSeatId,
-                        userId = userUUID
+                    val paymentId: Long =
+                        paymentPort.save(Payment(userId = userUUID, price = context.seat.price))
+
+                    val reservation =
+                        Reservation(
+                            userId = userUUID,
+                            concertSeatId = concertSeatId,
+                            concertId = context.schedule.concertId,
+                            paymentId = paymentId,
+                            status = Reservation.Status.IN_PROGRESS
+                        )
+                    reservationPort.save(reservation)
+
+                    MakeReservationResponse(
+                        userId = userId,
+                        concertSeatId = context.concertSeat.id,
+                        reservedAt = reservation.reservedAt,
+                        expiresAt = reservation.expiresAt,
+                        concertDate = context.schedule.date
                     )
+                }
+
+            rankingPort.saveFirstReservationTime(
+                concertId = context.schedule.concertId,
+                concertDate = context.schedule.date,
+                reservationAt = response.reservedAt
+            )
+
+            val remainingConcertSeat: Long =
+                concertSchedulePort.decreaseSeatCount(
+                    concertId = context.schedule.concertId,
+                    scheduleId = context.schedule.id
                 )
 
-                val paymentId: Long =
-                    paymentPort.save(
-                        Payment(
-                            userId = userUUID,
-                            price = context.seat.price
-                        )
-                    )
-
-                val reservation =
-                    Reservation(
-                        userId = userUUID,
-                        concertSeatId = concertSeatId,
-                        concertId = context.schedule.concertId,
-                        paymentId = paymentId,
-                        status = Reservation.Status.IN_PROGRESS
-                    )
-                reservationPort.save(reservation)
-
-                MakeReservationResponse(
-                    userId = userId,
-                    concertSeatId = context.concertSeat.id,
-                    reservedAt = reservation.reservedAt,
-                    expiresAt = reservation.expiresAt,
+            if (remainingConcertSeat == 0L) {
+                rankingPort.saveSoldOutTime(
+                    concertId = context.schedule.concertId,
+                    scheduleId = context.schedule.id,
+                    concertDate = context.schedule.date,
+                    soldOutAt = response.reservedAt
+                )
+                rankingPort.saveSoldOutRanking(
+                    concertId = context.schedule.concertId,
+                    scheduleId = context.schedule.id,
                     concertDate = context.schedule.date
                 )
             }
+
+            return@logging response
         }
 }
