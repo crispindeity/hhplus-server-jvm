@@ -10,6 +10,7 @@ services:
     ports:
       - "3306:3306"
     environment:
+      - TZ=Asia/Seoul
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=application
       - MYSQL_PASSWORD=application
@@ -30,6 +31,7 @@ services:
     ports:
       - "3307:3306"
     environment:
+      - TZ=Asia/Seoul
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=application
       - MYSQL_PASSWORD=application
@@ -50,6 +52,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql1:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
       - SPRING_SQL_INIT_MODE=never
       - SPRING_PROFILES_ACTIVE=performance
@@ -64,6 +67,7 @@ services:
     ports:
       - "8081:8081"
     environment:
+      - TZ=Asia/Seoul
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql2:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
       - SPRING_SQL_INIT_MODE=never
       - SERVER_PORT=8081
@@ -79,6 +83,7 @@ services:
       - ../data_generator/mysql1:/var/lib/mysql-files
       - ../data_generator/mysql1:/app/csv
     environment:
+      - TZ=Asia/Seoul
       - DB_HOST=mysql1
       - DB_PORT=3306
       - DB_NAME=hhplus
@@ -97,6 +102,7 @@ services:
       - ../data_generator/mysql2:/var/lib/mysql-files
       - ../data_generator/mysql2:/app/csv
     environment:
+      - TZ=Asia/Seoul
       - DB_HOST=mysql2
       - DB_PORT=3306
       - DB_NAME=hhplus
