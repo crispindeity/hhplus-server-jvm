@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.reservation.application.service
 
 import java.time.LocalDate
+import kr.hhplus.be.server.common.application.extensions.orThrow
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertschedule.domain.ConcertSchedule
@@ -8,7 +9,6 @@ import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
 import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
-import kr.hhplus.be.server.reservation.application.service.extensions.orThrow
 import kr.hhplus.be.server.seat.application.port.SeatPort
 import kr.hhplus.be.server.seat.domain.Seat
 import kr.hhplus.be.server.seat.exception.SeatException
