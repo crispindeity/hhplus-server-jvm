@@ -2,8 +2,8 @@ package kr.hhplus.be.server.reservation.application.event
 
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
+import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
-import kr.hhplus.be.server.reservation.application.service.dto.MakeReservationEvent
 import kr.hhplus.be.server.reservation.exception.ReservationException
 import org.slf4j.Logger
 import org.springframework.context.event.EventListener

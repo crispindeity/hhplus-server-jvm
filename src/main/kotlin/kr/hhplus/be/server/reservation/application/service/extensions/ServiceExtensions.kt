@@ -2,8 +2,8 @@ package kr.hhplus.be.server.reservation.application.service.extensions
 
 import java.time.LocalDateTime
 import java.util.UUID
+import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import kr.hhplus.be.server.reservation.application.service.ReservationContext
-import kr.hhplus.be.server.reservation.application.service.dto.MakeReservationEvent
 
 internal fun ReservationContext.toMakeEvent(
     eventId: UUID,

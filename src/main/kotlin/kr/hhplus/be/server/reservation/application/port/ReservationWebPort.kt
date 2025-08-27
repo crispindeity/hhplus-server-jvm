@@ -1,6 +1,6 @@
 package kr.hhplus.be.server.reservation.application.port
 
-import kr.hhplus.be.server.reservation.application.service.dto.MakeReservationEvent
+import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import org.springframework.http.HttpStatusCode
 
 internal interface ReservationWebPort {

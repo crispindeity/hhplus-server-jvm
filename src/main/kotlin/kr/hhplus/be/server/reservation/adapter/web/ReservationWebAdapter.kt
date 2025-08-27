@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.reservation.adapter.web
 
 import kr.hhplus.be.server.reservation.adapter.web.executor.HttpExecutor
+import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
-import kr.hhplus.be.server.reservation.application.service.dto.MakeReservationEvent
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 

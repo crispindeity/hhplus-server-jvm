@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.application.service.dto
+package kr.hhplus.be.server.reservation.application.event
 
 import java.time.LocalDateTime
 import java.util.UUID
