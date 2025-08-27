@@ -17,7 +17,7 @@ internal class ReservationEventPublisher(
     private val logger: Logger = Log.getLogger(this.javaClass)
 
     @EventListener
-    fun onMakeReservation(event: MakeReservationEvent) {
+    fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
             Log.logging(logger) { log ->
                 log["method"] = "onEvent()"
