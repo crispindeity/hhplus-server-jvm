@@ -28,6 +28,7 @@ val kotlinCoroutineVersion = "1.10.2"
 val restAssuredVersion = "5.5.0"
 val nimbusJWTVersion = "10.3"
 val redissonVersion = "3.44.0"
+val kotestVersion = "5.9.1"
 
 java {
     toolchain {
@@ -81,6 +82,7 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
 
     // JWT
     implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJWTVersion")
