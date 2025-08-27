@@ -7,6 +7,7 @@ import kr.hhplus.be.server.common.exception.ServletException
 import kr.hhplus.be.server.common.lock.RedisLockTimeoutException
 import kr.hhplus.be.server.common.lock.RedissonException
 import kr.hhplus.be.server.common.log.Log
+import kr.hhplus.be.server.common.transactional.AfterCommitCallbackException
 import kr.hhplus.be.server.concert.exception.ConcertException
 import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
 import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
@@ -211,6 +212,17 @@ class ApiControllerAdvice {
     fun redissonException(exception: RedissonException): ApiResponse<Unit> =
         Log.logging(logger) { log ->
             log["exception"] = "redissonException()"
+            log["message"] = exception.codeInterface.message
+            ApiResponse.fail(
+                code = exception.codeInterface.code,
+                message = exception.message ?: ""
+            )
+        }
+
+    @ExceptionHandler(AfterCommitCallbackException::class)
+    fun afterCommitCallbackException(exception: AfterCommitCallbackException): ApiResponse<Unit> =
+        Log.warnLogging(logger) { log ->
+            log["exception"] = "afterCommitCallbackException()"
             log["message"] = exception.codeInterface.message
             ApiResponse.fail(
                 code = exception.codeInterface.code,
