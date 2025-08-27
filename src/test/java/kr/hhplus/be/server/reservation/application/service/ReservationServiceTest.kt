@@ -2,6 +2,7 @@ package kr.hhplus.be.server.reservation.application.service
 
 import java.time.LocalDate
 import java.util.UUID
+import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertschedule.exception.ConcertScheduleException
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
@@ -10,9 +11,9 @@ import kr.hhplus.be.server.fake.FakeConcertPort
 import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakePaymentPort
+import kr.hhplus.be.server.fake.FakeReservationEventPublisher
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeRunner
-import kr.hhplus.be.server.fake.FakeSeatHoldPort
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
 import org.assertj.core.api.Assertions
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test
 class ReservationServiceTest {
     private lateinit var seatPort: FakeSeatPort
     private lateinit var concertPort: FakeConcertPort
-    private lateinit var seatHoldPort: FakeSeatHoldPort
     private lateinit var reservationPort: FakeReservationPort
     private lateinit var concertSeatPort: FakeConcertSeatPort
     private lateinit var reservationService: ReservationService
@@ -36,7 +36,6 @@ class ReservationServiceTest {
     fun setUp() {
         seatPort = FakeSeatPort()
         concertPort = FakeConcertPort()
-        seatHoldPort = FakeSeatHoldPort()
         reservationPort = FakeReservationPort()
         concertSeatPort = FakeConcertSeatPort(seatPort)
         concertSchedulePort = FakeConcertSchedulePort(concertSeatPort)
@@ -50,12 +49,11 @@ class ReservationServiceTest {
         val transactional = Transactional(FakeRunner())
         reservationService =
             ReservationService(
-                seatHoldPort = seatHoldPort,
-                concertSeatPort = concertSeatPort,
                 reservationPort = reservationPort,
-                paymentPort = paymentPort,
                 reservationContextLoader = reservationContextLoader,
-                transactional = transactional
+                transactional = transactional,
+                afterCommitExecutor = AfterCommitExecutor(),
+                eventPublisher = FakeReservationEventPublisher()
             )
     }
 
