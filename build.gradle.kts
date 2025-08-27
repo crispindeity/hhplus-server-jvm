@@ -66,6 +66,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
     // DB
     runtimeOnly("com.mysql:mysql-connector-j")
