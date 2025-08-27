@@ -7,21 +7,6 @@ import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.support.DefaultTransactionDefinition
 
-interface Runner {
-    fun <T> run(
-        function: () -> T?,
-        readOnly: Boolean = false,
-        isolation: Isolation,
-        propagation: Propagation
-    ): T?
-
-    fun <T> readOnly(
-        function: () -> T?,
-        isolation: Isolation,
-        propagation: Propagation
-    ): T? = run(function, readOnly = true, isolation = isolation, propagation = propagation)
-}
-
 @Component
 class Transactional(
     private val advice: Runner
@@ -40,7 +25,8 @@ class Transactional(
 
     @Component
     private class Advice(
-        private val transactionManager: PlatformTransactionManager
+        private val transactionManager: PlatformTransactionManager,
+        private val afterCommitExecutor: AfterCommitExecutor
     ) : Runner {
         override fun <T> run(
             function: () -> T?,
@@ -54,17 +40,22 @@ class Transactional(
                     this.propagationBehavior = propagation.value()
                     this.isolationLevel = isolation.value()
                 }
-
             val status: TransactionStatus = transactionManager.getTransaction(definition)
+            afterCommitExecutor.pushTransactionScope()
+
             return try {
                 val result: T? = function()
                 transactionManager.commit(status)
+                afterCommitExecutor.onTransactionCommit(status.isNewTransaction)
                 result
             } catch (exception: Throwable) {
                 if (!status.isCompleted) {
                     transactionManager.rollback(status)
                 }
+                afterCommitExecutor.onTransactionRollback(status.isNewTransaction)
                 throw exception
+            } finally {
+                afterCommitExecutor.clearIfStackEmpty()
             }
         }
     }
