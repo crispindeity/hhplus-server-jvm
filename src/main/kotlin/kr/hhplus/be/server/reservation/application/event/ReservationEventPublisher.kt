@@ -4,7 +4,9 @@ import kr.hhplus.be.server.common.application.extensions.orThrow
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.common.transactional.Transactional
+import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldCompletedEvent
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
+import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
 import kr.hhplus.be.server.reservation.domain.Reservation
@@ -20,7 +22,8 @@ import org.springframework.stereotype.Component
 internal class ReservationEventPublisher(
     private val reservationWebPort: ReservationWebPort,
     private val reservationPort: ReservationPort,
-    private val transactional: Transactional
+    private val transactional: Transactional,
+    private val reservationEventTracePort: ReservationEventTracePort
 ) {
     private val logger: Logger = Log.getLogger(this.javaClass)
 
@@ -82,6 +85,14 @@ internal class ReservationEventPublisher(
             } catch (_: OptimisticLockingFailureException) {
                 return@logging
             }
+        }
+    }
+
+    @Async
+    @EventListener
+    fun handleConcertSeatHoldCompletedEvent(event: ConcertSeatHoldCompletedEvent) {
+        runCatching {
+        }.onFailure {
         }
     }
 }

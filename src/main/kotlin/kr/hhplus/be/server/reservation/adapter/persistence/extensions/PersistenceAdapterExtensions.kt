@@ -3,7 +3,9 @@ package kr.hhplus.be.server.reservation.adapter.persistence.extensions
 import java.util.UUID
 import kr.hhplus.be.server.common.adapter.persistence.entity.Version
 import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEventTraceEntity
 import kr.hhplus.be.server.reservation.domain.Reservation
+import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 
 internal fun Reservation.toEntity(): ReservationEntity =
     ReservationEntity(
@@ -64,4 +66,25 @@ internal fun ReservationEntity.Status.toDomain(): Reservation.Status =
         ReservationEntity.Status.CONFIRMED -> Reservation.Status.CONFIRMED
         ReservationEntity.Status.EXPIRED -> Reservation.Status.EXPIRED
         ReservationEntity.Status.ERROR -> Reservation.Status.ERROR
+    }
+
+internal fun ReservationEventTrace.toEntity(): ReservationEventTraceEntity =
+    ReservationEventTraceEntity(
+        id = this.id,
+        eventId = this.eventId.toString(),
+        reservationId = this.reservationId,
+        occurredAt = this.occurredAt,
+        eventType = this.eventType.toEntity()
+    )
+
+internal fun ReservationEventTrace.EventType.toEntity(): ReservationEventTraceEntity.EventType =
+    when (this) {
+        ReservationEventTrace.EventType.PAYMENT ->
+            ReservationEventTraceEntity.EventType.PAYMENT
+
+        ReservationEventTrace.EventType.SEAT_HELD ->
+            ReservationEventTraceEntity.EventType.SEAT_HELD
+
+        ReservationEventTrace.EventType.CONCERT_SEAT_HELD ->
+            ReservationEventTraceEntity.EventType.CONCERT_SEAT_HELD
     }

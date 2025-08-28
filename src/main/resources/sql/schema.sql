@@ -132,6 +132,17 @@ CREATE TABLE queue_numbers
   updated_at TIMESTAMP
 );
 
+CREATE TABLE reservation_event_traces
+(
+  id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+  event_id       BIGINT      NOT NULL,
+  reservation_id BIGINT      NOT NULL,
+  occurred_at    TIMESTAMP   NOT NULL,
+  event_type     VARCHAR(20) NOT NULL,
+  created_at     TIMESTAMP,
+  updated_at     TIMESTAMP
+);
+
 CREATE INDEX idx_concert_schedules_concert_id ON concert_schedules (concert_id);
 CREATE INDEX idx_concert_seats_schedule_status ON concert_seats (schedule_id, status);
 CREATE INDEX idx_reservations_status_reserved_at ON reservations (status, reserved_at);
