@@ -8,7 +8,7 @@ internal data class ReservationEventTrace(
     val eventId: UUID,
     val reservationId: Long,
     val eventType: EventType,
-    val occurredAt: LocalDateTime
+    val occurredAt: LocalDateTime = LocalDateTime.now()
 ) {
     enum class EventType {
         PAYMENT,

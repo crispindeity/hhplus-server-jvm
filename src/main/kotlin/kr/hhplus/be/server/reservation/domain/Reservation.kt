@@ -51,5 +51,19 @@ internal data class Reservation(
         )
     }
 
+    fun inProgress(): Reservation {
+        if (status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status"
+            )
+        }
+        return this.copy(
+            status = Status.IN_PROGRESS
+        )
+    }
+
     fun isStatusAsError(): Boolean = status == Status.ERROR
+
+    fun isStatusAsInProgress(): Boolean = status == Status.IN_PROGRESS
 }

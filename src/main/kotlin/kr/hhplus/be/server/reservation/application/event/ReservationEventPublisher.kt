@@ -10,6 +10,7 @@ import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePor
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
 import kr.hhplus.be.server.reservation.domain.Reservation
+import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 import kr.hhplus.be.server.reservation.exception.ReservationException
 import org.slf4j.Logger
 import org.springframework.context.event.EventListener
@@ -26,6 +27,10 @@ internal class ReservationEventPublisher(
     private val reservationEventTracePort: ReservationEventTracePort
 ) {
     private val logger: Logger = Log.getLogger(this.javaClass)
+
+    companion object {
+        const val TRACE_COUNT = 3L
+    }
 
     @Async
     @EventListener
@@ -92,7 +97,45 @@ internal class ReservationEventPublisher(
     @EventListener
     fun handleConcertSeatHoldCompletedEvent(event: ConcertSeatHoldCompletedEvent) {
         runCatching {
-        }.onFailure {
+            reservationEventTracePort.save(
+                ReservationEventTrace(
+                    eventId = event.eventId,
+                    reservationId = event.reservationId,
+                    eventType = ReservationEventTrace.EventType.CONCERT_SEAT_HELD
+                )
+            )
+
+            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                updateReservationStatusAsInProgress(event.reservationId)
+            }
+        }.onFailure { exception ->
+            Log.errorLogging(logger, exception) { log ->
+                log["eventId"] = event.eventId
+                log["reservationId"] = event.reservationId
+            }
+        }
+    }
+
+    private fun updateReservationStatusAsInProgress(reservationId: Long) {
+        Log.logging(logger) {
+            val foundReservation: Reservation =
+                reservationPort
+                    .getReservation(reservationId)
+                    .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
+
+            if (foundReservation.isStatusAsInProgress()) {
+                return@logging
+            }
+
+            val updatedReservation: Reservation = foundReservation.inProgress()
+
+            try {
+                transactional.run {
+                    reservationPort.update(updatedReservation)
+                }
+            } catch (_: OptimisticLockingFailureException) {
+                return@logging
+            }
         }
     }
 }
