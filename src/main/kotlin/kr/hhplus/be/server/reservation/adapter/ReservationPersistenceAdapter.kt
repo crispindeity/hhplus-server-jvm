@@ -32,4 +32,7 @@ internal class ReservationPersistenceAdapter(
     override fun updateStatusToExpired(ids: List<Long>) {
         repository.updateStatusToExpired(ids)
     }
+
+    override fun getReservation(reservationId: Long): Reservation? =
+        repository.findBy(reservationId)?.toDomain()
 }

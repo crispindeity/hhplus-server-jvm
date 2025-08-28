@@ -16,4 +16,6 @@ internal interface ReservationRepository {
         start: LocalDateTime,
         end: LocalDateTime
     ): List<ReservationEntity>
+
+    fun findBy(reservationId: Long): ReservationEntity?
 }

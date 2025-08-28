@@ -3,6 +3,7 @@ package kr.hhplus.be.server.reservation.adapter.persistence.repository
 import jakarta.persistence.EntityManager
 import java.time.LocalDateTime
 import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -30,4 +31,7 @@ internal class ReservationDomainRepository(
         start: LocalDateTime,
         end: LocalDateTime
     ): List<ReservationEntity> = jpaRepository.findAllByReservedAtBetweenAndStatus(start, end)
+
+    override fun findBy(reservationId: Long): ReservationEntity? =
+        jpaRepository.findByIdOrNull(reservationId)
 }

@@ -16,4 +16,6 @@ internal interface ReservationPort {
     ): List<Reservation>
 
     fun updateStatusToExpired(ids: List<Long>)
+
+    fun getReservation(reservationId: Long): Reservation?
 }
