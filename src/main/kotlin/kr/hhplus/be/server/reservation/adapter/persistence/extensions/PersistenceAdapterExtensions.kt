@@ -70,7 +70,6 @@ internal fun ReservationEntity.Status.toDomain(): Reservation.Status =
 
 internal fun ReservationEventTrace.toEntity(): ReservationEventTraceEntity =
     ReservationEventTraceEntity(
-        id = this.id,
         eventId = this.eventId.toString(),
         reservationId = this.reservationId,
         occurredAt = this.occurredAt,
