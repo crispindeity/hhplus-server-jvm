@@ -10,4 +10,6 @@ internal class ReservationEventTraceDomainRepository(
     override fun save(entity: ReservationEventTraceEntity) {
         jpaRepository.save(entity)
     }
+
+    override fun count(eventId: String): Long = jpaRepository.countByEventId(eventId)
 }

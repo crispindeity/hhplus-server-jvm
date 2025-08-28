@@ -4,4 +4,6 @@ import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEve
 
 internal interface ReservationEventTraceRepository {
     fun save(entity: ReservationEventTraceEntity)
+
+    fun count(eventId: String): Long
 }
