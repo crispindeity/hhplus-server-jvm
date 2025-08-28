@@ -11,7 +11,7 @@ internal class FakeReservationPort : ReservationPort {
 
     override fun save(reservation: Reservation) {
         if (reservation.id == 0L || storage[reservation.id] == null) {
-            val newReservation: Reservation = reservation.copy(id = sequence++)
+            val newReservation: Reservation = reservation.copy(id = ++sequence)
             storage[newReservation.id] = newReservation
         } else {
             storage[reservation.id] = reservation
@@ -42,6 +42,8 @@ internal class FakeReservationPort : ReservationPort {
             }
         }
     }
+
+    override fun getReservation(reservationId: Long): Reservation? = storage[reservationId]
 
     fun saveSingleReservation(userId: UUID) {
         storage[1L] =
