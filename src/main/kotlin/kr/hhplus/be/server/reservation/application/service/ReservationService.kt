@@ -47,7 +47,7 @@ internal class ReservationService(
                         userId = userUUID,
                         concertSeatId = concertSeatId,
                         concertId = context.schedule.concertId,
-                        status = Reservation.Status.IN_PROGRESS
+                        status = Reservation.Status.INIT
                     )
 
                 reservationPort.save(reservation)

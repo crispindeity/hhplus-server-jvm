@@ -18,10 +18,12 @@ internal data class Reservation(
     val version: Int = 0
 ) {
     enum class Status {
+        INIT,
         IN_PROGRESS,
         CANCELLED,
         CONFIRMED,
-        EXPIRED
+        EXPIRED,
+        ERROR
     }
 
     fun confirm(now: LocalDateTime = LocalDateTime.now()): Reservation {
