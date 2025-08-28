@@ -13,6 +13,7 @@ import org.slf4j.Logger
 import org.springframework.context.event.EventListener
 import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.http.HttpStatusCode
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,6 +24,7 @@ internal class ReservationEventPublisher(
 ) {
     private val logger: Logger = Log.getLogger(this.javaClass)
 
+    @Async
     @EventListener
     fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
@@ -45,6 +47,7 @@ internal class ReservationEventPublisher(
         }
     }
 
+    @Async
     @EventListener
     fun handleConcertSeatHoldFailedEvent(event: ConcertSeatHoldFailedEvent) {
         runCatching {
