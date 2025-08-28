@@ -38,4 +38,18 @@ internal data class Reservation(
             reservedAt = now
         )
     }
+
+    fun error(): Reservation {
+        if (status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status"
+            )
+        }
+        return this.copy(
+            status = Status.ERROR
+        )
+    }
+
+    fun isStatusAsError(): Boolean = status == Status.ERROR
 }
