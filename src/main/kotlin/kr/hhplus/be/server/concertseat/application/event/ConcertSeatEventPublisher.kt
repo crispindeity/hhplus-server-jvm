@@ -11,6 +11,7 @@ import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
 import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
@@ -22,6 +23,7 @@ internal class ConcertSeatEventPublisher(
 ) {
     private val logger = Log.getLogger(this.javaClass)
 
+    @Async
     @EventListener
     fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
