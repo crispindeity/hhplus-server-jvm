@@ -66,4 +66,16 @@ internal data class Reservation(
     fun isStatusAsError(): Boolean = status == Status.ERROR
 
     fun isStatusAsInProgress(): Boolean = status == Status.IN_PROGRESS
+
+    fun updatePayment(paymentId: Long): Reservation {
+        if (this.paymentId != null || status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status, PaymentId: $paymentId"
+            )
+        }
+        return this.copy(
+            paymentId = paymentId
+        )
+    }
 }

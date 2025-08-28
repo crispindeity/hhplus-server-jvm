@@ -6,6 +6,8 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldCompletedEvent
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
+import kr.hhplus.be.server.payment.application.event.PaymentSaveCompletedEvent
+import kr.hhplus.be.server.payment.application.event.PaymentSaveFailedEvent
 import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
@@ -143,6 +145,53 @@ internal class ReservationEventPublisher(
                     eventId = event.eventId,
                     reservationId = event.reservationId,
                     eventType = ReservationEventTrace.EventType.SEAT_HELD
+                )
+            )
+
+            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                updateReservationStatusAsInProgress(event.reservationId)
+            }
+        }.onFailure { exception ->
+            Log.errorLogging(logger, exception) { log ->
+                log["eventId"] = event.eventId
+                log["reservationId"] = event.reservationId
+                updateReservationStatusAsError(event.reservationId)
+            }
+        }
+    }
+
+    @Async
+    @EventListener
+    fun handlePaymentSaveFailedEvent(event: PaymentSaveFailedEvent) {
+        runCatching {
+            Log.warnLogging(logger) { log ->
+                log["method"] = "handlePaymentSaveFailedEvent()"
+                log["eventId"] = event.eventId
+                log["reservationId"] = event.reservationId
+                updateReservationStatusAsError(event.reservationId)
+            }
+        }.onFailure { exception ->
+            Log.errorLogging(logger, exception) {}
+        }
+    }
+
+    @Async
+    @EventListener
+    fun handlePaymentSaveCompletedEvent(event: PaymentSaveCompletedEvent) {
+        runCatching {
+            val reservation: Reservation =
+                reservationPort
+                    .getReservation(event.reservationId)
+                    .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
+
+            val updatedReservation: Reservation = reservation.updatePayment(event.paymentId)
+            reservationPort.update(updatedReservation)
+
+            reservationEventTracePort.save(
+                ReservationEventTrace(
+                    eventId = event.eventId,
+                    reservationId = event.reservationId,
+                    eventType = ReservationEventTrace.EventType.PAYMENT
                 )
             )
 
