@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
+import kr.hhplus.be.server.fake.FakeReservationEventPort
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeReservationWebPort
 import kr.hhplus.be.server.fake.FakeRunner
@@ -38,7 +39,8 @@ class ReservationEventPublisherTest :
                 ReservationEventPublisher(
                     reservationPort = reservationPort,
                     reservationWebPort = webPort,
-                    transactional = Transactional(FakeRunner())
+                    transactional = Transactional(FakeRunner()),
+                    reservationEventTracePort = FakeReservationEventPort()
                 )
         }
 
