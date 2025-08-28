@@ -12,6 +12,8 @@ import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
 import kr.hhplus.be.server.reservation.domain.Reservation
 import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 import kr.hhplus.be.server.reservation.exception.ReservationException
+import kr.hhplus.be.server.seat.application.event.SeatHoldCompletedEvent
+import kr.hhplus.be.server.seat.application.event.SeatHoldFailedEvent
 import org.slf4j.Logger
 import org.springframework.context.event.EventListener
 import org.springframework.dao.OptimisticLockingFailureException
@@ -102,6 +104,45 @@ internal class ReservationEventPublisher(
                     eventId = event.eventId,
                     reservationId = event.reservationId,
                     eventType = ReservationEventTrace.EventType.CONCERT_SEAT_HELD
+                )
+            )
+
+            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                updateReservationStatusAsInProgress(event.reservationId)
+            }
+        }.onFailure { exception ->
+            Log.errorLogging(logger, exception) { log ->
+                log["eventId"] = event.eventId
+                log["reservationId"] = event.reservationId
+                updateReservationStatusAsError(event.reservationId)
+            }
+        }
+    }
+
+    @Async
+    @EventListener
+    fun handleSeatHoldFailedEvent(event: SeatHoldFailedEvent) {
+        runCatching {
+            Log.warnLogging(logger) { log ->
+                log["method"] = "handleSeatHoldFailedEvent()"
+                log["eventId"] = event.eventId
+                log["reservationId"] = event.reservationId
+                updateReservationStatusAsError(event.reservationId)
+            }
+        }.onFailure { exception ->
+            Log.errorLogging(logger, exception) {}
+        }
+    }
+
+    @Async
+    @EventListener
+    fun handleSeatHoldCompletedEvent(event: SeatHoldCompletedEvent) {
+        runCatching {
+            reservationEventTracePort.save(
+                ReservationEventTrace(
+                    eventId = event.eventId,
+                    reservationId = event.reservationId,
+                    eventType = ReservationEventTrace.EventType.SEAT_HELD
                 )
             )
 
