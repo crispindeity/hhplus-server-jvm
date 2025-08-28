@@ -1,5 +1,6 @@
 package kr.hhplus.be.server.reservation.adapter.web.executor
 
+import java.time.Duration
 import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
@@ -18,5 +19,6 @@ internal class WebClientHttpExecutor(
             .bodyValue(BodyInserters.fromValue(request))
             .exchangeToMono { response ->
                 Mono.just(response.statusCode())
-            }.block()
+            }.timeout(Duration.ofSeconds(10))
+            .block()
 }
