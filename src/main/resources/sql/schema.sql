@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS concert_seats;
 DROP TABLE IF EXISTS concert_schedules;
 DROP TABLE IF EXISTS concerts;
 DROP TABLE IF EXISTS queue_numbers;
+DROP TABLE IF EXISTS reservation_event_traces;
 
 CREATE TABLE concerts
 (
@@ -70,7 +71,7 @@ CREATE TABLE reservations
   id              BIGINT AUTO_INCREMENT PRIMARY KEY,
   user_id         VARCHAR(36) NOT NULL,
   concert_id      BIGINT      NOT NULL,
-  payment_id      BIGINT      NOT NULL,
+  payment_id      BIGINT    DEFAULT NULL,
   concert_seat_id BIGINT      NOT NULL,
   confirmed_at    TIMESTAMP DEFAULT NULL,
   reserved_at     TIMESTAMP   NOT NULL,
@@ -135,7 +136,7 @@ CREATE TABLE queue_numbers
 CREATE TABLE reservation_event_traces
 (
   id             BIGINT AUTO_INCREMENT PRIMARY KEY,
-  event_id       BIGINT      NOT NULL,
+  event_id       VARCHAR(36) NOT NULL,
   reservation_id BIGINT      NOT NULL,
   occurred_at    TIMESTAMP   NOT NULL,
   event_type     VARCHAR(20) NOT NULL,
