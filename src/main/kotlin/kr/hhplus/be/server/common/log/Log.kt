@@ -51,7 +51,7 @@ object Log {
 
     fun <T> errorLogging(
         log: Logger,
-        exception: Exception,
+        exception: Throwable,
         function: (MutableMap<String, Any>) -> T?
     ): T {
         val logError: MutableMap<String, Any> = mutableMapOf()
