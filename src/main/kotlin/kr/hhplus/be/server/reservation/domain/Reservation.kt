@@ -75,7 +75,8 @@ internal data class Reservation(
             )
         }
         return this.copy(
-            paymentId = paymentId
+            paymentId = paymentId,
+            confirmedAt = LocalDateTime.now()
         )
     }
 }
