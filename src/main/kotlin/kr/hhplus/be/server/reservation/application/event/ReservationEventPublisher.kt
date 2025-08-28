@@ -63,18 +63,18 @@ internal class ReservationEventPublisher(
                 log["method"] = "handleConcertSeatHoldFailedEvent()"
                 log["eventId"] = event.eventId
                 log["reservationId"] = event.reservationId
-                updateReservationStatusAsError(event)
+                updateReservationStatusAsError(event.reservationId)
             }
         }.onFailure { exception ->
             Log.errorLogging(logger, exception) {}
         }
     }
 
-    private fun updateReservationStatusAsError(event: ConcertSeatHoldFailedEvent) {
+    private fun updateReservationStatusAsError(reservationId: Long) {
         Log.logging(logger) {
             val foundReservation: Reservation =
                 reservationPort
-                    .getReservation(event.reservationId)
+                    .getReservation(reservationId)
                     .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
 
             if (foundReservation.isStatusAsError()) {
@@ -112,6 +112,7 @@ internal class ReservationEventPublisher(
             Log.errorLogging(logger, exception) { log ->
                 log["eventId"] = event.eventId
                 log["reservationId"] = event.reservationId
+                updateReservationStatusAsError(event.reservationId)
             }
         }
     }
