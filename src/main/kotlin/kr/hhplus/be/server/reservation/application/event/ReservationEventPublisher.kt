@@ -101,16 +101,18 @@ internal class ReservationEventPublisher(
     @EventListener
     fun handleConcertSeatHoldCompletedEvent(event: ConcertSeatHoldCompletedEvent) {
         runCatching {
-            reservationEventTracePort.save(
-                ReservationEventTrace(
-                    eventId = event.eventId,
-                    reservationId = event.reservationId,
-                    eventType = ReservationEventTrace.EventType.CONCERT_SEAT_HELD
+            transactional.run {
+                reservationEventTracePort.save(
+                    ReservationEventTrace(
+                        eventId = event.eventId,
+                        reservationId = event.reservationId,
+                        eventType = ReservationEventTrace.EventType.CONCERT_SEAT_HELD
+                    )
                 )
-            )
 
-            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
-                updateReservationStatusAsInProgress(event.reservationId)
+                if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                    updateReservationStatusAsInProgress(event.reservationId)
+                }
             }
         }.onFailure { exception ->
             Log.errorLogging(logger, exception) { log ->
@@ -140,16 +142,18 @@ internal class ReservationEventPublisher(
     @EventListener
     fun handleSeatHoldCompletedEvent(event: SeatHoldCompletedEvent) {
         runCatching {
-            reservationEventTracePort.save(
-                ReservationEventTrace(
-                    eventId = event.eventId,
-                    reservationId = event.reservationId,
-                    eventType = ReservationEventTrace.EventType.SEAT_HELD
+            transactional.run {
+                reservationEventTracePort.save(
+                    ReservationEventTrace(
+                        eventId = event.eventId,
+                        reservationId = event.reservationId,
+                        eventType = ReservationEventTrace.EventType.SEAT_HELD
+                    )
                 )
-            )
 
-            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
-                updateReservationStatusAsInProgress(event.reservationId)
+                if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                    updateReservationStatusAsInProgress(event.reservationId)
+                }
             }
         }.onFailure { exception ->
             Log.errorLogging(logger, exception) { log ->
@@ -179,24 +183,26 @@ internal class ReservationEventPublisher(
     @EventListener
     fun handlePaymentSaveCompletedEvent(event: PaymentSaveCompletedEvent) {
         runCatching {
-            val reservation: Reservation =
-                reservationPort
-                    .getReservation(event.reservationId)
-                    .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
+            transactional.run {
+                val reservation: Reservation =
+                    reservationPort
+                        .getReservation(event.reservationId)
+                        .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
 
-            val updatedReservation: Reservation = reservation.updatePayment(event.paymentId)
-            reservationPort.update(updatedReservation)
+                val updatedReservation: Reservation = reservation.updatePayment(event.paymentId)
+                reservationPort.update(updatedReservation)
 
-            reservationEventTracePort.save(
-                ReservationEventTrace(
-                    eventId = event.eventId,
-                    reservationId = event.reservationId,
-                    eventType = ReservationEventTrace.EventType.PAYMENT
+                reservationEventTracePort.save(
+                    ReservationEventTrace(
+                        eventId = event.eventId,
+                        reservationId = event.reservationId,
+                        eventType = ReservationEventTrace.EventType.PAYMENT
+                    )
                 )
-            )
 
-            if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
-                updateReservationStatusAsInProgress(event.reservationId)
+                if (reservationEventTracePort.count(event.eventId) == TRACE_COUNT) {
+                    updateReservationStatusAsInProgress(event.reservationId)
+                }
             }
         }.onFailure { exception ->
             Log.errorLogging(logger, exception) { log ->
