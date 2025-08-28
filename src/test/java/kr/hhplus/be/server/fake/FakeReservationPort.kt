@@ -9,13 +9,15 @@ internal class FakeReservationPort : ReservationPort {
     private val storage: MutableMap<Long, Reservation> = mutableMapOf()
     private var sequence = 0L
 
-    override fun save(reservation: Reservation) {
+    override fun save(reservation: Reservation): Long {
         if (reservation.id == 0L || storage[reservation.id] == null) {
             val newReservation: Reservation = reservation.copy(id = ++sequence)
             storage[newReservation.id] = newReservation
+            return newReservation.id
         } else {
             storage[reservation.id] = reservation
         }
+        return reservation.id
     }
 
     override fun getAll(userId: String): List<Reservation> =

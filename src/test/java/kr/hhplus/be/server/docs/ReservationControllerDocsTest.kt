@@ -159,7 +159,7 @@ class ReservationControllerDocsTest {
         BDDMockito.given(concertSeatPort.getConcertSeat(concertSeatId)).willReturn(concertSeat)
         BDDMockito.given(concertSchedulePort.getSchedule(scheduleId)).willReturn(schedule)
         BDDMockito.given(seatPort.getSeat(seatId)).willReturn(seat)
-        BDDMockito.willDoNothing().given(reservationPort).save(reservation)
+        BDDMockito.given(reservationPort.save(reservation)).willReturn(reservation.id)
         BDDMockito.given(paymentPort.save(payment)).willReturn(payment.id)
 
         // when

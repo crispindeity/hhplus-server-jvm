@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
 
 internal interface ReservationRepository {
-    fun save(entity: ReservationEntity)
+    fun save(entity: ReservationEntity): Long
 
     fun update(entity: ReservationEntity)
 

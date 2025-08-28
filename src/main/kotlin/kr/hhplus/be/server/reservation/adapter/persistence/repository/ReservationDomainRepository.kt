@@ -12,9 +12,7 @@ internal class ReservationDomainRepository(
     private val jpaRepository: ReservationJpaRepository,
     private val jdbcRepository: ReservationJdbcRepository
 ) : ReservationRepository {
-    override fun save(entity: ReservationEntity) {
-        jpaRepository.save(entity)
-    }
+    override fun save(entity: ReservationEntity): Long = jpaRepository.save(entity).id!!
 
     override fun update(entity: ReservationEntity) {
         entityManager.merge(entity)

@@ -50,7 +50,7 @@ internal class ReservationService(
                         status = Reservation.Status.INIT
                     )
 
-                reservationPort.save(reservation)
+                val reservationId: Long = reservationPort.save(reservation)
 
                 afterCommitExecutor.registerAfterCommit {
                     val eventId: UUID = UUID.randomUUID()
@@ -59,7 +59,7 @@ internal class ReservationService(
                         context.toMakeEvent(
                             eventId = eventId,
                             userId = UUID.fromString(userId),
-                            reservationId = reservation.id,
+                            reservationId = reservationId,
                             reservedAt = reservation.reservedAt
                         )
                     )

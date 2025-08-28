@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import kr.hhplus.be.server.reservation.domain.Reservation
 
 internal interface ReservationPort {
-    fun save(reservation: Reservation)
+    fun save(reservation: Reservation): Long
 
     fun getAll(userId: String): List<Reservation>
 
