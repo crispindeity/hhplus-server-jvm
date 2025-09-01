@@ -7,26 +7,26 @@ import java.util.UUID
 import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.domain.ConcertSeat
-import kr.hhplus.be.server.fake.FakeApplicationEventPublisher
+import kr.hhplus.be.server.fake.FakeConcertSeatEventPort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatPort
 import kr.hhplus.be.server.fixture.UserFixture
-import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
+import kr.hhplus.be.server.reservation.application.event.ReservationEvent
 
 class ConcertSeatEventPublisherTest :
     BehaviorSpec({
-        lateinit var concertSeatEventPublisher: ConcertSeatEventPublisher
+        lateinit var concertSeatEventReader: ConcertSeatEventReader
         lateinit var concertSeatPort: FakeConcertSeatPort
 
         beforeTest {
             concertSeatPort = FakeConcertSeatPort(FakeSeatPort())
-            concertSeatEventPublisher =
-                ConcertSeatEventPublisher(
+            concertSeatEventReader =
+                ConcertSeatEventReader(
                     concertSeatPort = concertSeatPort,
                     transactional = Transactional(FakeRunner()),
                     afterCommitExecutor = AfterCommitExecutor(),
-                    eventPublisher = FakeApplicationEventPublisher()
+                    concertSeatEventPort = FakeConcertSeatEventPort()
                 )
         }
 
@@ -36,8 +36,8 @@ class ConcertSeatEventPublisherTest :
                     then("정상적으로 점유 돼야한다.") {
                         concertSeatPort.saveSingleSeat(1L)
 
-                        concertSeatEventPublisher.handleMakeReservationEvent(
-                            MakeReservationEvent(
+                        concertSeatEventReader.handleMakeReservationEvent(
+                            ReservationEvent(
                                 eventId = UUID.randomUUID(),
                                 userId = UUID.fromString(UserFixture.getUserId()),
                                 reservationId = 1L,

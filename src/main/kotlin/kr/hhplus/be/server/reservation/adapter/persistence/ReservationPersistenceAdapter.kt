@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.adapter
+package kr.hhplus.be.server.reservation.adapter.persistence
 
 import java.time.LocalDateTime
 import kr.hhplus.be.server.reservation.adapter.persistence.extensions.toDomain

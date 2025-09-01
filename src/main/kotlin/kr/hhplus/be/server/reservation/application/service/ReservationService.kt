@@ -7,11 +7,11 @@ import kr.hhplus.be.server.common.log.Log
 import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
+import kr.hhplus.be.server.reservation.application.port.ReservationEventPort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.service.extensions.toMakeEvent
 import kr.hhplus.be.server.reservation.domain.Reservation
 import org.slf4j.Logger
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,7 +20,7 @@ internal class ReservationService(
     private val reservationContextLoader: ReservationContextLoader,
     private val transactional: Transactional,
     private val afterCommitExecutor: AfterCommitExecutor,
-    private val eventPublisher: ApplicationEventPublisher
+    private val reservationEventPort: ReservationEventPort
 ) {
     private val logger: Logger = Log.getLogger(ReservationService::class.java)
 
@@ -55,7 +55,7 @@ internal class ReservationService(
                 afterCommitExecutor.registerAfterCommit {
                     val eventId: UUID = UUID.randomUUID()
                     log["eventId"] = eventId
-                    eventPublisher.publishEvent(
+                    reservationEventPort.makeReservationEventPublish(
                         context.toMakeEvent(
                             eventId = eventId,
                             userId = UUID.fromString(userId),

@@ -3,7 +3,7 @@ package kr.hhplus.be.server.reservation.application.event
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal data class MakeReservationEvent(
+internal data class ReservationEvent(
     val eventId: UUID,
     val userId: UUID,
     val reservationId: Long,

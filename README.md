@@ -128,25 +128,27 @@ docker-compose up -d
 
 - 설계 부분은 직접적인 수정은 하지 않고, 다시 한번 생각 해 보는 방식으로 피드백을 수용하자.
 - [x] 웹 소켓 사용에 대한 생각
-  - 대기열이 실시간으로 줄어드는걸 보여줄 필요가 없었던걸까? 만약 그런거라면 빼도 될것 같다.
+    - 대기열이 실시간으로 줄어드는걸 보여줄 필요가 없었던걸까? 만약 그런거라면 빼도 될것 같다.
 - [x] 시퀀스 다이어 그램에서 핵심적인 예외 부분은 남겨도 좋을것 같다.
-  - 너무 간소화 시킨 것 같다. 사실 아직 구현단계 전이라 그런가 어떤게 핵심적인 예외 발생 부분인지 잘은 모르겠다.
+    - 너무 간소화 시킨 것 같다. 사실 아직 구현단계 전이라 그런가 어떤게 핵심적인 예외 발생 부분인지 잘은 모르겠다.
 - [x] 브라우저 닫기 등의 내용은 너무 상세한 것 같다.
-  - 웹 소켓을 생각할 필요가 없다면 이 부분도 빼도 될것 같다.
+    - 웹 소켓을 생각할 필요가 없다면 이 부분도 빼도 될것 같다.
 - [x] 클러스터링 인덱스 구조에 대해 학습
-  - 일단 이번주차에 DB를 사용하지 않으니까, 이번주 금요일 과제 제출 하고 공부해보자.
+    - 일단 이번주차에 DB를 사용하지 않으니까, 이번주 금요일 과제 제출 하고 공부해보자.
 - [x] PK 는 왜 Long 타입 정수형으로 선언하면 좋은지 고민해보기.
-  - 일단 이번주차에 DB를 사용하지 않으니까, 이번주 금요일 과제 제출 하고 공부해보자. 
+    - 일단 이번주차에 DB를 사용하지 않으니까, 이번주 금요일 과제 제출 하고 공부해보자.
 - [x] 모호한 컬럼 네이밍 수정
-  - number 보다는 queueNumber? 가 좋으려나..
+    - number 보다는 queueNumber? 가 좋으려나..
 - [x] URL Path 수정
-  - 이것도 나중에 깨달은 부분인데 시간이 없어 수정이 어려웠다.. /api/reservation/available-dates -> /api/concerts/{id}/reservation/available-dates 가 좋았을것 같다.
-  - 예약 Controller 에 있는게 아니라 Concert Controller 에 있어야겠지?
-  - Seat 관련된 URL 로 Reservation 에 있는데 옮겨야겠다.
+    - 이것도 나중에 깨달은 부분인데 시간이 없어 수정이 어려웠다.. /api/reservation/available-dates ->
+      /api/concerts/{id}/reservation/available-dates 가 좋았을것 같다.
+    - 예약 Controller 에 있는게 아니라 Concert Controller 에 있어야겠지?
+    - Seat 관련된 URL 로 Reservation 에 있는데 옮겨야겠다.
 
 #### Mock API
 
-- Mock API 에서 어디까지 작성해야 하는지 그 기준이 모호 했었는데, 너무 작게 잡은것 같다. 응답 관련된 부분은 전부 작성하는게 좋은것 같다.(예외, Validation 등등)
+- Mock API 에서 어디까지 작성해야 하는지 그 기준이 모호 했었는데, 너무 작게 잡은것 같다. 응답 관련된 부분은 전부 작성하는게 좋은것 같다.(예외, Validation
+  등등)
 - [x] 커스텀 예외 응답 추가
 - [x] Validation 추가
 
@@ -184,7 +186,6 @@ docker-compose up -d
     - OOM 해결, 소요 시간은 5분정도 소요
 - [x] jdbc 사용 관련, 흠흠.. 이건 피드백 받을 줄 알고 있었는데. 의도한거니까 일단은 냅두자.
 
-
 ### 5주차 피드백
 
 ```text
@@ -205,9 +206,9 @@ docker-compose up -d
 #### 피드백 수정 내용
 
 - [x] 대기열 토큰 발급 기능 로직 수정
-  - 이건 MQ 를 사용하는 시점에 로직을 수정하게 될것 같은데, 그 전에라도 시간이 된다면 수정해보자 우선 어떤식으로 설계해야하고 수정해야 하는지는 이해 완료
+    - 이건 MQ 를 사용하는 시점에 로직을 수정하게 될것 같은데, 그 전에라도 시간이 된다면 수정해보자 우선 어떤식으로 설계해야하고 수정해야 하는지는 이해 완료
 - [x] 비관적락 이랑 낙관적락 체크 리스트를 조금 수정해봐야 할것 같다.
-  - 재시도와 경합을 초점으로 맞춰서
+    - 재시도와 경합을 초점으로 맞춰서
 
 ### 6주차 피드백
 
@@ -223,6 +224,32 @@ docker-compose up -d
 
 - 이번주차는 크게 수정 할 내용은 없어 보인다.
 - 다음주차 기능 구현이랑 대기열 변경 등 할게 많으니 바로 시작하면 될것 같다.
+
+### 7주차 피드백
+
+- 과제 진행률 부족으로 제출 실패.. 추후 진행 예정
+
+### 8주차 피드백
+
+```text
+- 주문/예약 정보를 원 트랜잭션이 종료된 이후에 전송: O
+- 주문/예약 정보를 전달하는 부가 로직에 대한 관심사를 메인 서비스에서 분리: O
+- 트랜잭션이 분리되더라도 데이터 일관성을 보장할 수 있는 분산 트랜잭션 설계: O
+--
+- 클래스의 이름은 이벤트 퍼블리셔인데 해당 클래스가 갖는 메서드에는 다 이벤트리스너가 달려있어서 이게 퍼블리셔인지 리스너인지 헷갈려요.
+- afterCommitExecutor를 활용할 필요 없이 이벤트 퍼블리셔만 활용해도 될 것 같은데 복잡도가 높은 느낌이 드네요. 트랜잭션도 어노테이션을 활용하는 것이 코드를 더 깔끔하게 작성할 수 있을 것 같아요.
+- 예약을 생성한 이후 비동기로 다른 프로세스가 처리되는 중에 고객에게 노출할 예약의 상태를 정의하는 것은 필요해보여요.
+- 기존의 port 방식에서 최소한의 변경으로 이벤트 기반 아키텍처로 변경하는 것부터 쉽지 않은 것 같아요. 시퀀스다이어그램 등을 포함해서 어떤 클래스들이 어떤 역할들을 하고 어떤 흐름으로 비즈니스 로직이 흘러가는지 이해하기 쉽게 문서를 작성해주시면 좋을 것 같아요.
+```
+
+#### 피드백 수정 내용
+
+- [x] 이벤트 처리 클래스 이름 변경
+- [x] afterCommitExecutor 복잡성
+  - 학습 용도로 만들어본 부분으로 실제로 사용할때는 어노테이션을 사용할것 같다.
+- [x] 고객에게 노출할 예약의 상태 정의
+  - 이미 처리 되어 있다. IN_PROGRESS 상태의 예약만 고객에게 보이게됨, 최초 예약 생성은 INIT 상태
+- [x] 기존 port 설계를 조금 더 유연하게 변경 
 
 </details>
 
@@ -304,7 +331,7 @@ sequenceDiagram
     ReserveService ->> DB: 예약 가능한 날짜 조회
     SeatAPI -->> FE: 날짜 목록 응답
     FE ->> SeatAPI: GET
-    SeatAPI ->> ReserveService: 해당 날짜 좌석 상태 조회 요청 
+    SeatAPI ->> ReserveService: 해당 날짜 좌석 상태 조회 요청
     ReserveService ->> DB: 해당 날짜 좌석 상태 조회
     SeatAPI -->> FE: 좌석 목록 응답
     FE ->> SeatAPI: POST
@@ -445,7 +472,7 @@ erDiagram
 
     POINT_WALLETS {
         BIGINT id PK
-        VARCHAR(36) user_id 
+        VARCHAR(36) user_id
         BIGINT balance
         BIGINT version
         TIMESTAMP created_at
@@ -454,7 +481,7 @@ erDiagram
 
     POINT_TRANSACTIONS {
         BIGINT id PK
-        BIGINT point_wallet_id 
+        BIGINT point_wallet_id
         VARCHAR type "CHARGED | USED"
         BIGINT amount
         TIMESTAMP created_at
@@ -463,7 +490,7 @@ erDiagram
 
     QUEUE_TOKENS {
         BIGINT id PK
-        VARCHAR(36) user_id 
+        VARCHAR(36) user_id
         INT number
         VARCHAR(1024) token
         VARCHAR status "WAITING | COMPLETED | CANCELLED | EXPIRED"
@@ -491,8 +518,8 @@ erDiagram
 
     CONCERT_SEATS {
         BIGINT id PK
-        BIGINT concert_id 
-        BIGINT seat_id 
+        BIGINT concert_id
+        BIGINT seat_id
         VARCHAR status "HELD | AVAILABLE | RESERVED"
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -500,17 +527,17 @@ erDiagram
 
     SEAT_HOLDS {
         BIGINT id PK
-        BIGINT concert_seat_id 
-        VARCHAR(36) user_id 
+        BIGINT concert_seat_id
+        VARCHAR(36) user_id
         TIMESTAMP held_at
         TIMESTAMP expires_at
     }
 
     RESERVATIONS {
         BIGINT id PK
-        VARCHAR(36) user_id 
-        BIGINT concert_id 
-        BIGINT payment_id 
+        VARCHAR(36) user_id
+        BIGINT concert_id
+        BIGINT payment_id
         TIMESTAMP confirmed_at
         TIMESTAMP reserved_at
         TIMESTAMP expires_at
@@ -521,7 +548,7 @@ erDiagram
 
     RESERVATION_SEATS {
         BIGINT id PK
-        BIGINT reservation_id 
+        BIGINT reservation_id
         BIGINT concert_seat_id
         TIMESTAMP created_at
         TIMESTAMP updated_at
@@ -529,7 +556,7 @@ erDiagram
 
     PAYMENTS {
         BIGINT id PK
-        VARCHAR(36) user_id 
+        VARCHAR(36) user_id
         VARCHAR status "PENDING | COMPLETED | CANCELLED"
         BIGINT price
         TIMESTAMP paid_at

@@ -2,7 +2,7 @@ package kr.hhplus.be.server.reservation.application.service.extensions
 
 import java.time.LocalDateTime
 import java.util.UUID
-import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
+import kr.hhplus.be.server.reservation.application.event.ReservationEvent
 import kr.hhplus.be.server.reservation.application.service.ReservationContext
 
 internal fun ReservationContext.toMakeEvent(
@@ -10,8 +10,8 @@ internal fun ReservationContext.toMakeEvent(
     userId: UUID,
     reservationId: Long,
     reservedAt: LocalDateTime
-): MakeReservationEvent =
-    MakeReservationEvent(
+): ReservationEvent =
+    ReservationEvent(
         eventId = eventId,
         userId = userId,
         reservationId = reservationId,
