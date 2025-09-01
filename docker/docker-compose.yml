@@ -1,5 +1,6 @@
 services:
   mysql:
+    profiles: [ "storage" ]
     image: mysql:8.0
     container_name: hhplus-mysql
     ports: [ "3306:3306" ]
@@ -15,6 +16,7 @@ services:
     restart: unless-stopped
 
   pinpoint-hbase:
+    profiles: [ "pinpoint" ]
     image: pinpointdocker/pinpoint-hbase:2.5.3
     container_name: pinpoint-hbase
     environment:
@@ -27,6 +29,7 @@ services:
     restart: unless-stopped
 
   pinpoint-collector:
+    profiles: [ "pinpoint" ]
     image: pinpointdocker/pinpoint-collector:2.5.3
     container_name: pinpoint-collector
     environment:
@@ -41,6 +44,7 @@ services:
     restart: unless-stopped
 
   pinpoint-web:
+    profiles: [ "pinpoint" ]
     image: pinpointdocker/pinpoint-web:2.5.3
     container_name: pinpoint-web
     environment:
@@ -51,6 +55,7 @@ services:
     restart: unless-stopped
 
   server:
+    profiles: [ "server" ]
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -69,6 +74,7 @@ services:
     restart: on-failure
 
   data-generator:
+    profiles: [ "data" ]
     container_name: data-generator
     build:
       context: ..
@@ -90,6 +96,7 @@ services:
       - SCALE=10
 
   redis:
+    profiles: [ "storage" ]
     image: redis:8.2
     container_name: hhplus-redis
     environment:
@@ -112,6 +119,82 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+
+  zookeeper:
+    profiles: [ "kafka" ]
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: hhplus-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    profiles: [ "kafka" ]
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: hhplus-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+
+  kafka-ui:
+    profiles: [ "kafka" ]
+    image: provectuslabs/kafka-ui:latest
+    container_name: hhplus-kafka-ui
+    depends_on:
+      - kafka
+      - schema-registry
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schema-registry:8081
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: debezium
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect:8083
+    ports:
+      - "9090:8080"
+
+  schema-registry:
+    profiles: [ "kafka" ]
+    image: confluentinc/cp-schema-registry:7.4.0
+    container_name: schema-registry
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:29092
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+    ports:
+      - "8081:8081"
+
+  kafka-connect:
+    profiles: [ "kafka" ]
+    image: debezium/connect:2.4
+    container_name: hhplus-kafka-connect
+    depends_on:
+      - kafka
+    environment:
+      BOOTSTRAP_SERVERS: kafka:29092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: my_connect_configs
+      OFFSET_STORAGE_TOPIC: my_connect_offsets
+      STATUS_STORAGE_TOPIC: my_connect_statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+    ports:
+      - "8083:8083"
 
 networks:
   default:
