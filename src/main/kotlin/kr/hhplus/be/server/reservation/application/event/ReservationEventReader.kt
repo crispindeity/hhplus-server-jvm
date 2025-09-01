@@ -8,6 +8,7 @@ import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldComplete
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
 import kr.hhplus.be.server.payment.application.event.PaymentSaveCompletedEvent
 import kr.hhplus.be.server.payment.application.event.PaymentSaveFailedEvent
+import kr.hhplus.be.server.reservation.application.event.extensions.toRequest
 import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
@@ -24,7 +25,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
-internal class ReservationEventPublisher(
+internal class ReservationEventReader(
     private val reservationWebPort: ReservationWebPort,
     private val reservationPort: ReservationPort,
     private val transactional: Transactional,
@@ -38,12 +39,12 @@ internal class ReservationEventPublisher(
 
     @Async
     @EventListener
-    fun handleMakeReservationEvent(event: MakeReservationEvent) {
+    fun handleMakeReservationEvent(event: ReservationEvent) {
         runCatching {
             Log.logging(logger) { log ->
                 log["method"] = "reservation.handleMakeReservationEvent()"
                 val status: HttpStatusCode? =
-                    reservationWebPort.sendReservationInfo(event)
+                    reservationWebPort.sendReservationInfo(event.toRequest())
                 if (status == null || !status.is2xxSuccessful) {
                     throw ReservationException(
                         code = ErrorCode.FAILED_SEND_RESERVATION_INFO,

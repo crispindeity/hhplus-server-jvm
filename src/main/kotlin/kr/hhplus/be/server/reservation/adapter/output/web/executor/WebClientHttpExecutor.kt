@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.reservation.adapter.web.executor
+package kr.hhplus.be.server.reservation.adapter.output.web.executor
 
 import java.time.Duration
-import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
+import kr.hhplus.be.server.reservation.adapter.output.web.dto.ReservationInfoRequest
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 internal class WebClientHttpExecutor(
     private val webClient: WebClient
 ) : HttpExecutor {
-    override fun sendReservationInfo(request: MakeReservationEvent): HttpStatusCode? =
+    override fun sendReservationInfo(request: ReservationInfoRequest): HttpStatusCode? =
         webClient
             .post()
             .uri("/post")

@@ -1,6 +1,5 @@
-package kr.hhplus.be.server.seat.adapter
+package kr.hhplus.be.server.seat.adapter.persistence
 
-import kotlin.collections.map
 import kr.hhplus.be.server.seat.adapter.persistence.extensions.toDomain
 import kr.hhplus.be.server.seat.adapter.persistence.repository.SeatRepository
 import kr.hhplus.be.server.seat.application.port.SeatPort

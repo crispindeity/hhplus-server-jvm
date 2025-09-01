@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.util.UUID
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
-import kr.hhplus.be.server.fake.FakeReservationEventPort
+import kr.hhplus.be.server.fake.FakeReservationEventTracePort
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeReservationWebPort
 import kr.hhplus.be.server.fake.FakeRunner
@@ -23,7 +23,7 @@ class ReservationEventPublisherTest :
     BehaviorSpec({
         lateinit var webPort: FakeReservationWebPort
         lateinit var reservationPort: FakeReservationPort
-        lateinit var reservationEventPublisher: ReservationEventPublisher
+        lateinit var reservationEventReader: ReservationEventReader
 
         beforeTest {
             webPort =
@@ -35,12 +35,12 @@ class ReservationEventPublisherTest :
                     }
                 }
             reservationPort = FakeReservationPort()
-            reservationEventPublisher =
-                ReservationEventPublisher(
+            reservationEventReader =
+                ReservationEventReader(
                     reservationPort = reservationPort,
                     reservationWebPort = webPort,
                     transactional = Transactional(FakeRunner()),
-                    reservationEventTracePort = FakeReservationEventPort()
+                    reservationEventTracePort = FakeReservationEventTracePort()
                 )
         }
 
@@ -49,7 +49,7 @@ class ReservationEventPublisherTest :
                 `when`("예약 정보 데이터 전송 시") {
                     then("정상적으로 전송 돼야한다.") {
                         val event =
-                            MakeReservationEvent(
+                            ReservationEvent(
                                 eventId = UUID.randomUUID(),
                                 reservationId = 1L,
                                 userId = UUID.randomUUID(),
@@ -60,21 +60,21 @@ class ReservationEventPublisherTest :
                             )
 
                         shouldNotThrowAny {
-                            reservationEventPublisher.handleMakeReservationEvent(event)
+                            reservationEventReader.handleMakeReservationEvent(event)
                         }
                         webPort.callCount shouldBe 1
-                        webPort.lastEvent?.reservationId shouldBe 1L
+                        webPort.infoRequest?.reservationId shouldBe 1L
                     }
 
                     `when`("예약 정보 데이터 전송 응답 코드가 200이 아닌 경우") {
                         then("예외는 던지지 않지만 실패 로그가 남아야 한다.") {
                             val (_, appender: ListAppender<ILoggingEvent>) =
                                 attachListAppenderFor(
-                                    ReservationEventPublisher::class.java,
+                                    ReservationEventReader::class.java,
                                     Level.WARN
                                 )
                             val event =
-                                MakeReservationEvent(
+                                ReservationEvent(
                                     eventId = UUID.randomUUID(),
                                     reservationId = 0L,
                                     userId = UUID.randomUUID(),
@@ -85,11 +85,11 @@ class ReservationEventPublisherTest :
                                 )
 
                             shouldNotThrowAny {
-                                reservationEventPublisher.handleMakeReservationEvent(event)
+                                reservationEventReader.handleMakeReservationEvent(event)
                             }
 
                             webPort.callCount shouldBe 1
-                            webPort.lastEvent?.reservationId shouldBe 0L
+                            webPort.infoRequest?.reservationId shouldBe 0L
                             appender.list.any { it.level == Level.WARN } shouldBe true
                         }
                     }
@@ -109,7 +109,7 @@ class ReservationEventPublisherTest :
                                 concertSeatId = 1L
                             )
 
-                        reservationEventPublisher.handleConcertSeatHoldFailedEvent(event)
+                        reservationEventReader.handleConcertSeatHoldFailedEvent(event)
 
                         val reservation: Reservation = reservationPort.getReservation(1L)!!
 
