@@ -67,6 +67,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("io.netty:netty-resolver-dns-native-macos")
 
     // DB
     runtimeOnly("com.mysql:mysql-connector-j")

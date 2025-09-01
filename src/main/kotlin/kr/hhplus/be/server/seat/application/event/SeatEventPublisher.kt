@@ -9,7 +9,6 @@ import kr.hhplus.be.server.seathold.domain.SeatHold
 import org.slf4j.Logger
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
@@ -21,14 +20,17 @@ internal class SeatEventPublisher(
 ) {
     private val logger: Logger = Log.getLogger(this.javaClass)
 
-    @Async
     @EventListener
     fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
             Log.logging(logger) { log ->
-                log["method"] = "handleMakeReservationEvent()"
+                log["method"] = "seat.handleMakeReservationEvent()"
                 log["eventId"] = event.eventId
                 transactional.run {
+                    afterCommitExecutor.registerAfterRollback {
+                        sendToSeatHoldFailedEvent(event)
+                    }
+
                     seatHoldPort.save(
                         SeatHold(
                             concertSeatId = event.concertSeatId,
@@ -44,10 +46,6 @@ internal class SeatEventPublisher(
                             )
                         )
                     }
-
-                    afterCommitExecutor.registerAfterRollback {
-                        sendToSeatHoldFailedEvent(event)
-                    }
                 }
             }
         }.onFailure { exception ->
@@ -56,12 +54,16 @@ internal class SeatEventPublisher(
     }
 
     private fun sendToSeatHoldFailedEvent(event: MakeReservationEvent) {
-        eventPublisher.publishEvent(
-            SeatHoldFailedEvent(
-                eventId = event.eventId,
-                reservationId = event.reservationId,
-                seatId = event.seatId
+        Log.logging(logger) { log ->
+            log["method"] = "sendToSeatHoldFailedEvent()"
+            log["eventId"] = event.eventId
+            eventPublisher.publishEvent(
+                SeatHoldFailedEvent(
+                    eventId = event.eventId,
+                    reservationId = event.reservationId,
+                    seatId = event.seatId
+                )
             )
-        )
+        }
     }
 }

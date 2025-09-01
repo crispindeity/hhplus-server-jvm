@@ -41,7 +41,7 @@ internal class ReservationEventPublisher(
     fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
             Log.logging(logger) { log ->
-                log["method"] = "onEvent()"
+                log["method"] = "reservation.handleMakeReservationEvent()"
                 val status: HttpStatusCode? =
                     reservationWebPort.sendReservationInfo(event)
                 if (status == null || !status.is2xxSuccessful) {
@@ -59,7 +59,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handleConcertSeatHoldFailedEvent(event: ConcertSeatHoldFailedEvent) {
         runCatching {
@@ -76,19 +75,18 @@ internal class ReservationEventPublisher(
 
     private fun updateReservationStatusAsError(reservationId: Long) {
         Log.logging(logger) {
-            val foundReservation: Reservation =
-                reservationPort
-                    .getReservation(reservationId)
-                    .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
-
-            if (foundReservation.isStatusAsError()) {
-                return@logging
-            }
-
-            val updatedReservation: Reservation = foundReservation.error()
-
             try {
                 transactional.run {
+                    val foundReservation: Reservation =
+                        reservationPort
+                            .getReservation(reservationId)
+                            .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
+
+                    if (foundReservation.isStatusAsError()) {
+                        return@run
+                    }
+
+                    val updatedReservation: Reservation = foundReservation.error()
                     reservationPort.update(updatedReservation)
                 }
             } catch (_: OptimisticLockingFailureException) {
@@ -97,7 +95,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handleConcertSeatHoldCompletedEvent(event: ConcertSeatHoldCompletedEvent) {
         runCatching {
@@ -123,7 +120,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handleSeatHoldFailedEvent(event: SeatHoldFailedEvent) {
         runCatching {
@@ -138,7 +134,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handleSeatHoldCompletedEvent(event: SeatHoldCompletedEvent) {
         runCatching {
@@ -164,7 +159,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handlePaymentSaveFailedEvent(event: PaymentSaveFailedEvent) {
         runCatching {
@@ -179,7 +173,6 @@ internal class ReservationEventPublisher(
         }
     }
 
-    @Async
     @EventListener
     fun handlePaymentSaveCompletedEvent(event: PaymentSaveCompletedEvent) {
         runCatching {
@@ -214,20 +207,20 @@ internal class ReservationEventPublisher(
     }
 
     private fun updateReservationStatusAsInProgress(reservationId: Long) {
-        Log.logging(logger) {
-            val foundReservation: Reservation =
-                reservationPort
-                    .getReservation(reservationId)
-                    .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
-
-            if (foundReservation.isStatusAsInProgress()) {
-                return@logging
-            }
-
-            val updatedReservation: Reservation = foundReservation.inProgress()
-
+        Log.logging(logger) { log ->
+            log["method"] = "updateReservationStatusAsInProgress()"
             try {
                 transactional.run {
+                    val foundReservation: Reservation =
+                        reservationPort
+                            .getReservation(reservationId)
+                            .orThrow { ReservationException(ErrorCode.NOT_FOUND_RESERVATION) }
+
+                    if (foundReservation.isStatusAsInProgress()) {
+                        return@run
+                    }
+
+                    val updatedReservation: Reservation = foundReservation.inProgress()
                     reservationPort.update(updatedReservation)
                 }
             } catch (_: OptimisticLockingFailureException) {

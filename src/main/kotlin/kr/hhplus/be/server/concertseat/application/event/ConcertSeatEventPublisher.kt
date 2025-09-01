@@ -11,7 +11,6 @@ import kr.hhplus.be.server.concertseat.exception.ConcertSeatException
 import kr.hhplus.be.server.reservation.application.event.MakeReservationEvent
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.event.EventListener
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
@@ -23,7 +22,6 @@ internal class ConcertSeatEventPublisher(
 ) {
     private val logger = Log.getLogger(this.javaClass)
 
-    @Async
     @EventListener
     fun handleMakeReservationEvent(event: MakeReservationEvent) {
         runCatching {
@@ -31,6 +29,10 @@ internal class ConcertSeatEventPublisher(
                 log["method"] = "concertSeat.handleMakeReservationEvent()"
                 log["eventId"] = event.eventId
                 transactional.run {
+                    afterCommitExecutor.registerAfterRollback {
+                        sendToConcertSeatHoldFailedEvent(event)
+                    }
+
                     val concertSeat: ConcertSeat =
                         concertSeatPort
                             .getConcertSeat(event.concertSeatId)
@@ -48,10 +50,6 @@ internal class ConcertSeatEventPublisher(
                             )
                         )
                     }
-
-                    afterCommitExecutor.registerAfterRollback {
-                        sendToConcertSeatHoldFailedEvent(event)
-                    }
                 }
             }
         }.onFailure { exception ->
@@ -60,12 +58,16 @@ internal class ConcertSeatEventPublisher(
     }
 
     private fun sendToConcertSeatHoldFailedEvent(event: MakeReservationEvent) {
-        eventPublisher.publishEvent(
-            ConcertSeatHoldFailedEvent(
-                eventId = event.eventId,
-                reservationId = event.reservationId,
-                concertSeatId = event.concertSeatId
+        Log.logging(logger) { log ->
+            log["method"] = "sendToConcertSeatHoldFailedEvent()"
+            log["eventId"] = event.eventId
+            eventPublisher.publishEvent(
+                ConcertSeatHoldFailedEvent(
+                    eventId = event.eventId,
+                    reservationId = event.reservationId,
+                    concertSeatId = event.concertSeatId
+                )
             )
-        )
+        }
     }
 }
