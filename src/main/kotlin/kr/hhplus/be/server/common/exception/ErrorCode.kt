@@ -41,5 +41,7 @@ enum class ErrorCode(
     NOT_VALUE_IN_EXPRESSION(code = 500, message = "not value in expression."),
     INVALID_RETURN_TYPE(code = 500, message = "invalid return types"),
     KEYS_IS_EMPTY(code = 404, message = "is empty keys."),
-    FAILED_TO_UNLOCK(code = 500, message = "failed to unlock.")
+    FAILED_TO_UNLOCK(code = 500, message = "failed to unlock."),
+    FAILED_AFTER_COMMIT_CALLBACK(code = 500, message = "failed to after commit callback."),
+    FAILED_SEND_RESERVATION_INFO(code = 500, message = "failed to send reservation info.")
 }

@@ -38,9 +38,11 @@ internal class ReservationEntity(
     var version: Version
 ) : BaseEntity() {
     enum class Status {
+        INIT,
         IN_PROGRESS,
         CANCELLED,
         CONFIRMED,
-        EXPIRED
+        EXPIRED,
+        ERROR
     }
 }

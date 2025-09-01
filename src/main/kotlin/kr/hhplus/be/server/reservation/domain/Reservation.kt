@@ -18,10 +18,12 @@ internal data class Reservation(
     val version: Int = 0
 ) {
     enum class Status {
+        INIT,
         IN_PROGRESS,
         CANCELLED,
         CONFIRMED,
-        EXPIRED
+        EXPIRED,
+        ERROR
     }
 
     fun confirm(now: LocalDateTime = LocalDateTime.now()): Reservation {
@@ -33,7 +35,47 @@ internal data class Reservation(
         }
         return this.copy(
             status = Status.CONFIRMED,
-            reservedAt = now
+            confirmedAt = now
+        )
+    }
+
+    fun error(): Reservation {
+        if (status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status"
+            )
+        }
+        return this.copy(
+            status = Status.ERROR
+        )
+    }
+
+    fun inProgress(): Reservation {
+        if (status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status"
+            )
+        }
+        return this.copy(
+            status = Status.IN_PROGRESS
+        )
+    }
+
+    fun isStatusAsError(): Boolean = status == Status.ERROR
+
+    fun isStatusAsInProgress(): Boolean = status == Status.IN_PROGRESS
+
+    fun updatePayment(paymentId: Long): Reservation {
+        if (this.paymentId != null || status != Status.INIT) {
+            throw ReservationException(
+                code = ErrorCode.INVALID_STATUS,
+                message = "ReservationStatus: $status, PaymentId: $paymentId"
+            )
+        }
+        return this.copy(
+            paymentId = paymentId
         )
     }
 }

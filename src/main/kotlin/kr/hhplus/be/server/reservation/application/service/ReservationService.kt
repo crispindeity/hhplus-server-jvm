@@ -4,27 +4,23 @@ import java.time.LocalDate
 import java.util.UUID
 import kr.hhplus.be.server.common.lock.RedisLocks
 import kr.hhplus.be.server.common.log.Log
+import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
-import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
-import kr.hhplus.be.server.concertseat.domain.ConcertSeat
-import kr.hhplus.be.server.payment.application.port.PaymentPort
-import kr.hhplus.be.server.payment.domain.Payment
 import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
+import kr.hhplus.be.server.reservation.application.service.extensions.toMakeEvent
 import kr.hhplus.be.server.reservation.domain.Reservation
-import kr.hhplus.be.server.seathold.application.port.SeatHoldPort
-import kr.hhplus.be.server.seathold.domain.SeatHold
 import org.slf4j.Logger
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
 internal class ReservationService(
-    private val seatHoldPort: SeatHoldPort,
-    private val concertSeatPort: ConcertSeatPort,
     private val reservationPort: ReservationPort,
-    private val paymentPort: PaymentPort,
     private val reservationContextLoader: ReservationContextLoader,
-    private val transactional: Transactional
+    private val transactional: Transactional,
+    private val afterCommitExecutor: AfterCommitExecutor,
+    private val eventPublisher: ApplicationEventPublisher
 ) {
     private val logger: Logger = Log.getLogger(ReservationService::class.java)
 
@@ -46,34 +42,28 @@ internal class ReservationService(
                 val context: ReservationContext =
                     reservationContextLoader.load(concertSeatId, date)
 
-                val heldSeat: ConcertSeat = context.concertSeat.held()
-
-                concertSeatPort.update(heldSeat)
-
-                seatHoldPort.save(
-                    SeatHold(
-                        concertSeatId = concertSeatId,
-                        userId = userUUID
-                    )
-                )
-
-                val paymentId: Long =
-                    paymentPort.save(
-                        Payment(
-                            userId = userUUID,
-                            price = context.seat.price
-                        )
-                    )
-
                 val reservation =
                     Reservation(
                         userId = userUUID,
                         concertSeatId = concertSeatId,
                         concertId = context.schedule.concertId,
-                        paymentId = paymentId,
-                        status = Reservation.Status.IN_PROGRESS
+                        status = Reservation.Status.INIT
                     )
-                reservationPort.save(reservation)
+
+                val reservationId: Long = reservationPort.save(reservation)
+
+                afterCommitExecutor.registerAfterCommit {
+                    val eventId: UUID = UUID.randomUUID()
+                    log["eventId"] = eventId
+                    eventPublisher.publishEvent(
+                        context.toMakeEvent(
+                            eventId = eventId,
+                            userId = UUID.fromString(userId),
+                            reservationId = reservationId,
+                            reservedAt = reservation.reservedAt
+                        )
+                    )
+                }
 
                 MakeReservationResponse(
                     userId = userId,

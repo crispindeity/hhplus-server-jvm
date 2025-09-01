@@ -13,9 +13,7 @@ import org.springframework.stereotype.Component
 internal class ReservationPersistenceAdapter(
     private val repository: ReservationRepository
 ) : ReservationPort {
-    override fun save(reservation: Reservation) {
-        repository.save(reservation.toEntity())
-    }
+    override fun save(reservation: Reservation): Long = repository.save(reservation.toEntity())
 
     override fun getAll(userId: String): List<Reservation> =
         repository.findAll(userId).map { it.toDomain() }
@@ -32,4 +30,7 @@ internal class ReservationPersistenceAdapter(
     override fun updateStatusToExpired(ids: List<Long>) {
         repository.updateStatusToExpired(ids)
     }
+
+    override fun getReservation(reservationId: Long): Reservation? =
+        repository.findBy(reservationId)?.toDomain()
 }

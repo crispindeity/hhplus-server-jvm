@@ -1,36 +1,34 @@
 package kr.hhplus.be.server.config
 
+import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
-import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.service.ReservationContextLoader
 import kr.hhplus.be.server.reservation.application.service.ReservationService
 import kr.hhplus.be.server.seat.application.port.SeatPort
-import kr.hhplus.be.server.seathold.application.port.SeatHoldPort
 import org.mockito.Mockito.mock
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 
 @TestConfiguration
 internal class ReservationTestConfig {
     @Bean
     fun reservationService(
-        seatHoldPort: SeatHoldPort,
-        concertSeatPort: ConcertSeatPort,
         reservationPort: ReservationPort,
-        paymentPort: PaymentPort,
         reservationContextLoader: ReservationContextLoader,
-        transactional: Transactional
+        transactional: Transactional,
+        afterCommitExecutor: AfterCommitExecutor,
+        eventPublisher: ApplicationEventPublisher
     ): ReservationService =
         ReservationService(
-            seatHoldPort,
-            concertSeatPort,
-            reservationPort,
-            paymentPort,
-            reservationContextLoader,
-            transactional
+            reservationPort = reservationPort,
+            reservationContextLoader = reservationContextLoader,
+            transactional = transactional,
+            afterCommitExecutor = afterCommitExecutor,
+            eventPublisher = eventPublisher
         )
 
     @Bean
@@ -47,4 +45,10 @@ internal class ReservationTestConfig {
 
     @Bean
     fun reservationPort(): ReservationPort = mock(ReservationPort::class.java)
+
+    @Bean
+    fun afterCommitExecutor(): AfterCommitExecutor = mock(AfterCommitExecutor::class.java)
+
+    @Bean
+    fun eventPublisher(): ApplicationEventPublisher = mock(ApplicationEventPublisher::class.java)
 }
