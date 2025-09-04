@@ -29,6 +29,9 @@ val restAssuredVersion = "5.5.0"
 val nimbusJWTVersion = "10.3"
 val redissonVersion = "3.44.0"
 val kotestVersion = "5.9.1"
+val confluentVersion = "8.0.0"
+val nettyBomVersion = "4.2.4.Final"
+val apacheCommonsVersion = "3.18.0"
 
 java {
     toolchain {
@@ -44,50 +47,76 @@ kotlin {
 }
 
 repositories {
+    maven {
+        url = uri("https://packages.confluent.io/maven/")
+        isAllowInsecureProtocol = true
+    }
     mavenCentral()
 }
 
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:2024.0.0")
+        mavenBom("io.netty:netty-bom:$nettyBomVersion")
+    }
+    dependencies {
+        dependency("org.apache.commons:commons-lang3:$apacheCommonsVersion")
     }
 }
 
 dependencies {
+    // OS
+    implementation("io.netty:netty-resolver-dns-native-macos")
+
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutineVersion")
+
+    // Jackson
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    // Spring
+    // Spring Boot Core
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("io.netty:netty-resolver-dns-native-macos")
 
-    // DB
-    runtimeOnly("com.mysql:mysql-connector-j")
+    // JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // Redis
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+    // Kafka
+    implementation("org.apache.kafka:kafka-streams")
+    implementation("org.springframework.kafka:spring-kafka")
+    implementation("io.confluent:kafka-avro-serializer:$confluentVersion")
+    implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
+
+    // Auth
+    implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJWTVersion")
+
+    // Redisson
+    implementation("org.redisson:redisson-spring-boot-starter:$redissonVersion")
+
+    // Mysql
+    runtimeOnly("com.mysql:mysql-connector-j")
+
     // Test
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
+    testImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
+    testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
+    testImplementation("org.springframework.kafka:spring-kafka-test")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:mysql")
-    testImplementation("io.rest-assured:rest-assured:$restAssuredVersion")
-    testImplementation("io.rest-assured:kotlin-extensions:$restAssuredVersion")
+    testImplementation("org.testcontainers:kafka")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:$restdocsSpecMockMvcVersion")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutineVersion")
+    testImplementation("org.testcontainers:mysql")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
-
-    // JWT
-    implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJWTVersion")
 }
 
 tasks.withType<Test> {
