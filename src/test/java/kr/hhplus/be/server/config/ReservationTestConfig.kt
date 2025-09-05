@@ -4,7 +4,7 @@ import kr.hhplus.be.server.common.transactional.AfterCommitExecutor
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertschedule.application.port.ConcertSchedulePort
 import kr.hhplus.be.server.concertseat.application.port.ConcertSeatPort
-import kr.hhplus.be.server.reservation.application.port.ReservationEventPort
+import kr.hhplus.be.server.reservation.application.port.ReservationExternalEventPort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.application.service.ReservationContextLoader
 import kr.hhplus.be.server.reservation.application.service.ReservationService
@@ -22,14 +22,14 @@ internal class ReservationTestConfig {
         reservationContextLoader: ReservationContextLoader,
         transactional: Transactional,
         afterCommitExecutor: AfterCommitExecutor,
-        reservationEventPort: ReservationEventPort
+        externalEventPort: ReservationExternalEventPort
     ): ReservationService =
         ReservationService(
             reservationPort = reservationPort,
             reservationContextLoader = reservationContextLoader,
             transactional = transactional,
             afterCommitExecutor = afterCommitExecutor,
-            reservationEventPort = reservationEventPort
+            externalEventPort = externalEventPort
         )
 
     @Bean
@@ -54,5 +54,6 @@ internal class ReservationTestConfig {
     fun eventPublisher(): ApplicationEventPublisher = mock(ApplicationEventPublisher::class.java)
 
     @Bean
-    fun reservationEventPort(): ReservationEventPort = mock(ReservationEventPort::class.java)
+    fun externalEventPort(): ReservationExternalEventPort =
+        mock(ReservationExternalEventPort::class.java)
 }

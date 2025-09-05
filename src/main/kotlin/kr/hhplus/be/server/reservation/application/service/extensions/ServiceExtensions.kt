@@ -5,7 +5,7 @@ import java.util.UUID
 import kr.hhplus.be.server.reservation.application.event.ReservationEvent
 import kr.hhplus.be.server.reservation.application.service.ReservationContext
 
-internal fun ReservationContext.toMakeEvent(
+internal fun ReservationContext.toEvent(
     eventId: UUID,
     userId: UUID,
     reservationId: Long,

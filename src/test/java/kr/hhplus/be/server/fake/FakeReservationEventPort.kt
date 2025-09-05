@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.fake
 
 import kr.hhplus.be.server.reservation.application.event.ReservationEvent
-import kr.hhplus.be.server.reservation.application.port.ReservationEventPort
+import kr.hhplus.be.server.reservation.application.port.ReservationExternalEventPort
 
-internal class FakeReservationEventPort : ReservationEventPort {
-    override fun makeReservationEventPublish(event: ReservationEvent) {}
+internal class FakeReservationEventPort : ReservationExternalEventPort {
+    override fun publishReservation(event: ReservationEvent) {}
 }
