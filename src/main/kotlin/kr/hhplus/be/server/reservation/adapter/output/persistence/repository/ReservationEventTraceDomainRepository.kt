@@ -1,6 +1,6 @@
-package kr.hhplus.be.server.reservation.adapter.persistence.repository
+package kr.hhplus.be.server.reservation.adapter.output.persistence.repository
 
-import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEventTraceEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.entity.ReservationEventTraceEntity
 import org.springframework.stereotype.Repository
 
 @Repository

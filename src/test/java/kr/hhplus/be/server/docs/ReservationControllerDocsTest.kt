@@ -20,8 +20,8 @@ import kr.hhplus.be.server.config.SeatTestConfig
 import kr.hhplus.be.server.config.TransactionalTestConfig
 import kr.hhplus.be.server.payment.application.port.PaymentPort
 import kr.hhplus.be.server.payment.domain.Payment
-import kr.hhplus.be.server.reservation.adapter.web.ReservationController
-import kr.hhplus.be.server.reservation.adapter.web.request.MakeReservationRequest
+import kr.hhplus.be.server.reservation.adapter.input.web.ReservationController
+import kr.hhplus.be.server.reservation.adapter.input.web.request.MakeReservationRequest
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.domain.Reservation
 import kr.hhplus.be.server.seat.application.port.SeatPort

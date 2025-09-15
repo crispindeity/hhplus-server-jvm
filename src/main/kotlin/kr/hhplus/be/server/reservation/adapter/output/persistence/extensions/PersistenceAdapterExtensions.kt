@@ -1,9 +1,9 @@
-package kr.hhplus.be.server.reservation.adapter.persistence.extensions
+package kr.hhplus.be.server.reservation.adapter.output.persistence.extensions
 
 import java.util.UUID
 import kr.hhplus.be.server.common.adapter.persistence.entity.Version
-import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
-import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEventTraceEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.entity.ReservationEventTraceEntity
 import kr.hhplus.be.server.reservation.domain.Reservation
 import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 

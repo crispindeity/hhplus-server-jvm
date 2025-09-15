@@ -1,8 +1,8 @@
-package kr.hhplus.be.server.reservation.adapter.persistence
+package kr.hhplus.be.server.reservation.adapter.output.persistence
 
 import java.util.UUID
-import kr.hhplus.be.server.reservation.adapter.persistence.extensions.toEntity
-import kr.hhplus.be.server.reservation.adapter.persistence.repository.ReservationEventTraceRepository
+import kr.hhplus.be.server.reservation.adapter.output.persistence.extensions.toEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.repository.ReservationEventTraceRepository
 import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePort
 import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 import org.springframework.stereotype.Component

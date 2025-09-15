@@ -11,11 +11,11 @@ import kr.hhplus.be.server.fake.FakeConcertPort
 import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakePaymentPort
-import kr.hhplus.be.server.fake.FakeReservationEventPort
+import kr.hhplus.be.server.fake.FakeReservationExternalEventPort
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatPort
-import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
+import kr.hhplus.be.server.reservation.adapter.input.web.response.MakeReservationResponse
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -53,7 +53,7 @@ class ReservationServiceTest {
                 reservationContextLoader = reservationContextLoader,
                 transactional = transactional,
                 afterCommitExecutor = AfterCommitExecutor(),
-                reservationEventPort = FakeReservationEventPort()
+                reservationEventPort = FakeReservationExternalEventPort()
             )
     }
 

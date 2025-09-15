@@ -25,6 +25,11 @@ spring:
       port: 6379
       database: 0
 
+kafka:
+  topics:
+    reservation:
+      name: concert.reservations
+
 ---
 spring:
   config:

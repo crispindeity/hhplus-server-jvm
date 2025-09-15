@@ -4,7 +4,7 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import java.time.LocalDate
-import kr.hhplus.be.server.reservation.adapter.web.request.MakeReservationRequest
+import kr.hhplus.be.server.reservation.adapter.input.web.request.MakeReservationRequest
 import org.hamcrest.Matchers
 import org.springframework.http.MediaType
 

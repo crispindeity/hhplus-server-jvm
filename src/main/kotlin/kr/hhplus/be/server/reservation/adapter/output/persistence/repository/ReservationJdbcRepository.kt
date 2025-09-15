@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.adapter.persistence.repository
+package kr.hhplus.be.server.reservation.adapter.output.persistence.repository
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate

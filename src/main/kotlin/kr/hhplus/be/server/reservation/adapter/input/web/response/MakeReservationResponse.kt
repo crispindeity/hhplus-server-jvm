@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.adapter.web.response
+package kr.hhplus.be.server.reservation.adapter.input.web.response
 
 import java.time.LocalDate
 import java.time.LocalDateTime

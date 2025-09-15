@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.adapter.web.request
+package kr.hhplus.be.server.reservation.adapter.input.web.request
 
 import jakarta.validation.constraints.Future
 import jakarta.validation.constraints.Min
