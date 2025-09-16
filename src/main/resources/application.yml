@@ -24,6 +24,12 @@ spring:
       host: localhost
       port: 6379
       database: 0
+kafka:
+  bootstrap-server: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+  schema-registry-url: ${KAFKA_SCHEMA_REGISTRY_URL:http://localhost:8081}
+  topics:
+    RESERVATION:
+      name: ${$KAFKA_TOPICS_RESERVATION_NAME:concert.reservation}
 
 ---
 spring:
@@ -49,6 +55,11 @@ spring:
 jwt:
   secret: uLzJXp4n5z9J9fV4p8VJdRhBqBv9c8r+O7dnYGfH1V4=
   expiration-minutes: 5
+
+kafka:
+  topics:
+    reservation:
+      name: "concert.reservations"
 
 ---
 spring:

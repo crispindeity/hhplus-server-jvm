@@ -1,8 +1,8 @@
-package kr.hhplus.be.server.reservation.adapter.persistence.repository
+package kr.hhplus.be.server.reservation.adapter.output.persistence.repository
 
 import jakarta.persistence.EntityManager
 import java.time.LocalDateTime
-import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.entity.ReservationEntity
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 

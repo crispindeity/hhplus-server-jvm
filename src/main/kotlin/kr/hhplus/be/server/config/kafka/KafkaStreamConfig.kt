@@ -1,0 +1,25 @@
+package kr.hhplus.be.server.config.kafka
+
+import org.apache.kafka.common.serialization.Serdes
+import org.apache.kafka.streams.StreamsConfig
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import org.springframework.kafka.config.KafkaStreamsConfiguration
+
+@Configuration
+@Profile("!test")
+class KafkaStreamConfig(
+    private val kafkaProperties: KafkaProperties
+) {
+    @Bean("defaultKafkaStreamsConfig")
+    fun defaultKafkaStreamsConfig(): KafkaStreamsConfiguration {
+        val props: MutableMap<String, Any> = kafkaProperties.streams.buildProperties(null)
+
+        props[StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG] = Serdes.String()::class.java
+        props[StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG] = Serdes.String()::class.java
+
+        return KafkaStreamsConfiguration(props)
+    }
+}

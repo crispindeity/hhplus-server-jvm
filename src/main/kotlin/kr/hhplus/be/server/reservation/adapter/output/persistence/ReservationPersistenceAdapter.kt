@@ -1,10 +1,10 @@
-package kr.hhplus.be.server.reservation.adapter.persistence
+package kr.hhplus.be.server.reservation.adapter.output.persistence
 
 import java.time.LocalDateTime
-import kr.hhplus.be.server.reservation.adapter.persistence.extensions.toDomain
-import kr.hhplus.be.server.reservation.adapter.persistence.extensions.toEntity
-import kr.hhplus.be.server.reservation.adapter.persistence.extensions.toUpdateEntity
-import kr.hhplus.be.server.reservation.adapter.persistence.repository.ReservationRepository
+import kr.hhplus.be.server.reservation.adapter.output.persistence.extensions.toDomain
+import kr.hhplus.be.server.reservation.adapter.output.persistence.extensions.toEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.extensions.toUpdateEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.repository.ReservationRepository
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
 import kr.hhplus.be.server.reservation.domain.Reservation
 import org.springframework.stereotype.Component

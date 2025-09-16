@@ -1,4 +1,4 @@
-package kr.hhplus.be.server.reservation.adapter.web
+package kr.hhplus.be.server.reservation.adapter.input.web
 
 import jakarta.servlet.ServletRequest
 import jakarta.servlet.http.HttpServletRequest
@@ -6,8 +6,8 @@ import jakarta.validation.Valid
 import kr.hhplus.be.server.common.adapter.web.dto.ApiResponse
 import kr.hhplus.be.server.common.annotation.RequireQueueAccess
 import kr.hhplus.be.server.common.exception.ErrorCode
-import kr.hhplus.be.server.reservation.adapter.web.request.MakeReservationRequest
-import kr.hhplus.be.server.reservation.adapter.web.response.MakeReservationResponse
+import kr.hhplus.be.server.reservation.adapter.input.web.request.MakeReservationRequest
+import kr.hhplus.be.server.reservation.adapter.input.web.response.MakeReservationResponse
 import kr.hhplus.be.server.reservation.application.service.ReservationService
 import kr.hhplus.be.server.reservation.exception.ReservationException
 import org.springframework.web.bind.annotation.PostMapping

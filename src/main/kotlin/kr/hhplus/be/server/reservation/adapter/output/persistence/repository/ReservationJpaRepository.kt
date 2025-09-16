@@ -1,7 +1,7 @@
-package kr.hhplus.be.server.reservation.adapter.persistence.repository
+package kr.hhplus.be.server.reservation.adapter.output.persistence.repository
 
 import java.time.LocalDateTime
-import kr.hhplus.be.server.reservation.adapter.persistence.entity.ReservationEntity
+import kr.hhplus.be.server.reservation.adapter.output.persistence.entity.ReservationEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
 internal interface ReservationJpaRepository : JpaRepository<ReservationEntity, Long> {

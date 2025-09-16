@@ -8,10 +8,8 @@ import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldComplete
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
 import kr.hhplus.be.server.payment.application.event.PaymentSaveCompletedEvent
 import kr.hhplus.be.server.payment.application.event.PaymentSaveFailedEvent
-import kr.hhplus.be.server.reservation.application.event.extensions.toRequest
 import kr.hhplus.be.server.reservation.application.port.ReservationEventTracePort
 import kr.hhplus.be.server.reservation.application.port.ReservationPort
-import kr.hhplus.be.server.reservation.application.port.ReservationWebPort
 import kr.hhplus.be.server.reservation.domain.Reservation
 import kr.hhplus.be.server.reservation.domain.ReservationEventTrace
 import kr.hhplus.be.server.reservation.exception.ReservationException
@@ -20,13 +18,10 @@ import kr.hhplus.be.server.seat.application.event.SeatHoldFailedEvent
 import org.slf4j.Logger
 import org.springframework.context.event.EventListener
 import org.springframework.dao.OptimisticLockingFailureException
-import org.springframework.http.HttpStatusCode
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
 internal class ReservationEventReader(
-    private val reservationWebPort: ReservationWebPort,
     private val reservationPort: ReservationPort,
     private val transactional: Transactional,
     private val reservationEventTracePort: ReservationEventTracePort
@@ -35,29 +30,6 @@ internal class ReservationEventReader(
 
     companion object {
         const val TRACE_COUNT = 3L
-    }
-
-    @Async
-    @EventListener
-    fun handleMakeReservationEvent(event: ReservationEvent) {
-        runCatching {
-            Log.logging(logger) { log ->
-                log["method"] = "reservation.handleMakeReservationEvent()"
-                val status: HttpStatusCode? =
-                    reservationWebPort.sendReservationInfo(event.toRequest())
-                if (status == null || !status.is2xxSuccessful) {
-                    throw ReservationException(
-                        code = ErrorCode.FAILED_SEND_RESERVATION_INFO,
-                        message = status?.value().toString()
-                    )
-                }
-            }
-        }.onFailure {
-            Log.warnLogging(logger) { log ->
-                log["eventId"] = event.eventId
-                log["reservationId"] = event.reservationId
-            }
-        }
     }
 
     @EventListener

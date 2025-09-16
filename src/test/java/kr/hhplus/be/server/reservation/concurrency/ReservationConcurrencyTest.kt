@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import kr.hhplus.be.server.common.integration.AbstractIntegrationTest
 import kr.hhplus.be.server.fixture.UserFixture
-import kr.hhplus.be.server.reservation.adapter.web.request.MakeReservationRequest
+import kr.hhplus.be.server.reservation.adapter.input.web.request.MakeReservationRequest
 import kr.hhplus.be.server.steps.ConcertSteps
 import kr.hhplus.be.server.steps.EntryQueueTokenSteps
 import org.assertj.core.api.SoftAssertions

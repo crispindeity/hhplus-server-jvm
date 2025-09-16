@@ -4,6 +4,7 @@ import jakarta.annotation.PreDestroy
 import org.springframework.context.annotation.Configuration
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MySQLContainer
+import org.testcontainers.kafka.KafkaContainer
 import org.testcontainers.utility.DockerImageName
 
 @Configuration
@@ -11,6 +12,8 @@ class TestcontainersConfiguration {
     @PreDestroy
     fun preDestroy() {
         if (mySqlContainer.isRunning) mySqlContainer.stop()
+        if (redisContainer.isRunning) redisContainer.stop()
+        if (kafkaContainer.isRunning) kafkaContainer.stop()
     }
 
     companion object {
@@ -28,6 +31,11 @@ class TestcontainersConfiguration {
                 .withEnv("TZ", "Asia/Seoul")
                 .apply { start() }
 
+        val kafkaContainer: KafkaContainer =
+            KafkaContainer(DockerImageName.parse("apache/kafka"))
+                .withEnv("TZ", "Asia/Seoul")
+                .apply { start() }
+
         init {
             System.setProperty(
                 "spring.datasource.url",
@@ -41,6 +49,7 @@ class TestcontainersConfiguration {
                 "spring.data.redis.port",
                 redisContainer.getMappedPort(6379).toString()
             )
+            System.setProperty("spring.kafka.bootstrap-servers", kafkaContainer.bootstrapServers)
         }
     }
 }

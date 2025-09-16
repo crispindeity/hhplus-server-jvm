@@ -1,12 +1,7 @@
 package kr.hhplus.be.server.reservation.application.event
 
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.read.ListAppender
-import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
-import java.time.LocalDateTime
 import java.util.UUID
 import kr.hhplus.be.server.common.transactional.Transactional
 import kr.hhplus.be.server.concertseat.application.event.ConcertSeatHoldFailedEvent
@@ -16,7 +11,6 @@ import kr.hhplus.be.server.fake.FakeReservationWebPort
 import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fixture.ReservationFixture
 import kr.hhplus.be.server.reservation.domain.Reservation
-import kr.hhplus.be.server.testutil.attachListAppenderFor
 import org.springframework.http.HttpStatusCode
 
 class ReservationEventPublisherTest :
@@ -38,63 +32,9 @@ class ReservationEventPublisherTest :
             reservationEventReader =
                 ReservationEventReader(
                     reservationPort = reservationPort,
-                    reservationWebPort = webPort,
                     transactional = Transactional(FakeRunner()),
                     reservationEventTracePort = FakeReservationEventTracePort()
                 )
-        }
-
-        context("예약 생성 이벤트") {
-            given("예약 생성 이벤트 발생하고") {
-                `when`("예약 정보 데이터 전송 시") {
-                    then("정상적으로 전송 돼야한다.") {
-                        val event =
-                            ReservationEvent(
-                                eventId = UUID.randomUUID(),
-                                reservationId = 1L,
-                                userId = UUID.randomUUID(),
-                                seatId = 1L,
-                                concertSeatId = 1L,
-                                scheduleId = 1L,
-                                reservedAt = LocalDateTime.now()
-                            )
-
-                        shouldNotThrowAny {
-                            reservationEventReader.handleMakeReservationEvent(event)
-                        }
-                        webPort.callCount shouldBe 1
-                        webPort.infoRequest?.reservationId shouldBe 1L
-                    }
-
-                    `when`("예약 정보 데이터 전송 응답 코드가 200이 아닌 경우") {
-                        then("예외는 던지지 않지만 실패 로그가 남아야 한다.") {
-                            val (_, appender: ListAppender<ILoggingEvent>) =
-                                attachListAppenderFor(
-                                    ReservationEventReader::class.java,
-                                    Level.WARN
-                                )
-                            val event =
-                                ReservationEvent(
-                                    eventId = UUID.randomUUID(),
-                                    reservationId = 0L,
-                                    userId = UUID.randomUUID(),
-                                    seatId = 1L,
-                                    concertSeatId = 1L,
-                                    scheduleId = 1L,
-                                    reservedAt = LocalDateTime.now()
-                                )
-
-                            shouldNotThrowAny {
-                                reservationEventReader.handleMakeReservationEvent(event)
-                            }
-
-                            webPort.callCount shouldBe 1
-                            webPort.infoRequest?.reservationId shouldBe 0L
-                            appender.list.any { it.level == Level.WARN } shouldBe true
-                        }
-                    }
-                }
-            }
         }
 
         context("좌석 점유 실패 이벤트") {
