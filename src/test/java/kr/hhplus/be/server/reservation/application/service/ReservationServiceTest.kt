@@ -12,6 +12,7 @@ import kr.hhplus.be.server.fake.FakeConcertSchedulePort
 import kr.hhplus.be.server.fake.FakeConcertSeatPort
 import kr.hhplus.be.server.fake.FakePaymentPort
 import kr.hhplus.be.server.fake.FakeReservationExternalEventPort
+import kr.hhplus.be.server.fake.FakeReservationInternalEventPort
 import kr.hhplus.be.server.fake.FakeReservationPort
 import kr.hhplus.be.server.fake.FakeRunner
 import kr.hhplus.be.server.fake.FakeSeatPort
@@ -53,7 +54,8 @@ class ReservationServiceTest {
                 reservationContextLoader = reservationContextLoader,
                 transactional = transactional,
                 afterCommitExecutor = AfterCommitExecutor(),
-                reservationEventPort = FakeReservationExternalEventPort()
+                externalEventPort = FakeReservationExternalEventPort(),
+                internalEventPort = FakeReservationInternalEventPort()
             )
     }
 

@@ -67,6 +67,9 @@ services:
     environment:
       - TZ=Asia/Seoul
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
+      - KAFKA_BOOTSTRAP_SERVER=kafka:29092
+      - KAFKA_SCHEMA_REGISTRY_URL=http://schema-registry:8081
+      - KAFKA_TOPICS_RESERVATION_NAME=concert.reservation
       - SPRING_DATA_REDIS_HOST=redis
       - PINPOINT_COLLECTOR_IP=pinpoint-collector
       - PINPOINT_AGENT_ID=backend-server

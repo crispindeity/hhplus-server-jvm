@@ -64,13 +64,13 @@ paths:
               예약 생성 - 잘못된 요청:
                 value: |-
                   {
-                    "date" : "2025-08-14",
+                    "date" : "2025-09-17",
                     "seat" : -1
                   }
               예약 생성:
                 value: |-
                   {
-                    "date" : "2025-08-14",
+                    "date" : "2025-09-17",
                     "seat" : 1
                   }
       responses:
@@ -99,11 +99,11 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "userId" : "2785db52-57db-4e14-abd0-971bf9533e6c",
+                        "userId" : "ef46325e-c47f-435e-a4d8-6d70fa436734",
                         "concertSeatId" : 1,
-                        "concertDate" : "2025-08-14",
-                        "reservedAt" : "2025-08-13T09:21:24.085296",
-                        "expiresAt" : "2025-08-13T09:27:24.085299"
+                        "concertDate" : "2025-09-17",
+                        "reservedAt" : "2025-09-16T07:33:08.897448",
+                        "expiresAt" : "2025-09-16T07:39:08.897455"
                       }
                     }
   /api/queue/entry-token:
@@ -122,7 +122,7 @@ paths:
               대기열 토큰:
                 value: |-
                   {
-                    "userId" : "deee7f1f-073d-4052-8ae8-9405897f79a5"
+                    "userId" : "1fa85f64-5717-4562-b3fc-2c963f66afa1"
                   }
               대기열 토큰 - 잘못된 요청:
                 value: |-
@@ -195,7 +195,7 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "userId" : "320c5aeb-e9d0-4f82-9951-d8bf1eb5a3e6",
+                        "userId" : "3181d947-46ae-4ec3-830a-52e452a335f8",
                         "balance" : 1000
                       }
                     }
@@ -234,7 +234,7 @@ paths:
                       "code" : 200,
                       "message" : "success",
                       "result" : {
-                        "dates" : [ "2025-08-13", "2025-08-13" ]
+                        "dates" : [ "2025-09-16", "2025-09-16" ]
                       }
                     }
   /api/concerts/{id}/reservations/available-seats:
@@ -451,6 +451,15 @@ components:
         message:
           type: string
           description: 응답 메시지
+    api-reservations-1797044994:
+      type: object
+      properties:
+        seat:
+          type: number
+          description: 좌석
+        date:
+          type: string
+          description: 예약 일자
     api-queue-entry-token1812758081:
       type: object
       properties:
@@ -474,15 +483,6 @@ components:
         message:
           type: string
           description: 에러 메시지
-    api-reservations-1797044994:
-      type: object
-      properties:
-        seat:
-          type: number
-          description: 좌석
-        date:
-          type: string
-          description: 예약 일자
     api-queue-entry-token-200765834:
       type: object
       properties:

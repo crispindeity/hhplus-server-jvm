@@ -7,6 +7,7 @@ import java.util.UUID
 import kr.hhplus.be.server.common.exception.ErrorCode
 import kr.hhplus.be.server.config.EntryQueueTestConfig
 import kr.hhplus.be.server.config.TransactionalTestConfig
+import kr.hhplus.be.server.fixture.UserFixture
 import kr.hhplus.be.server.queuetoken.adapter.web.EntryQueueController
 import kr.hhplus.be.server.queuetoken.adapter.web.request.EntryQueueTokenRequest
 import kr.hhplus.be.server.queuetoken.application.port.EntryQueuePort
@@ -68,7 +69,7 @@ internal class QueueControllerDocsTest {
     @DisplayName("[문서] 대기열 토큰 발급 요청")
     fun queueToken() {
         // given
-        val userId: UUID = UUID.randomUUID()
+        val userId: UUID = UUID.fromString(UserFixture.getUserId())
         val request =
             EntryQueueTokenRequest(userId.toString())
 

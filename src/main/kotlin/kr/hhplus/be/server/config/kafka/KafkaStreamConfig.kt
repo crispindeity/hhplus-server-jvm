@@ -5,9 +5,11 @@ import org.apache.kafka.streams.StreamsConfig
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import org.springframework.kafka.config.KafkaStreamsConfiguration
 
 @Configuration
+@Profile("!test")
 class KafkaStreamConfig(
     private val kafkaProperties: KafkaProperties
 ) {
